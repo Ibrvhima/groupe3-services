@@ -1,0 +1,9 @@
+django>=4.2
+djangorestframework>=3.14
+django-cors-headers
+djangorestframework-simplejwt
+channels
+channels-redis
+mysqlclient
+python-decouple
+Pillow
