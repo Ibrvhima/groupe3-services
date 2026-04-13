@@ -21,4 +21,5 @@ docker-compose up --build
 - `docs/`     → Documentation du projet
 - `docker/`   → Configuration Docker
 
-## Équipe — Groupe 3
+## Équipe — Groupe 3 
+Ibrahima Diallo, Boubacar Cherif, Mamadou Djouldé
