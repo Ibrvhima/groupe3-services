@@ -1,0 +1,27 @@
+[
+  {
+    "model": "prestataires.categorie",
+    "pk": 1,
+    "fields": { "nom": "Plombier", "icone": "plumbing", "description": "" }
+  },
+  {
+    "model": "prestataires.categorie",
+    "pk": 2,
+    "fields": { "nom": "Électricien", "icone": "electrical", "description": "" }
+  },
+  {
+    "model": "prestataires.categorie",
+    "pk": 3,
+    "fields": { "nom": "Mécanicien", "icone": "car_repair", "description": "" }
+  },
+  {
+    "model": "prestataires.categorie",
+    "pk": 4,
+    "fields": { "nom": "Peintre", "icone": "brush", "description": "" }
+  },
+  {
+    "model": "prestataires.categorie",
+    "pk": 5,
+    "fields": { "nom": "Maçon", "icone": "construction", "description": "" }
+  }
+]
