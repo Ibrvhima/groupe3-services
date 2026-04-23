@@ -15,10 +15,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Packages tiers
     'rest_framework',
     'corsheaders',
+    # Apps du projet
     'apps.users',
     'apps.prestataires',
+    'apps.demandes',
+    'apps.avis',
+    'apps.devis',
+    'apps.chat',
 ]
 
 MIDDLEWARE = [
