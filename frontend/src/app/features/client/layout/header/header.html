@@ -1,0 +1,59 @@
+<header class="bg-white shadow-sm sticky top-0 z-50">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+
+    <!-- Logo -->
+    <a routerLink="/client" class="flex items-center gap-2">
+      <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+      </div>
+      <span class="font-bold text-gray-800 text-sm">KonakryServices</span>
+    </a>
+
+    <!-- Nav desktop -->
+    <nav class="hidden md:flex items-center gap-6">
+      <a routerLink="/client" routerLinkActive="text-blue-600 font-semibold"
+        class="text-sm text-gray-600 hover:text-blue-600 transition">Accueil</a>
+      <a routerLink="/client/demandes" routerLinkActive="text-blue-600 font-semibold"
+        class="text-sm text-gray-600 hover:text-blue-600 transition">Mes demandes</a>
+    </nav>
+
+    <!-- Profil + Déconnexion desktop -->
+    <div class="hidden md:flex items-center gap-3">
+      <span class="text-sm text-gray-600">{{ user?.nom }} {{ user?.prenom }}</span>
+      <button (click)="logout()"
+        class="text-xs bg-red-50 text-red-500 px-3 py-1.5 rounded-lg hover:bg-red-100 transition">
+        Déconnexion
+      </button>
+    </div>
+
+    <!-- Hamburger mobile -->
+    <button (click)="toggleMenu()" class="md:hidden p-1">
+      <svg *ngIf="!menuOpen" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+      <svg *ngIf="menuOpen" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+
+  </div>
+
+  <!-- Menu mobile -->
+  <div *ngIf="menuOpen" class="md:hidden bg-white border-t border-gray-100 px-4 py-3 space-y-3">
+    <a routerLink="/client" (click)="toggleMenu()"
+      class="block text-sm text-gray-700 py-2 border-b border-gray-50">Accueil</a>
+    <a routerLink="/client/demandes" (click)="toggleMenu()"
+      class="block text-sm text-gray-700 py-2 border-b border-gray-50">Mes demandes</a>
+    <div class="flex items-center justify-between py-2">
+      <span class="text-sm text-gray-600">{{ user?.nom }} {{ user?.prenom }}</span>
+      <button (click)="logout()"
+        class="text-xs bg-red-50 text-red-500 px-3 py-1.5 rounded-lg">
+        Déconnexion
+      </button>
+    </div>
+  </div>
+
+</header>
