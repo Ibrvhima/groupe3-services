@@ -20,7 +20,7 @@ export class HomeComponent implements OnInit {
 
   constructor(
     private prestataireService: PrestataireService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
@@ -34,7 +34,7 @@ export class HomeComponent implements OnInit {
         this.categories = Array.isArray(data) ? data : [];
         this.cdr.detectChanges();
       },
-      error: (err) => console.error(err)
+      error: (err) => console.error(err),
     });
   }
 
@@ -42,7 +42,7 @@ export class HomeComponent implements OnInit {
     this.loading = true;
     this.prestataireService.getAll(filters).subscribe({
       next: (data: any) => {
-        this.prestataires = data.results ? data.results : (Array.isArray(data) ? data : []);
+        this.prestataires = data.results ? data.results : Array.isArray(data) ? data : [];
         this.loading = false;
         this.cdr.detectChanges();
       },
@@ -50,17 +50,30 @@ export class HomeComponent implements OnInit {
         console.error(err);
         this.loading = false;
         this.cdr.detectChanges();
-      }
+      },
     });
   }
 
   onSearch() {
-    this.loadPrestataires({ search: this.searchQuery, categorie: this.selectedCategorie });
+    this.loadPrestataires({
+      search: this.searchQuery,
+      categorie: this.selectedCategorie,
+    });
+  }
+
+  onSearchInput() {
+    this.loadPrestataires({
+      search: this.searchQuery,
+      categorie: this.selectedCategorie,
+    });
   }
 
   filterByCategorie(id: any) {
-    this.selectedCategorie = this.selectedCategorie === id ? '' : id;
-    this.loadPrestataires({ categorie: this.selectedCategorie, search: this.searchQuery });
+    this.selectedCategorie = this.selectedCategorie == id ? '' : id;
+    this.loadPrestataires({
+      categorie: this.selectedCategorie,
+      search: this.searchQuery,
+    });
   }
 
   getInitiales(nom: string, prenom: string): string {
