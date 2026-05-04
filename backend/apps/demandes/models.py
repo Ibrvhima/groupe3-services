@@ -14,7 +14,7 @@ class Demande(models.Model):
 
     client      = models.ForeignKey(User, on_delete=models.CASCADE, related_name='demandes')
     prestataire = models.ForeignKey(Prestataire, on_delete=models.CASCADE, related_name='demandes_recues')
-    titre       = models.CharField(max_length=200)
+    titre = models.CharField(max_length=200, default='Sans titre')
     description = models.TextField()
     statut      = models.CharField(max_length=20, choices=STATUT_CHOICES, default='en_attente')
     created_at  = models.DateTimeField(auto_now_add=True)
