@@ -3,6 +3,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 from .serializers import RegisterSerializer, UserSerializer
 from .models import User
+from apps.prestataires.models import Prestataire, Categorie
 
 
 class RegisterView(generics.CreateAPIView):
@@ -14,6 +15,30 @@ class RegisterView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user   = serializer.save()
+
+        # Si c'est un prestataire, créer automatiquement son profil
+        if user.role == 'prestataire':
+            categorie_id = request.data.get('categorie_id')
+            quartier     = request.data.get('quartier', '')
+            description  = request.data.get('description', '')
+            telephone    = request.data.get('telephone_pro', user.telephone)
+
+            categorie = None
+            if categorie_id:
+                try:
+                    categorie = Categorie.objects.get(id=categorie_id)
+                except Categorie.DoesNotExist:
+                    pass
+
+            Prestataire.objects.create(
+                user        = user,
+                categorie   = categorie,
+                quartier    = quartier,
+                description = description,
+                telephone   = telephone,
+                disponible  = True,
+            )
+
         tokens = RefreshToken.for_user(user)
         return Response({
             'user':    UserSerializer(user).data,

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { AuthService } from '../../../core/services/auth';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -25,33 +25,34 @@ export class LoginComponent {
   }
 
   onSubmit() {
-  if (!this.email || !this.password) {
-    this.error = 'Veuillez remplir tous les champs.';
-    return;
-  }
-  this.error = '';
-  this.loading = true;
-
-  this.authService.login(this.email, this.password).subscribe({
-    next: () => {
-      this.loading = false;
-      // Récupérer le profil pour avoir le rôle
-      this.authService.getMe().subscribe({
-        next: (user: any) => {
-          localStorage.setItem('role', user.role);
-          localStorage.setItem('user', JSON.stringify(user));
-          if (user.role === 'client') {
-            this.router.navigate(['/client']);
-          } else if (user.role === 'prestataire') {
-            this.router.navigate(['/prestataire']);
-          }
-        }
-      });
-    },
-    error: () => {
-      this.loading = false;
-      this.error = 'Email ou mot de passe incorrect.';
+    if (!this.email || !this.password) {
+      this.error = 'Veuillez remplir tous les champs.';
+      return;
     }
-  });
-}
+    this.error = '';
+    this.loading = true;
+
+    this.authService.login(this.email, this.password).subscribe({
+      next: () => {
+        this.loading = false;
+        this.authService.getMe().subscribe({
+          next: (user: any) => {
+            localStorage.setItem('role', user.role);
+            localStorage.setItem('user', JSON.stringify(user));
+            if (user.role === 'client') {
+              this.router.navigate(['/client']);
+            } else if (user.role === 'prestataire') {
+              this.router.navigate(['/prestataire']);
+            } else if (user.role === 'admin') {
+              this.router.navigate(['/admin']);
+            }
+          }
+        });
+      },
+      error: () => {
+        this.loading = false;
+        this.error = 'Email ou mot de passe incorrect.';
+      }
+    });
+  }
 }
