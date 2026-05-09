@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
@@ -16,28 +16,32 @@ export class RegisterComponent implements OnInit {
   prenom = '';
   email = '';
   telephone = '';
-  role = 'client';
   password = '';
-  error = '';
-  showPassword = false;
-  loading = false;
+  role = 'client';
 
-  // Champs prestataire
   categorie_id = '';
   quartier = '';
   description = '';
   categories: any[] = [];
 
+  error = '';
+  loading = false;
+  showPassword = false;
+
   constructor(
     private authService: AuthService,
     private prestataireService: PrestataireService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     this.prestataireService.getCategories().subscribe({
-      next: (data: any) => this.categories = data,
-      error: (err) => console.error(err)
+      next: (data: any) => {
+        this.categories = data;
+        this.cdr.detectChanges();
+      },
+      error: () => {}
     });
   }
 
@@ -46,60 +50,68 @@ export class RegisterComponent implements OnInit {
   }
 
   onSubmit() {
+    this.error = '';
+
     if (!this.nom || !this.prenom || !this.email || !this.telephone || !this.password) {
       this.error = 'Veuillez remplir tous les champs.';
-      return;
-    }
-    if (this.password.length < 8) {
-      this.error = 'Le mot de passe doit contenir au moins 8 caractères.';
-      return;
-    }
-    if (this.role === 'prestataire' && (!this.categorie_id || !this.quartier || !this.description)) {
-      this.error = 'Veuillez remplir toutes les informations professionnelles.';
+      this.cdr.detectChanges();
       return;
     }
 
-    this.error = '';
+    if (this.password.length < 8) {
+      this.error = 'Mot de passe trop court.';
+      this.cdr.detectChanges();
+      return;
+    }
+
+    if (this.role === 'prestataire' && (!this.categorie_id || !this.quartier || !this.description)) {
+      this.error = 'Complétez les infos professionnelles.';
+      this.cdr.detectChanges();
+      return;
+    }
+
     this.loading = true;
+    this.cdr.detectChanges();
 
     const data: any = {
       nom: this.nom,
       prenom: this.prenom,
       email: this.email,
       telephone: this.telephone,
-      role: this.role,
       password: this.password,
+      role: this.role,
     };
 
     if (this.role === 'prestataire') {
-      data.categorie_id  = this.categorie_id;
-      data.quartier      = this.quartier;
-      data.description   = this.description;
+      data.categorie_id = this.categorie_id;
+      data.quartier = this.quartier;
+      data.description = this.description;
       data.telephone_pro = this.telephone;
     }
 
     this.authService.register(data).subscribe({
-      next: () => {
+      next: (res: any) => {
         this.loading = false;
-        this.authService.getMe().subscribe({
-          next: (user: any) => {
-            localStorage.setItem('role', user.role);
-            localStorage.setItem('user', JSON.stringify(user));
-            if (user.role === 'client') {
-              this.router.navigate(['/client']);
-            } else if (user.role === 'prestataire') {
-              this.router.navigate(['/prestataire']);
-            }
-          }
-        });
+
+        localStorage.setItem('access_token', res.access);
+        localStorage.setItem('refresh_token', res.refresh);
+        localStorage.setItem('user', JSON.stringify(res.user));
+        localStorage.setItem('role', res.user.role);
+
+        this.cdr.detectChanges();
+
+        this.router.navigate([res.user.role === 'client' ? '/client/dashboard' : '/prestataire/dashboard']);
       },
       error: (err) => {
         this.loading = false;
+
         if (err.error?.email) {
-          this.error = 'Cet email est déjà utilisé.';
+          this.error = 'Email pas valide.';
         } else {
-          this.error = 'Une erreur est survenue. Réessayez.';
+          this.error = 'Erreur lors de l’inscription.';
         }
+
+        this.cdr.detectChanges();
       }
     });
   }

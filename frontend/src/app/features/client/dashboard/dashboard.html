@@ -1,0 +1,343 @@
+<!-- dashboard.html -->
+
+<div class="min-h-screen bg-gray-950 text-white overflow-hidden">
+
+  <!-- HEADER -->
+  <app-header-client></app-header-client>
+
+  <!-- HERO -->
+  <section class="relative">
+
+    <!-- BG EFFECT -->
+    <div
+      class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(59,130,246,0.15),transparent_35%)]">
+    </div>
+
+    <div class="relative max-w-7xl mx-auto px-4 pt-8 pb-10">
+
+      <!-- HERO CARD -->
+      <div
+        class="relative overflow-hidden rounded-[32px] border border-gray-800 bg-gradient-to-br from-gray-900 via-gray-900 to-black p-8 md:p-12 shadow-2xl">
+
+        <!-- LIGHT -->
+        <div
+          class="absolute -top-20 -right-20 w-72 h-72 bg-blue-500/20 blur-3xl rounded-full">
+        </div>
+
+        <div
+          class="absolute -bottom-20 -left-20 w-72 h-72 bg-cyan-500/10 blur-3xl rounded-full">
+        </div>
+
+        <div class="relative z-10 grid lg:grid-cols-2 gap-10 items-center">
+
+          <!-- LEFT -->
+          <div>
+
+            <div
+              class="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 text-blue-400 px-4 py-2 rounded-full text-xs font-medium mb-5">
+
+              <div class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
+
+              Plateforme moderne de services
+
+            </div>
+
+            <h1 class="text-4xl md:text-5xl font-black leading-tight mb-5">
+
+              Trouvez rapidement
+              <br>
+
+              <span
+                class="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                le meilleur prestataire
+              </span>
+
+            </h1>
+
+            <p class="text-gray-400 text-sm md:text-base leading-relaxed max-w-xl">
+
+              Explorez des professionnels qualifiés,
+              contactez facilement les meilleurs prestataires
+              et gérez toutes vos demandes depuis une seule plateforme.
+
+            </p>
+
+          </div>
+
+          <!-- RIGHT -->
+          <div class="hidden lg:flex justify-center">
+
+            <div class="relative">
+
+              <!-- OUTER -->
+              <div
+                class="w-80 h-80 rounded-full border border-blue-500/10 flex items-center justify-center">
+
+                <!-- MIDDLE -->
+                <div
+                  class="w-56 h-56 rounded-full border border-cyan-500/10 flex items-center justify-center">
+
+                  <!-- CENTER -->
+                  <div
+                    class="w-32 h-32 rounded-3xl bg-gradient-to-br from-blue-500 to-cyan-500 shadow-2xl shadow-blue-500/30 flex items-center justify-center">
+
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="w-14 h-14 text-white"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor">
+
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+
+                    </svg>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+              <!-- FLOATING -->
+              <div
+                class="absolute top-10 -left-6 bg-gray-900 border border-gray-800 rounded-2xl px-4 py-3 shadow-xl">
+
+                <p class="text-xs text-gray-400 mb-1">
+                  Disponibilité
+                </p>
+
+                <div class="flex items-center gap-2">
+
+                  <div class="w-2 h-2 rounded-full bg-green-500"></div>
+
+                  <span class="text-sm font-semibold">
+                    Prestataires actifs
+                  </span>
+
+                </div>
+
+              </div>
+
+              <!-- FLOATING -->
+              <div
+                class="absolute bottom-10 -right-6 bg-gray-900 border border-gray-800 rounded-2xl px-4 py-3 shadow-xl">
+
+                <p class="text-xs text-gray-400 mb-1">
+                  Recherche rapide
+                </p>
+
+                <p class="text-sm font-semibold text-blue-400">
+                  + Services disponibles
+                </p>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- CONTENT -->
+  <section class="max-w-7xl mx-auto px-4 pb-12">
+
+    <!-- SEARCH -->
+    <div class="mb-5">
+
+      <div class="relative">
+
+        <input
+          type="text"
+          [(ngModel)]="searchQuery"
+          (input)="onSearchInput()"
+          placeholder="Rechercher un prestataire..."
+          class="w-full bg-gray-900/90 border border-gray-800 rounded-2xl px-5 py-4 pl-12 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-lg"
+        />
+
+        <!-- ICON -->
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-5 h-5 text-gray-500 absolute left-4 top-1/2 -translate-y-1/2"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor">
+
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z"/>
+
+        </svg>
+
+      </div>
+
+    </div>
+
+    <!-- FILTERS -->
+    <div class="flex gap-3 overflow-x-auto pb-4 mb-8">
+
+      <!-- ALL -->
+      <button
+        (click)="filterByCategorie('')"
+        class="px-5 py-2.5 rounded-full text-sm whitespace-nowrap border transition-all duration-200"
+        [class]="!selectedCategorie
+          ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-500/20'
+          : 'bg-gray-900 border-gray-700 text-gray-300 hover:border-blue-500/40 hover:text-white'"
+      >
+        Tous
+      </button>
+
+      <!-- CATEGORY -->
+      <button
+        *ngFor="let c of categories"
+        (click)="filterByCategorie(c.id)"
+        class="px-5 py-2.5 rounded-full text-sm whitespace-nowrap border transition-all duration-200"
+        [class]="selectedCategorie == c.id
+          ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-500/20'
+          : 'bg-gray-900 border-gray-700 text-gray-300 hover:border-blue-500/40 hover:text-white'"
+      >
+        {{ c.nom }}
+      </button>
+
+    </div>
+
+    <!-- LOADING -->
+    <div *ngIf="loading" class="flex justify-center py-24">
+
+      <div
+        class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin">
+      </div>
+
+    </div>
+
+    <!-- LIST -->
+    <div
+      *ngIf="!loading"
+      class="grid sm:grid-cols-2 xl:grid-cols-3 gap-6"
+    >
+
+      <!-- CARD -->
+      <div
+        *ngFor="let p of prestataires"
+        [routerLink]="['/client/prestataire', p.id]"
+        class="group relative overflow-hidden bg-gradient-to-b from-gray-900 to-black border border-gray-800 hover:border-blue-500/40 rounded-[28px] p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-500/10 cursor-pointer"
+      >
+
+        <!-- BG -->
+        <div
+          class="absolute top-0 right-0 w-40 h-40 bg-blue-500/5 blur-3xl rounded-full">
+        </div>
+
+        <div class="relative z-10">
+
+          <!-- TOP -->
+          <div class="flex items-start justify-between mb-5">
+
+            <div class="flex items-center gap-3">
+
+              <!-- AVATAR -->
+              <div
+                class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white font-black text-lg shadow-xl">
+
+                {{ getInitiales(p.user?.nom, p.user?.prenom) }}
+
+              </div>
+
+              <!-- INFO -->
+              <div>
+
+                <h2 class="font-semibold text-white text-sm">
+                  {{ p.user?.nom }} {{ p.user?.prenom }}
+                </h2>
+
+                <p class="text-xs text-blue-400 mt-1">
+                  {{ p.categorie?.nom }}
+                </p>
+
+              </div>
+
+            </div>
+
+            <!-- STATUS -->
+            <span
+              class="text-[11px] px-3 py-1 rounded-full font-medium border"
+              [class]="p.disponible
+                ? 'bg-green-500/10 text-green-400 border-green-500/20'
+                : 'bg-red-500/10 text-red-400 border-red-500/20'"
+            >
+
+              {{ p.disponible ? 'Disponible' : 'Indisponible' }}
+
+            </span>
+
+          </div>
+
+          <!-- DESCRIPTION -->
+          <p class="text-sm text-gray-400 leading-relaxed mb-6 line-clamp-3">
+
+            {{ p.description }}
+
+          </p>
+
+          <!-- FOOTER -->
+          <div class="flex items-center justify-between">
+
+            <span class="text-xs text-gray-500">
+              📍 {{ p.quartier }}
+            </span>
+
+            <span
+              class="text-sm text-blue-400 font-semibold group-hover:translate-x-1 transition">
+
+              Voir profil →
+
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- EMPTY -->
+    <div
+      *ngIf="!loading && prestataires.length === 0"
+      class="text-center py-24"
+    >
+
+      <div class="text-6xl mb-5">
+        🔎
+      </div>
+
+      <h2 class="text-2xl font-bold mb-3">
+        Aucun prestataire trouvé
+      </h2>
+
+      <p class="text-gray-500 text-sm">
+        Essayez une autre recherche ou catégorie.
+      </p>
+
+    </div>
+
+  </section>
+
+</div>

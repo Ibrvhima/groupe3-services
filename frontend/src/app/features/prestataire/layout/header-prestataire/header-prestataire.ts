@@ -1,19 +1,24 @@
 import { Component } from '@angular/core';
-import { RouterModule, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
-  selector: 'app-header',
+  selector: 'app-header-prestataire',
   standalone: true,
-  imports: [RouterModule, CommonModule],
-  templateUrl: './header.html',
+  imports: [CommonModule, RouterModule],
+  templateUrl: './header-prestataire.html',
 })
-export class HeaderComponent {
+export class HeaderPrestataireComponent {
+
   menuOpen = false;
+
   user: any = JSON.parse(localStorage.getItem('user') || '{}');
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   toggleMenu() {
     this.menuOpen = !this.menuOpen;

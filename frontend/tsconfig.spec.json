@@ -3,7 +3,6 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "./out-tsc/spec",
     "types": [
       "vitest/globals"
     ]
@@ -11,5 +10,5 @@
   "include": [
     "src/**/*.d.ts",
     "src/**/*.spec.ts"
-  ]
+, "src/app/features/client/layout/header-client/header-client.spec.ts"  ]
 }

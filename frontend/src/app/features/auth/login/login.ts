@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
@@ -18,40 +18,71 @@ export class LoginComponent {
   rememberMe = false;
   loading = false;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private cdr: ChangeDetectorRef // 🔥 IMPORTANT
+  ) {}
 
   togglePassword() {
     this.showPassword = !this.showPassword;
   }
 
   onSubmit() {
+    this.error = '';
+
     if (!this.email || !this.password) {
       this.error = 'Veuillez remplir tous les champs.';
+      this.cdr.detectChanges(); // 🔥 force affichage
       return;
     }
-    this.error = '';
+
     this.loading = true;
+    this.cdr.detectChanges();
 
     this.authService.login(this.email, this.password).subscribe({
-      next: () => {
-        this.loading = false;
+      next: (res: any) => {
+        localStorage.setItem('access_token', res.access);
+        localStorage.setItem('refresh_token', res.refresh);
+
         this.authService.getMe().subscribe({
           next: (user: any) => {
+            this.loading = false;
+
             localStorage.setItem('role', user.role);
             localStorage.setItem('user', JSON.stringify(user));
+
+            this.cdr.detectChanges();
+
             if (user.role === 'client') {
-              this.router.navigate(['/client']);
+              this.router.navigate(['/client/dashboard']);
             } else if (user.role === 'prestataire') {
-              this.router.navigate(['/prestataire']);
-            } else if (user.role === 'admin') {
+              this.router.navigate(['/prestataire/dashboard']);
+            } else {
               this.router.navigate(['/admin']);
             }
+          },
+          error: () => {
+            this.loading = false;
+            this.error = 'Erreur récupération utilisateur.';
+            this.cdr.detectChanges(); // 🔥
           }
         });
       },
-      error: () => {
+
+      error: (err) => {
         this.loading = false;
-        this.error = 'Email ou mot de passe incorrect.';
+
+        console.log('LOGIN ERROR:', err);
+
+        // 🔥 message immédiat
+        if (err.status === 401) {
+          this.error = 'Email ou mot de passe incorrect.';
+        } else {
+          this.error = 'Erreur serveur.';
+        }
+
+        this.cdr.detectChanges(); //
       }
     });
   }

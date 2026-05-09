@@ -1,0 +1,343 @@
+<!-- demandes.html -->
+
+<div class="min-h-screen bg-gray-950 text-white overflow-hidden">
+
+  <!-- HEADER -->
+  <app-header-client></app-header-client>
+
+  <!-- HERO -->
+  <section class="relative">
+
+    <!-- BG -->
+    <div
+      class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.12),transparent_35%)]">
+    </div>
+
+    <div class="relative max-w-7xl mx-auto px-4 pt-8 pb-8">
+
+      <!-- HERO CARD -->
+      <div
+        class="relative overflow-hidden rounded-[32px] border border-gray-800 bg-gradient-to-br from-gray-900 via-gray-900 to-black p-8 shadow-2xl">
+
+        <!-- LIGHT -->
+        <div
+          class="absolute top-0 right-0 w-72 h-72 bg-blue-500/10 blur-3xl rounded-full">
+        </div>
+
+        <div class="relative z-10">
+
+          <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+
+            <!-- LEFT -->
+            <div>
+
+              <div
+                class="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 text-blue-400 px-4 py-2 rounded-full text-xs font-medium mb-5">
+
+                <div class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
+
+                Gestion intelligente des demandes
+
+              </div>
+
+              <h1 class="text-4xl md:text-5xl font-black leading-tight mb-4">
+
+                Mes
+                <span
+                  class="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                  demandes
+                </span>
+
+              </h1>
+
+              <p class="text-gray-400 max-w-2xl leading-relaxed text-sm md:text-base">
+
+                Suivez toutes vos demandes,
+                consultez leurs statuts en temps réel
+                et gérez facilement vos prestations.
+
+              </p>
+
+            </div>
+
+            <!-- RIGHT -->
+            <div class="hidden lg:flex">
+
+              <div
+                class="w-40 h-40 rounded-full bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-500/10 flex items-center justify-center">
+
+                <div
+                  class="w-24 h-24 rounded-3xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-2xl shadow-blue-500/30">
+
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-12 h-12 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor">
+
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+
+                  </svg>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- CONTENT -->
+  <section class="max-w-7xl mx-auto px-4 pb-12">
+
+    <!-- STATS -->
+    <div class="grid grid-cols-2 xl:grid-cols-5 gap-4 mb-8">
+
+      <!-- TOTAL -->
+      <div
+        class="bg-gradient-to-b from-gray-900 to-black border border-gray-800 rounded-3xl p-5">
+
+        <p class="text-gray-400 text-xs uppercase tracking-wider mb-2">
+          Total
+        </p>
+
+        <h2 class="text-3xl font-black">
+          {{ total }}
+        </h2>
+
+      </div>
+
+      <!-- ATTENTE -->
+      <div
+        class="bg-yellow-500/10 border border-yellow-500/20 rounded-3xl p-5">
+
+        <p class="text-yellow-400 text-xs uppercase tracking-wider mb-2">
+          En attente
+        </p>
+
+        <h2 class="text-3xl font-black">
+          {{ enAttente }}
+        </h2>
+
+      </div>
+
+      <!-- ACCEPTÉES -->
+      <div
+        class="bg-green-500/10 border border-green-500/20 rounded-3xl p-5">
+
+        <p class="text-green-400 text-xs uppercase tracking-wider mb-2">
+          Acceptées
+        </p>
+
+        <h2 class="text-3xl font-black">
+          {{ acceptees }}
+        </h2>
+
+      </div>
+
+      <!-- TERMINÉES -->
+      <div
+        class="bg-blue-500/10 border border-blue-500/20 rounded-3xl p-5">
+
+        <p class="text-blue-400 text-xs uppercase tracking-wider mb-2">
+          Terminées
+        </p>
+
+        <h2 class="text-3xl font-black">
+          {{ terminees }}
+        </h2>
+
+      </div>
+
+      <!-- REFUSÉES -->
+      <div
+        class="bg-red-500/10 border border-red-500/20 rounded-3xl p-5">
+
+        <p class="text-red-400 text-xs uppercase tracking-wider mb-2">
+          Refusées
+        </p>
+
+        <h2 class="text-3xl font-black">
+          {{ refusees }}
+        </h2>
+
+      </div>
+
+    </div>
+
+    <!-- LOADING -->
+    <div *ngIf="loading" class="flex justify-center py-24">
+
+      <div
+        class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin">
+      </div>
+
+    </div>
+
+    <!-- ERROR -->
+    <div
+      *ngIf="error && !loading"
+      class="bg-red-500/10 border border-red-500/20 text-red-400 rounded-2xl p-4 mb-6">
+
+      {{ error }}
+
+    </div>
+
+    <!-- EMPTY -->
+    <div
+      *ngIf="!loading && demandes.length === 0"
+      class="bg-gradient-to-b from-gray-900 to-black border border-gray-800 rounded-[32px] p-12 text-center">
+
+      <div class="text-6xl mb-5">
+        📭
+      </div>
+
+      <h2 class="text-2xl font-bold mb-3">
+        Aucune demande trouvée
+      </h2>
+
+      <p class="text-gray-500 text-sm max-w-md mx-auto">
+
+        Vous n’avez encore envoyé aucune demande.
+        Explorez les prestataires disponibles
+        pour commencer.
+
+      </p>
+
+      <a
+        routerLink="/client"
+        class="inline-flex items-center justify-center mt-6 bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-2xl text-sm font-medium transition">
+
+        Trouver un prestataire
+
+      </a>
+
+    </div>
+
+    <!-- LIST -->
+    <div
+      *ngIf="!loading && demandes.length > 0"
+      class="space-y-5">
+
+      <!-- CARD -->
+      <div
+        *ngFor="let d of demandes"
+        class="group relative overflow-hidden bg-gradient-to-b from-gray-900 to-black border border-gray-800 hover:border-blue-500/30 rounded-[30px] p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-500/10">
+
+        <!-- BG -->
+        <div
+          class="absolute top-0 right-0 w-40 h-40 bg-blue-500/5 blur-3xl rounded-full">
+        </div>
+
+        <div class="relative z-10">
+
+          <!-- TOP -->
+          <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-5 mb-5">
+
+            <!-- USER -->
+            <div class="flex items-center gap-4">
+
+              <!-- AVATAR -->
+              <div
+                class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white font-black text-lg shadow-xl">
+
+                {{ d.prestataire?.user?.nom?.charAt(0) }}
+                {{ d.prestataire?.user?.prenom?.charAt(0) }}
+
+              </div>
+
+              <!-- INFOS -->
+              <div>
+
+                <h2 class="text-lg font-bold text-white mb-1">
+
+                  {{ d.prestataire?.user?.nom }}
+                  {{ d.prestataire?.user?.prenom }}
+
+                </h2>
+
+                <p class="text-blue-400 text-sm mb-2">
+
+                  {{ d.prestataire?.categorie?.nom }}
+
+                </p>
+
+                <p class="text-xs text-gray-500">
+
+                  📍 {{ d.prestataire?.quartier }}
+
+                </p>
+
+              </div>
+
+            </div>
+
+            <!-- STATUS -->
+            <span
+              class="w-fit px-4 py-2 rounded-full text-xs font-semibold"
+              [ngClass]="getStatusClass(d.statut)">
+
+              {{ d.statut }}
+
+            </span>
+
+          </div>
+
+          <!-- DESCRIPTION -->
+          <div
+            class="bg-gray-950/80 border border-gray-800 rounded-2xl p-5 mb-5">
+
+            <p class="text-sm text-gray-300 leading-relaxed">
+
+              {{ d.description }}
+
+            </p>
+
+          </div>
+
+          <!-- FOOTER -->
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+
+            <!-- DATE -->
+            <div class="text-xs text-gray-500">
+
+              Demande envoyée récemment
+
+            </div>
+
+            <!-- ACTION -->
+            <div class="flex items-center gap-3">
+
+              <button
+                class="bg-gray-900 hover:bg-gray-800 border border-gray-700 px-4 py-2 rounded-xl text-sm transition">
+
+                Voir détails
+
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</div>

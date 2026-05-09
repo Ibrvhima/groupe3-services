@@ -1,0 +1,170 @@
+<div class="min-h-screen bg-gray-950 text-white">
+
+  <!-- HEADER -->
+  <app-header-prestataire></app-header-prestataire>
+
+  <div class="max-w-6xl mx-auto px-4 py-6">
+
+    <!-- TITLE -->
+    <div class="mb-8">
+
+      <h1 class="text-3xl font-black mb-2">
+
+        <span class="text-yellow-400">
+          Demandes
+        </span>
+
+        <span class="text-white">
+          reçues
+        </span>
+
+      </h1>
+
+      <p class="text-gray-400 text-sm">
+        Gérez vos clients et vos interventions
+      </p>
+
+    </div>
+
+    <!-- LOADING -->
+    <div
+      *ngIf="loading"
+      class="flex justify-center py-24"
+    >
+
+      <div
+        class="w-12 h-12 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin"
+      ></div>
+
+    </div>
+
+    <!-- CONTENT -->
+    <div *ngIf="!loading">
+
+      <!-- EMPTY -->
+      <div
+        *ngIf="demandes.length === 0"
+        class="bg-gray-900 border border-gray-800 rounded-3xl py-20 text-center"
+      >
+
+        <div class="text-6xl mb-4">
+          📭
+        </div>
+
+        <h2 class="text-xl font-bold mb-2">
+          Aucune demande reçue
+        </h2>
+
+        <p class="text-gray-400 text-sm">
+          Les nouvelles demandes apparaîtront ici
+        </p>
+
+      </div>
+
+      <!-- LIST -->
+      <div
+        *ngIf="demandes.length > 0"
+        class="space-y-5"
+      >
+
+        <div
+          *ngFor="let d of demandes"
+          class="bg-gray-900 border border-gray-800 rounded-3xl p-6"
+        >
+
+          <!-- TOP -->
+          <div class="flex justify-between gap-4 mb-5">
+
+            <div class="flex-1">
+
+              <h2 class="font-bold text-lg text-white mb-1">
+                {{ d.client?.nom }}
+                {{ d.client?.prenom }}
+              </h2>
+
+              <p class="text-gray-400 text-sm">
+                {{ d.description }}
+              </p>
+
+            </div>
+
+            <div>
+
+              <span
+                class="text-xs px-3 py-1 rounded-full border"
+                [ngClass]="getStatusClass(d.statut)"
+              >
+                {{ d.statut }}
+              </span>
+
+            </div>
+
+          </div>
+
+          <!-- ACTIONS -->
+          <div
+            class="flex flex-wrap gap-3"
+          >
+
+            <!-- EN ATTENTE -->
+            <ng-container *ngIf="d.statut === 'en_attente'">
+
+              <!-- ACCEPTER -->
+              <button
+                (click)="accepter(d)"
+                [disabled]="d.loading"
+                class="bg-green-500 hover:bg-green-600 transition px-5 py-2 rounded-xl text-sm font-semibold disabled:opacity-50"
+              >
+
+                <span *ngIf="!d.loading">
+                  ✅ Accepter
+                </span>
+
+                <span
+                  *ngIf="d.loading"
+                  class="flex justify-center"
+                >
+
+                  <div
+                    class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"
+                  ></div>
+
+                </span>
+
+              </button>
+
+              <!-- REFUSER -->
+              <button
+                (click)="refuser(d)"
+                [disabled]="d.loading"
+                class="bg-red-500 hover:bg-red-600 transition px-5 py-2 rounded-xl text-sm font-semibold disabled:opacity-50"
+              >
+                ❌ Refuser
+              </button>
+
+            </ng-container>
+
+            <!-- ACCEPTEE -->
+            <ng-container *ngIf="d.statut === 'acceptee'">
+
+              <button
+                (click)="terminer(d)"
+                [disabled]="d.loading"
+                class="bg-blue-500 hover:bg-blue-600 transition px-5 py-2 rounded-xl text-sm font-semibold disabled:opacity-50"
+              >
+                ✔ Marquer terminée
+              </button>
+
+            </ng-container>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

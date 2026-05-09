@@ -12,6 +12,10 @@ export class PrestataireService {
     return { headers: new HttpHeaders({ Authorization: `Bearer ${token}` }) };
   }
 
+   getPrestataires() {
+    return this.http.get(`${this.api}/prestataires/`);
+  }
+
   getAll(filters: any = {}) {
     let params = new HttpParams();
     Object.keys(filters).forEach(k => {

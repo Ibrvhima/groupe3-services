@@ -11,19 +11,13 @@ export class AuthService {
 
   register(data: any) {
     return this.http.post(`${this.api}/register/`, data).pipe(
-      tap((res: any) => {
-        localStorage.setItem('access_token', res.access);
-        localStorage.setItem('refresh_token', res.refresh);
-      })
+      tap((res: any) => this.saveSession(res))
     );
   }
 
   login(email: string, password: string) {
     return this.http.post(`${this.api}/login/`, { email, password }).pipe(
-      tap((res: any) => {
-        localStorage.setItem('access_token', res.access);
-        localStorage.setItem('refresh_token', res.refresh);
-      })
+      tap((res: any) => this.saveSession(res))
     );
   }
 
@@ -34,6 +28,7 @@ export class AuthService {
   }
 
   logout() {
+    // ✅ FIX ICI (OBLIGATOIRE)
     localStorage.clear();
     this.router.navigate(['/auth/login']);
   }
@@ -49,4 +44,23 @@ export class AuthService {
   getToken(): string {
     return localStorage.getItem('access_token') || '';
   }
+
+  private saveSession(res: any) {
+    localStorage.setItem('access_token', res.access);
+    localStorage.setItem('refresh_token', res.refresh);
+  }
+
+  // ---  GESTION DE MOT DE PASSE OUBLIE --- //
+
+ /*  forgotPassword(email: string) {
+        return this.http.post(`${this.apiUrl}/users/forgot-password/`, { email });
+     }
+
+     resetPassword(token: string, password: string) {
+        return this.http.post(`${this.apiUrl}/users/reset-password/`, {
+       token,
+       password,
+     });
+}  */
+
 }

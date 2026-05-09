@@ -1,0 +1,205 @@
+<div class="min-h-screen bg-gray-950 text-white">
+
+  <!-- HEADER -->
+  <app-header-prestataire></app-header-prestataire>
+
+  <div class="max-w-7xl mx-auto px-4 py-6">
+
+    <!-- TOP -->
+    <div class="mb-8">
+
+      <h1 class="text-3xl font-black mb-2">
+
+        <span class="text-red-500">Dashboard</span>
+
+        <span class="text-white">
+          Prestataire
+        </span>
+
+      </h1>
+
+      <p class="text-gray-400 text-sm">
+        Gérez vos demandes clients rapidement
+      </p>
+
+    </div>
+
+    <!-- LOADING -->
+    <div
+      *ngIf="loading"
+      class="flex justify-center items-center py-24"
+    >
+
+      <div
+        class="w-12 h-12 border-4 border-green-500 border-t-transparent rounded-full animate-spin"
+      ></div>
+
+    </div>
+
+    <!-- CONTENT -->
+    <div *ngIf="!loading">
+
+      <!-- STATS -->
+      <div
+        class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
+      >
+
+        <!-- TOTAL -->
+        <div
+          class="bg-gray-900 border border-gray-800 rounded-3xl p-5"
+        >
+
+          <p class="text-gray-400 text-sm">
+            Total
+          </p>
+
+          <h2 class="text-3xl font-black mt-2">
+            {{ total }}
+          </h2>
+
+        </div>
+
+        <!-- EN ATTENTE -->
+        <div
+          class="bg-yellow-500/10 border border-yellow-500/20 rounded-3xl p-5"
+        >
+
+          <p class="text-yellow-400 text-sm">
+            En attente
+          </p>
+
+          <h2 class="text-3xl font-black mt-2 text-yellow-400">
+            {{ enAttente }}
+          </h2>
+
+        </div>
+
+        <!-- ACCEPTEES -->
+        <div
+          class="bg-green-500/10 border border-green-500/20 rounded-3xl p-5"
+        >
+
+          <p class="text-green-400 text-sm">
+            Acceptées
+          </p>
+
+          <h2 class="text-3xl font-black mt-2 text-green-400">
+            {{ acceptees }}
+          </h2>
+
+        </div>
+
+        <!-- TERMINEES -->
+        <div
+          class="bg-blue-500/10 border border-blue-500/20 rounded-3xl p-5"
+        >
+
+          <p class="text-blue-400 text-sm">
+            Terminées
+          </p>
+
+          <h2 class="text-3xl font-black mt-2 text-blue-400">
+            {{ terminees }}
+          </h2>
+
+        </div>
+
+      </div>
+
+      <!-- LISTE -->
+      <div
+        class="bg-gray-900 border border-gray-800 rounded-3xl p-6"
+      >
+
+        <!-- HEADER -->
+        <div
+          class="flex justify-between items-center mb-6"
+        >
+
+          <div>
+
+            <h2 class="text-lg font-bold">
+              Dernières demandes
+            </h2>
+
+            <p class="text-gray-500 text-sm">
+              Vos demandes les plus récentes
+            </p>
+
+          </div>
+
+          <a
+            routerLink="/prestataire/demandes"
+            class="bg-green-500 hover:bg-green-600 transition px-4 py-2 rounded-xl text-sm font-semibold"
+          >
+            Voir tout
+          </a>
+
+        </div>
+
+        <!-- EMPTY -->
+        <div
+          *ngIf="demandes.length === 0"
+          class="text-center py-16"
+        >
+
+          <div class="text-5xl mb-4">
+            📭
+          </div>
+
+          <p class="text-gray-400">
+            Aucune demande reçue
+          </p>
+
+        </div>
+
+        <!-- LIST -->
+        <div
+          *ngIf="demandes.length > 0"
+          class="space-y-4"
+        >
+
+          <div
+            *ngFor="let d of demandes.slice(0,5)"
+            class="bg-gray-800 border border-gray-700 rounded-2xl p-5"
+          >
+
+            <div class="flex justify-between gap-4">
+
+              <div class="flex-1">
+
+                <h3 class="font-semibold text-white mb-1">
+                  {{ d.client?.nom }}
+                  {{ d.client?.prenom }}
+                </h3>
+
+                <p class="text-sm text-gray-400">
+                  {{ d.description }}
+                </p>
+
+              </div>
+
+              <div>
+
+                <span
+                  class="text-xs px-3 py-1 rounded-full border"
+                  [ngClass]="getStatusClass(d.statut)"
+                >
+                  {{ d.statut }}
+                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
