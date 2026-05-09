@@ -1,0 +1,200 @@
+<div class="min-h-screen bg-gray-50 md:flex">
+  <app-sidebar></app-sidebar>
+
+  <main class="flex-1 md:ml-56">
+    <!-- Header page -->
+    <div class="bg-white border-b border-gray-100 px-4 md:px-6 py-4">
+      <h1 class="text-lg font-bold text-gray-800">Tableau de bord</h1>
+      <p class="text-xs text-gray-500 mt-0.5">Vue d'ensemble de la plateforme</p>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="flex justify-center py-16">
+      <div
+        class="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"
+      ></div>
+    </div>
+
+    <div *ngIf="!loading && stats" class="px-4 md:px-6 py-5">
+      <!-- Stats -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        <!-- Utilisateurs -->
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs text-gray-500">Utilisateurs</span>
+            <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-4 h-4 text-blue-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                />
+              </svg>
+            </div>
+          </div>
+          <p class="text-2xl font-bold text-gray-800">{{ stats.nb_utilisateurs }}</p>
+          <p class="text-xs text-gray-400 mt-1">Total inscrits</p>
+        </div>
+
+        <!-- Prestataires -->
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs text-gray-500">Prestataires</span>
+            <div class="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-4 h-4 text-green-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                />
+              </svg>
+            </div>
+          </div>
+          <p class="text-2xl font-bold text-gray-800">{{ stats.nb_prestataires }}</p>
+          <p class="text-xs text-gray-400 mt-1">Actifs</p>
+        </div>
+
+        <!-- Demandes -->
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs text-gray-500">Demandes</span>
+            <div class="w-8 h-8 bg-orange-50 rounded-lg flex items-center justify-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-4 h-4 text-orange-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                />
+              </svg>
+            </div>
+          </div>
+          <p class="text-2xl font-bold text-gray-800">{{ stats.nb_demandes_mois }}</p>
+          <p class="text-xs text-gray-400 mt-1">Ce mois</p>
+        </div>
+
+        <!-- Signalements -->
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs text-gray-500">Signalements</span>
+            <div class="w-8 h-8 bg-red-50 rounded-lg flex items-center justify-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-4 h-4 text-red-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"
+                />
+              </svg>
+            </div>
+          </div>
+          <p class="text-2xl font-bold text-gray-800">{{ stats.nb_signalements }}</p>
+          <p class="text-xs text-gray-400 mt-1">En attente</p>
+        </div>
+      </div>
+
+      <!-- Derniers prestataires -->
+      <div class="bg-white rounded-xl border border-gray-100 shadow-sm mb-4">
+        <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+          <h2 class="text-sm font-semibold text-gray-700">Derniers prestataires inscrits</h2>
+          <a routerLink="/admin/prestataires" class="text-xs text-blue-600 hover:underline"
+            >Voir tout</a
+          >
+        </div>
+        <div class="divide-y divide-gray-50">
+          <div
+            *ngFor="let p of stats.derniers_prestataires"
+            class="px-4 py-3 flex items-center justify-between"
+          >
+            <div class="flex items-center gap-3">
+              <div
+                class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-xs font-bold text-blue-600"
+              >
+                {{ p.user__nom?.charAt(0) }}{{ p.user__prenom?.charAt(0) }}
+              </div>
+              <div>
+                <p class="text-sm font-medium text-gray-800">
+                  {{ p.user__nom }} {{ p.user__prenom }}
+                </p>
+                <p class="text-xs text-gray-500">{{ p.categorie__nom }} · {{ p.quartier }}</p>
+              </div>
+            </div>
+            <span
+              [class]="
+                p.disponible
+                  ? 'text-xs text-green-500 font-medium'
+                  : 'text-xs text-red-400 font-medium'
+              "
+            >
+              {{ p.disponible ? 'Disponible' : 'Indisponible' }}
+            </span>
+          </div>
+          <div
+            *ngIf="stats.derniers_prestataires.length === 0"
+            class="px-4 py-6 text-center text-sm text-gray-400"
+          >
+            Aucun prestataire pour l'instant
+          </div>
+        </div>
+      </div>
+
+      <!-- Dernières demandes -->
+      <div class="bg-white rounded-xl border border-gray-100 shadow-sm">
+        <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+          <h2 class="text-sm font-semibold text-gray-700">Dernières demandes</h2>
+          <a routerLink="/admin/demandes" class="text-xs text-blue-600 hover:underline"
+            >Voir tout</a
+          >
+        </div>
+        <div class="divide-y divide-gray-50">
+          <div
+            *ngFor="let d of stats.dernieres_demandes"
+            class="px-4 py-3 flex items-center justify-between"
+          >
+            <div>
+              <p class="text-sm font-medium text-gray-800">
+                {{ d.client__nom }} → {{ d.prestataire__user__nom }}
+              </p>
+              <p class="text-xs text-gray-500">{{ d.date_creation | date: 'dd/MM/yyyy' }}</p>
+            </div>
+            <span [class]="getStatusClass(d.statut)">
+              {{ d.statut | titlecase }}
+            </span>
+          </div>
+          <div
+            *ngIf="stats.dernieres_demandes.length === 0"
+            class="px-4 py-6 text-center text-sm text-gray-400"
+          >
+            Aucune demande pour l'instant
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
