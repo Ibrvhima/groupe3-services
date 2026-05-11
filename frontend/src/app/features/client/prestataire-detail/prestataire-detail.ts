@@ -39,4 +39,7 @@ export class PrestataireDetailComponent implements OnInit {
   getInitiales(nom: string, prenom: string): string {
     return (nom?.charAt(0) || '') + (prenom?.charAt(0) || '');
   }
+
+
+  
 }

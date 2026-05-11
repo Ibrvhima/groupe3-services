@@ -18,6 +18,10 @@ class DemandeViewSet(viewsets.ModelViewSet):
         return Demande.objects.none()
 
     def perform_create(self, serializer):
+<<<<<<< HEAD
+=======
+        # Seul un client peut créer une demande
+>>>>>>> f72c6cedaaa266be3a952f81ac6b29704f270e2a
         if self.request.user.role != 'client':
             raise permissions.PermissionDenied('Seul un client peut créer une demande.')
         serializer.save(client=self.request.user)
@@ -28,6 +32,10 @@ class DemandeViewSet(viewsets.ModelViewSet):
         nouveau = request.data.get('statut')
         user    = request.user
 
+<<<<<<< HEAD
+=======
+        # Client peut annuler si en attente
+>>>>>>> f72c6cedaaa266be3a952f81ac6b29704f270e2a
         if user.role == 'client':
             if nouveau == 'annulee' and demande.statut == 'en_attente':
                 demande.statut = nouveau
@@ -37,6 +45,11 @@ class DemandeViewSet(viewsets.ModelViewSet):
                 {'error': 'Action non autorisée.'},
                 status=status.HTTP_403_FORBIDDEN
             )
+<<<<<<< HEAD
+=======
+
+        # Prestataire peut accepter ou terminer
+>>>>>>> f72c6cedaaa266be3a952f81ac6b29704f270e2a
         elif user.role == 'prestataire':
             if nouveau in ['acceptee', 'terminee', 'annulee']:
                 demande.statut = nouveau
