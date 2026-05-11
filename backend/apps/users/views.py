@@ -1,4 +1,5 @@
 from rest_framework import generics, permissions
+from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 from .serializers import RegisterSerializer, UserSerializer
@@ -16,7 +17,6 @@ class RegisterView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         user   = serializer.save()
 
-        # Si c'est un prestataire, créer automatiquement son profil
         if user.role == 'prestataire':
             categorie_id = request.data.get('categorie_id')
             quartier     = request.data.get('quartier', '')
@@ -53,3 +53,33 @@ class MeView(generics.RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class AdminStatsView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        if request.user.role != 'admin':
+            return Response({'error': 'Accès refusé'}, status=403)
+
+        from django.utils import timezone
+        from apps.demandes.models import Demande
+        debut_mois = timezone.now().replace(day=1, hour=0, minute=0, second=0)
+
+        stats = {
+            'nb_utilisateurs':  User.objects.count(),
+            'nb_prestataires':  Prestataire.objects.count(),
+            'nb_demandes_mois': Demande.objects.filter(date_creation__gte=debut_mois).count(),
+            'nb_signalements':  0,
+            'derniers_prestataires': list(
+                Prestataire.objects.select_related('user', 'categorie')
+                .order_by('-created_at')[:5]
+                .values('id', 'user__nom', 'user__prenom', 'categorie__nom', 'quartier', 'disponible')
+            ),
+            'dernieres_demandes': list(
+                Demande.objects.select_related('client', 'prestataire__user')
+                .order_by('-date_creation')[:5]
+                .values('id', 'client__nom', 'prestataire__user__nom', 'statut', 'date_creation')
+            ),
+        }
+        return Response(stats)
