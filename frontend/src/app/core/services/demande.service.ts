@@ -16,6 +16,10 @@ export class DemandeService {
     return this.http.get(`${this.api}/demandes/`, this.getHeaders());
   }
 
+  getMesDemandes() {
+    return this.http.get(`${this.api}/demandes/`, this.getHeaders());
+  }
+
   creer(data: any) {
     return this.http.post(`${this.api}/demandes/`, data, this.getHeaders());
   }
@@ -24,7 +28,7 @@ export class DemandeService {
     return this.http.patch(
       `${this.api}/demandes/${id}/changer_statut/`,
       { statut },
-      this.getHeaders()
+      this.getHeaders(),
     );
   }
 }
