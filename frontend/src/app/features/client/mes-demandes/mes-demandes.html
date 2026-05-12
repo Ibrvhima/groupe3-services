@@ -1,0 +1,148 @@
+<div class="min-h-screen bg-gray-50">
+  <!-- Header -->
+  <app-header></app-header>
+
+  <div class="max-w-4xl mx-auto px-4 py-6">
+    <!-- En-tête -->
+    <div class="mb-6">
+      <a
+        routerLink="/client"
+        class="inline-flex items-center gap-1 text-xs text-gray-500 hover:text-blue-600 mb-3 transition"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-3.5 h-3.5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M15 19l-7-7 7-7"
+          />
+        </svg>
+        Retour
+      </a>
+      <h1 class="text-2xl font-bold text-gray-800">Mes demandes</h1>
+      <p class="text-sm text-gray-500 mt-1">Suivi de vos demandes de service</p>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="flex justify-center py-12">
+      <div
+        class="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"
+      ></div>
+    </div>
+
+    <!-- Liste vide -->
+    <div
+      *ngIf="!loading && demandes.length === 0"
+      class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="w-12 h-12 text-gray-300 mx-auto mb-3"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+        />
+      </svg>
+      <p class="text-gray-400 text-sm mb-2">Aucune demande pour le moment</p>
+      <a
+        routerLink="/client"
+        class="inline-block text-blue-600 text-xs font-semibold hover:text-blue-700"
+      >
+        Découvrir des prestataires
+      </a>
+    </div>
+
+    <!-- Liste des demandes -->
+    <div *ngIf="!loading && demandes.length > 0" class="space-y-3">
+      <div
+        *ngFor="let demande of demandes"
+        class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition"
+      >
+        <!-- Header card -->
+        <div class="flex items-start justify-between mb-3">
+          <!-- Prestataire info -->
+          <div class="flex items-center gap-3 flex-1 min-w-0">
+            <div
+              class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0"
+            >
+              <span class="text-blue-600 font-bold text-sm">
+                {{ getInitiales(demande.prestataire_nom, demande.prestataire_prenom) }}
+              </span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="text-sm font-semibold text-gray-800 truncate">
+                {{ demande.prestataire_nom }} {{ demande.prestataire_prenom }}
+              </h3>
+              <p class="text-xs text-gray-500">Demande #{{ demande.id }}</p>
+            </div>
+          </div>
+          <!-- Status badge -->
+          <div
+            [class]="
+              'px-2.5 py-1 rounded-full text-xs font-medium flex-shrink-0 ' +
+              getStatusColor(demande.statut).bg +
+              ' ' +
+              getStatusColor(demande.statut).text
+            "
+          >
+            {{ getStatusColor(demande.statut).label }}
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-3 pb-3 border-b border-gray-100">
+          <p class="text-sm text-gray-600 line-clamp-2">{{ demande.description }}</p>
+        </div>
+
+        <!-- Dates -->
+        <div class="grid grid-cols-2 gap-2 mb-3 text-xs text-gray-500">
+          <div>
+            <span class="text-gray-400">Créée le</span>
+            <p class="font-medium text-gray-700">
+              {{ demande.date_creation | date: 'dd/MM/yyyy' }}
+            </p>
+          </div>
+          <div>
+            <span class="text-gray-400">Intervention prévue</span>
+            <p class="font-medium text-gray-700">
+              {{
+                demande.date_intervention
+                  ? (demande.date_intervention | date: 'dd/MM/yyyy')
+                  : 'À définir'
+              }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex gap-2">
+          <a
+            [routerLink]="['/client/prestataire', demande.prestataire]"
+            class="flex-1 text-center bg-gray-50 text-gray-700 text-xs font-semibold py-2 rounded-lg hover:bg-gray-100 transition"
+          >
+            Voir le prestataire
+          </a>
+          <button
+            *ngIf="demande.statut === 'en_attente'"
+            (click)="loadDemandes()"
+            class="flex-1 text-center bg-red-50 text-red-600 text-xs font-semibold py-2 rounded-lg hover:bg-red-100 transition"
+          >
+            Annuler
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
