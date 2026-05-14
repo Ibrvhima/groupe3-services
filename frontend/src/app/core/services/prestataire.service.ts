@@ -1,30 +1,45 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { Categorie, Prestataire, PaginatedResponse } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class PrestataireService {
-  private api = 'http://localhost:8000/api';
+  private api = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 
-  private getHeaders() {
-    const token = localStorage.getItem('access_token');
-    return { headers: new HttpHeaders({ Authorization: `Bearer ${token}` }) };
-  }
-
-  getAll(filters: any = {}) {
+  /** Liste paginée avec filtres optionnels (search, categorie, quartier). */
+  getAll(filters: Record<string, string> = {}): Observable<PaginatedResponse<Prestataire>> {
     let params = new HttpParams();
-    Object.keys(filters).forEach(k => {
-      if (filters[k]) params = params.set(k, filters[k]);
-    });
-    return this.http.get(`${this.api}/prestataires/`, { params, ...this.getHeaders() });
+    Object.entries(filters).forEach(([k, v]) => { if (v) params = params.set(k, v); });
+    return this.http.get<PaginatedResponse<Prestataire>>(`${this.api}/prestataires/`, { params });
   }
 
-  getById(id: number) {
-    return this.http.get(`${this.api}/prestataires/${id}/`, this.getHeaders());
+  getById(id: number): Observable<Prestataire> {
+    return this.http.get<Prestataire>(`${this.api}/prestataires/${id}/`);
   }
 
-  getCategories() {
-    return this.http.get(`${this.api}/categories/`);
+  /** Retourne le profil prestataire de l'utilisateur connecté. */
+  getMonProfil(): Observable<Prestataire> {
+    return this.http.get<Prestataire>(`${this.api}/prestataires/me/`);
+  }
+
+  /** Liste des catégories — pas de pagination, toujours complète. */
+  getCategories(): Observable<Categorie[]> {
+    return this.http.get<Categorie[]>(`${this.api}/categories/`);
+  }
+
+  updateProfil(id: number, data: Partial<Prestataire>): Observable<Prestataire> {
+    return this.http.patch<Prestataire>(`${this.api}/prestataires/${id}/`, data);
+  }
+
+  /**
+   * Met à jour le profil avec photo.
+   * Utilise FormData car l'envoi d'un fichier nécessite multipart/form-data.
+   */
+  updateProfilAvecPhoto(id: number, data: FormData): Observable<Prestataire> {
+    return this.http.patch<Prestataire>(`${this.api}/prestataires/${id}/`, data);
   }
 }

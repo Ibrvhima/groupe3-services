@@ -5,8 +5,10 @@ from decouple import config
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config('SECRET_KEY')
-DEBUG = config('DEBUG', default=True, cast=bool)
-ALLOWED_HOSTS = ['*']
+DEBUG      = config('DEBUG', default=False, cast=bool)
+
+# En production, lister les domaines autorisés via la variable d'env ALLOWED_HOSTS
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*').split(',')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -15,17 +17,20 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Third-party
     'rest_framework',
     'corsheaders',
+    # Local
     'apps.users',
     'apps.prestataires',
     'apps.demandes',
     'apps.avis',
+    'apps.notifications',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',       # doit être avant CommonMiddleware
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -33,7 +38,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
 ]
 
-ROOT_URLCONF = 'config.urls'
+ROOT_URLCONF        = 'config.urls'
+WSGI_APPLICATION    = 'config.wsgi.application'
 
 TEMPLATES = [
     {
@@ -50,19 +56,24 @@ TEMPLATES = [
     },
 ]
 
+# ── Base de données ────────────────────────────────────────────────────────────
 DATABASES = {
     'default': {
-        'ENGINE':   'django.db.backends.mysql',
-        'NAME':     config('DB_NAME'),
-        'USER':     config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST':     config('DB_HOST', default='localhost'),
-        'PORT':     config('DB_PORT', default='3306'),
+        'ENGINE':       'django.db.backends.mysql',
+        'NAME':         config('DB_NAME'),
+        'USER':         config('DB_USER'),
+        'PASSWORD':     config('DB_PASSWORD'),
+        'HOST':         config('DB_HOST', default='localhost'),
+        'PORT':         config('DB_PORT', default='3306'),
+        # Réutilise les connexions pendant 60 s → évite une reconnexion par requête
+        'CONN_MAX_AGE': 60,
+        'OPTIONS':      {'charset': 'utf8mb4'},
     }
 }
 
 AUTH_USER_MODEL = 'users.User'
 
+# ── Django REST Framework ──────────────────────────────────────────────────────
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -70,17 +81,30 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
+    # 20 résultats par page pour éviter des payloads trop lourds
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,
 }
 
+# ── JWT ────────────────────────────────────────────────────────────────────────
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME':  timedelta(days=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
 }
 
-CORS_ALLOW_ALL_ORIGINS = True
+# ── CORS ───────────────────────────────────────────────────────────────────────
+# En dev : autoriser tout ; en prod, définir CORS_ALLOWED_ORIGINS dans .env
+if DEBUG:
+    CORS_ALLOW_ALL_ORIGINS = True
+else:
+    CORS_ALLOWED_ORIGINS = config(
+        'CORS_ALLOWED_ORIGINS',
+        default='http://localhost:4200'
+    ).split(',')
 
-STATIC_URL = '/static/'
-MEDIA_URL  = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# ── Fichiers statiques et médias ───────────────────────────────────────────────
+STATIC_URL  = '/static/'
+MEDIA_URL   = '/media/'
+MEDIA_ROOT  = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

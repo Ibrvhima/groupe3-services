@@ -5,9 +5,9 @@ services:
       MYSQL_DATABASE: konakry_db
       MYSQL_ROOT_PASSWORD: root
       MYSQL_USER: konakry
-      MYSQL_PASSWORD: konakry
+      MYSQL_PASSWORD: MySql@123
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
 
@@ -24,6 +24,9 @@ services:
       - "8000:8000"
     env_file:
       - ./backend/.env
+    # Volume pour persister les photos uploadées entre les redémarrages
+    volumes:
+      - media_data:/app/media
     depends_on:
       - db
       - redis
@@ -39,3 +42,4 @@ services:
 
 volumes:
   mysql_data:
+  media_data:   # stockage persistant des photos uploadées
