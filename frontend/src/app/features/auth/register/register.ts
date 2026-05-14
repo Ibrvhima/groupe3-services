@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { PrestataireService } from '../../../core/services/prestataire.service';
+import { Categorie } from '../../../core/models';
 
 @Component({
   selector: 'app-register',
@@ -12,40 +13,40 @@ import { PrestataireService } from '../../../core/services/prestataire.service';
   templateUrl: './register.html',
 })
 export class RegisterComponent implements OnInit {
-  nom = '';
-  prenom = '';
-  email = '';
+  nom      = '';
+  prenom   = '';
+  email    = '';
   telephone = '';
-  role = 'client';
+  role     = 'client';
   password = '';
-  error = '';
+  error    = '';
   showPassword = false;
-  loading = false;
+  loading  = false;
 
-  // Champs prestataire
+  // Champs supplémentaires pour le rôle prestataire
   categorie_id = '';
-  quartier = '';
-  description = '';
-  categories: any[] = [];
+  quartier     = '';
+  description  = '';
+  categories: Categorie[] = [];
 
   constructor(
     private authService: AuthService,
     private prestataireService: PrestataireService,
-    private router: Router
+    private router: Router,
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.prestataireService.getCategories().subscribe({
-      next: (data: any) => this.categories = data,
-      error: (err) => console.error(err)
+      next: data => (this.categories = data),
+      error: err  => console.error('Erreur chargement catégories', err),
     });
   }
 
-  togglePassword() {
+  togglePassword(): void {
     this.showPassword = !this.showPassword;
   }
 
-  onSubmit() {
+  onSubmit(): void {
     if (!this.nom || !this.prenom || !this.email || !this.telephone || !this.password) {
       this.error = 'Veuillez remplir tous les champs.';
       return;
@@ -59,48 +60,35 @@ export class RegisterComponent implements OnInit {
       return;
     }
 
-    this.error = '';
+    this.error   = '';
     this.loading = true;
 
-    const data: any = {
-      nom: this.nom,
-      prenom: this.prenom,
-      email: this.email,
-      telephone: this.telephone,
-      role: this.role,
-      password: this.password,
+    const payload: any = {
+      nom: this.nom, prenom: this.prenom,
+      email: this.email, telephone: this.telephone,
+      role: this.role, password: this.password,
     };
 
     if (this.role === 'prestataire') {
-      data.categorie_id  = this.categorie_id;
-      data.quartier      = this.quartier;
-      data.description   = this.description;
-      data.telephone_pro = this.telephone;
+      payload.categorie_id  = this.categorie_id;
+      payload.quartier      = this.quartier;
+      payload.description   = this.description;
+      payload.telephone_pro = this.telephone;
     }
 
-    this.authService.register(data).subscribe({
-      next: () => {
+    this.authService.register(payload).subscribe({
+      next: res => {
         this.loading = false;
-        this.authService.getMe().subscribe({
-          next: (user: any) => {
-            localStorage.setItem('role', user.role);
-            localStorage.setItem('user', JSON.stringify(user));
-            if (user.role === 'client') {
-              this.router.navigate(['/client']);
-            } else if (user.role === 'prestataire') {
-              this.router.navigate(['/prestataire']);
-            }
-          }
-        });
+        // Le rôle est dans la réponse — pas besoin d'un second appel getMe()
+        const role = res.user?.role || this.role;
+        this.router.navigate([`/${role}`]);
       },
-      error: (err) => {
+      error: err => {
         this.loading = false;
-        if (err.error?.email) {
-          this.error = 'Cet email est déjà utilisé.';
-        } else {
-          this.error = 'Une erreur est survenue. Réessayez.';
-        }
-      }
+        this.error = err.error?.email
+          ? 'Cet email est déjà utilisé.'
+          : 'Une erreur est survenue. Réessayez.';
+      },
     });
   }
 }

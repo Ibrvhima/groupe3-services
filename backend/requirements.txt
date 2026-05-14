@@ -7,3 +7,4 @@ channels-redis
 mysqlclient
 python-decouple
 Pillow
+gunicorn>=21.2

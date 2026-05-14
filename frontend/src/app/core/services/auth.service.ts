@@ -2,38 +2,28 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
+import { User, AuthResponse } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private api = 'http://localhost:8000/api/users';
+  private api = `${environment.apiUrl}/users`;
 
   constructor(private http: HttpClient, private router: Router) {}
 
-  register(data: any) {
-    return this.http.post(`${this.api}/register/`, data).pipe(
-      tap((res: any) => {
-        localStorage.setItem('access_token', res.access);
-        localStorage.setItem('refresh_token', res.refresh);
-      })
+  register(data: Partial<User> & { password: string; categorie_id?: string; quartier?: string; description?: string }) {
+    return this.http.post<AuthResponse>(`${this.api}/register/`, data).pipe(
+      tap(res => this._storeSession(res))
     );
   }
 
   login(email: string, password: string) {
-    return this.http.post(`${this.api}/login/`, { email, password }).pipe(
-      tap((res: any) => {
-        localStorage.setItem('access_token', res.access);
-        localStorage.setItem('refresh_token', res.refresh);
-      })
+    return this.http.post<AuthResponse>(`${this.api}/login/`, { email, password }).pipe(
+      tap(res => this._storeSession(res))
     );
   }
 
-  getMe() {
-    return this.http.get(`${this.api}/me/`, {
-      headers: { Authorization: `Bearer ${this.getToken()}` }
-    });
-  }
-
-  logout() {
+  logout(): void {
     localStorage.clear();
     this.router.navigate(['/auth/login']);
   }
@@ -48,5 +38,13 @@ export class AuthService {
 
   getToken(): string {
     return localStorage.getItem('access_token') || '';
+  }
+
+  /** Stocke tokens + infos utilisateur après login ou register. */
+  private _storeSession(res: AuthResponse): void {
+    localStorage.setItem('access_token',  res.access);
+    localStorage.setItem('refresh_token', res.refresh);
+    if (res.user?.role)  localStorage.setItem('role', res.user.role);
+    if (res.user)        localStorage.setItem('user', JSON.stringify(res.user));
   }
 }
