@@ -1,5 +1,8 @@
+import uuid
+from datetime import timedelta
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
+from django.utils import timezone
 
 
 class UserManager(BaseUserManager):
@@ -43,3 +46,27 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return f'{self.nom} {self.prenom} ({self.role})'
+
+
+class PasswordResetToken(models.Model):
+    """
+    Token à usage unique pour la réinitialisation de mot de passe.
+    Expire après 1 heure.
+    """
+    user       = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reset_tokens')
+    token      = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    expires_at = models.DateTimeField()
+    used       = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        # Définit l'expiration à 1 h si nouveau token
+        if not self.pk:
+            self.expires_at = timezone.now() + timedelta(hours=1)
+        super().save(*args, **kwargs)
+
+    @property
+    def is_valid(self):
+        return not self.used and self.expires_at > timezone.now()
+
+    def __str__(self):
+        return f'Reset token for {self.user.email}'

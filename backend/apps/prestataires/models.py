@@ -17,10 +17,19 @@ class Prestataire(models.Model):
     description   = models.TextField()
     quartier      = models.CharField(max_length=100)
     telephone     = models.CharField(max_length=20)
+    photo         = models.ImageField(upload_to='photos/prestataires/', null=True, blank=True)
     disponible    = models.BooleanField(default=True)
+    approuve      = models.BooleanField(default=False)
     note_moyenne  = models.DecimalField(max_digits=3, decimal_places=2, default=0.00)
     badge_verifie = models.BooleanField(default=False)
     created_at    = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['disponible']),
+            models.Index(fields=['-note_moyenne']),
+            models.Index(fields=['quartier']),
+        ]
 
     def __str__(self):
         return f'{self.user.nom} — {self.categorie}'

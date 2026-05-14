@@ -11,48 +11,41 @@ import { AuthService } from '../../../core/services/auth.service';
   templateUrl: './login.html',
 })
 export class LoginComponent {
-  email = '';
-  password = '';
-  error = '';
+  email        = '';
+  password     = '';
+  error        = '';
   showPassword = false;
-  rememberMe = false;
-  loading = false;
+  rememberMe   = false;
+  loading      = false;
 
   constructor(private authService: AuthService, private router: Router) {}
 
-  togglePassword() {
+  togglePassword(): void {
     this.showPassword = !this.showPassword;
   }
 
-  onSubmit() {
+  onSubmit(): void {
     if (!this.email || !this.password) {
       this.error = 'Veuillez remplir tous les champs.';
       return;
     }
-    this.error = '';
+    this.error   = '';
     this.loading = true;
 
     this.authService.login(this.email, this.password).subscribe({
-      next: () => {
+      next: res => {
         this.loading = false;
-        this.authService.getMe().subscribe({
-          next: (user: any) => {
-            localStorage.setItem('role', user.role);
-            localStorage.setItem('user', JSON.stringify(user));
-            if (user.role === 'client') {
-              this.router.navigate(['/client']);
-            } else if (user.role === 'prestataire') {
-              this.router.navigate(['/prestataire']);
-            } else if (user.role === 'admin') {
-              this.router.navigate(['/admin']);
-            }
-          }
-        });
+        // Redirection directe depuis la réponse — pas de second appel réseau
+        const role = res.user?.role;
+        if (role === 'client')      this.router.navigate(['/client']);
+        else if (role === 'prestataire') this.router.navigate(['/prestataire']);
+        else if (role === 'admin')  this.router.navigate(['/admin']);
+        else                        this.router.navigate(['/auth/login']);
       },
       error: () => {
         this.loading = false;
         this.error = 'Email ou mot de passe incorrect.';
-      }
+      },
     });
   }
 }
