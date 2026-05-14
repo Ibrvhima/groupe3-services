@@ -1,23 +1,30 @@
 from rest_framework import serializers
 from .models import Demande
-from apps.avis.models import Avis
-
-
-class AvisNestedSerializer(serializers.ModelSerializer):
-    """Serializer imbriqué pour les avis dans les demandes"""
-    class Meta:
-        model = Avis
-        fields = ['id', 'note', 'commentaire', 'date_creation']
+from apps.users.serializers import UserSerializer
+from apps.prestataires.serializers import PrestataireSerializer
 
 
 class DemandeSerializer(serializers.ModelSerializer):
-    client_nom         = serializers.CharField(source='client.nom', read_only=True)
-    client_prenom      = serializers.CharField(source='client.prenom', read_only=True)
-    prestataire_nom    = serializers.CharField(source='prestataire.user.nom', read_only=True)
-    prestataire_prenom = serializers.CharField(source='prestataire.user.prenom', read_only=True)
-    avis               = AvisNestedSerializer(read_only=True)
+    client_info      = UserSerializer(source='client', read_only=True)
+    prestataire_info = PrestataireSerializer(source='prestataire', read_only=True)
+    statut_display   = serializers.CharField(source='get_statut_display', read_only=True)
+    # True si le client a déjà laissé un avis pour cette demande
+    has_avis         = serializers.SerializerMethodField()
+
+    def get_has_avis(self, obj):
+        return hasattr(obj, 'avis')
 
     class Meta:
         model  = Demande
-        fields = '__all__'
-        read_only_fields = ['client', 'statut', 'date_creation']
+        fields = [
+            'id', 'client', 'client_info', 'prestataire', 'prestataire_info',
+            'description', 'adresse', 'date_souhaitee', 'statut', 'statut_display',
+            'has_avis', 'date_creation', 'date_maj',
+        ]
+        read_only_fields = ['client', 'statut', 'date_creation', 'date_maj']
+
+
+class DemandeCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model  = Demande
+        fields = ['prestataire', 'description', 'adresse', 'date_souhaitee']

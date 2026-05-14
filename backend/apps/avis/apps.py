@@ -1,5 +1,9 @@
 from django.apps import AppConfig
 
-class Config(AppConfig):
+
+class AvisConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'apps.avis'
+
+    def ready(self):
+        import apps.avis.signals

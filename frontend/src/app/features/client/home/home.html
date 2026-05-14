@@ -4,7 +4,8 @@
 
   <div class="max-w-6xl mx-auto px-4 py-6">
     <!-- Bannière -->
-    <div class="bg-blue-600 rounded-2xl p-5 mb-6 text-white">
+    <div class="bg-gradient-to-r from-blue-700 to-blue-500 rounded-2xl p-5 mb-6 text-white relative overflow-hidden">
+      <div class="absolute right-0 top-0 w-32 h-32 bg-amber-400 opacity-10 rounded-full -translate-y-8 translate-x-8"></div>
       <p class="text-xs opacity-80 mb-1">Bienvenue sur KonakryServices 🇬🇳</p>
       <h1 class="text-xl font-bold mb-1">Trouvez un prestataire fiable</h1>
       <p class="text-xs opacity-80">Plombier, électricien, mécanicien et plus encore</p>
@@ -46,7 +47,7 @@
           (click)="filterByCategorie('')"
           [class]="
             selectedCategorie === ''
-              ? 'flex-shrink-0 bg-blue-600 text-white text-xs px-3 py-1.5 rounded-full font-medium'
+              ? 'flex-shrink-0 bg-amber-500 text-white text-xs px-3 py-1.5 rounded-full font-medium'
               : 'flex-shrink-0 bg-white border border-gray-200 text-gray-600 text-xs px-3 py-1.5 rounded-full font-medium hover:border-blue-400 transition'
           "
         >
@@ -57,7 +58,7 @@
           (click)="filterByCategorie(cat.id)"
           [class]="
             selectedCategorie == cat.id
-              ? 'flex-shrink-0 bg-blue-600 text-white text-xs px-3 py-1.5 rounded-full font-medium'
+              ? 'flex-shrink-0 bg-amber-500 text-white text-xs px-3 py-1.5 rounded-full font-medium'
               : 'flex-shrink-0 bg-white border border-gray-200 text-gray-600 text-xs px-3 py-1.5 rounded-full font-medium hover:border-blue-400 transition'
           "
         >
@@ -169,7 +170,7 @@
         <!-- Bouton -->
         <a
           [routerLink]="['/client/prestataire', p.id]"
-          class="block w-full text-center bg-blue-50 text-blue-600 text-xs font-semibold py-2 rounded-lg hover:bg-blue-100 transition"
+          class="block w-full text-center bg-amber-500 text-white text-xs font-semibold py-2 rounded-lg hover:bg-amber-600 transition"
         >
           Voir le profil
         </a>

@@ -1,23 +1,99 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './features/auth/login/login';
-import { RegisterComponent } from './features/auth/register/register';
-import { HomeComponent } from './features/client/home/home';
-import { PrestataireDetailComponent } from './features/client/prestataire-detail/prestataire-detail';
-import { DemandeFormComponent } from './features/client/demande-form/demande-form';
-import { MesDemandes } from './features/client/mes-demandes/mes-demandes';
-import { DashboardComponent } from './features/admin/dashboard/dashboard';
-import { PrestatairesComponent } from './features/admin/prestataires/prestataires';
+import { authGuard, roleGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
-  { path: 'auth/login', component: LoginComponent },
-  { path: 'auth/register', component: RegisterComponent },
-  { path: 'client', component: HomeComponent },
-  { path: 'client/prestataire/:id', component: PrestataireDetailComponent },
-  { path: 'client/demande/:id', component: DemandeFormComponent },
-  { path: 'client/mes-demandes', component: MesDemandes },
-  { path: 'client/demandes', redirectTo: 'client/mes-demandes', pathMatch: 'full' },
-  { path: 'prestataire', component: LoginComponent },
-  { path: 'admin', component: DashboardComponent },
-  { path: 'admin/prestataires', component: PrestatairesComponent },
-  { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
-]; 
+  // Page d'accueil publique (landing) — aucune authentification requise
+  {
+    path: '',
+    title: 'KonakryServices — Trouvez un prestataire à Conakry',
+    loadComponent: () => import('./features/landing/landing').then(m => m.LandingComponent),
+  },
+
+  // ── Authentification ────────────────────────────────────────────────────────
+  {
+    path: 'auth/login',
+    title: 'Connexion',
+    loadComponent: () => import('./features/auth/login/login').then(m => m.LoginComponent),
+  },
+  {
+    path: 'auth/register',
+    title: 'Inscription',
+    loadComponent: () => import('./features/auth/register/register').then(m => m.RegisterComponent),
+  },
+  {
+    path: 'auth/forgot-password',
+    title: 'Mot de passe oublié',
+    loadComponent: () => import('./features/auth/forgot-password/forgot-password').then(m => m.ForgotPasswordComponent),
+  },
+  {
+    path: 'auth/reset-password',
+    title: 'Nouveau mot de passe',
+    loadComponent: () => import('./features/auth/reset-password/reset-password').then(m => m.ResetPasswordComponent),
+  },
+
+  // ── Espace client ───────────────────────────────────────────────────────────
+  {
+    path: 'client',
+    canActivate: [roleGuard('client')],
+    children: [
+      {
+        path: '',
+        title: 'Trouver un prestataire',
+        loadComponent: () => import('./features/client/home/home').then(m => m.HomeComponent),
+      },
+      {
+        path: 'prestataire/:id',
+        title: 'Profil prestataire',
+        loadComponent: () => import('./features/client/prestataire-detail/prestataire-detail').then(m => m.PrestataireDetailComponent),
+      },
+      {
+        path: 'mes-demandes',
+        title: 'Mes demandes',
+        loadComponent: () => import('./features/client/mes-demandes/mes-demandes').then(m => m.MesDemandesComponent),
+      },
+    ],
+  },
+
+  // ── Espace prestataire ──────────────────────────────────────────────────────
+  {
+    path: 'prestataire',
+    canActivate: [roleGuard('prestataire')],
+    children: [
+      {
+        path: '',
+        title: 'Tableau de bord',
+        loadComponent: () => import('./features/prestataire/home/home').then(m => m.PrestataireHomeComponent),
+      },
+      {
+        path: 'demandes',
+        title: 'Mes demandes reçues',
+        loadComponent: () => import('./features/prestataire/demandes/demandes').then(m => m.PrestataireDemandesComponent),
+      },
+      {
+        path: 'profil',
+        title: 'Mon profil',
+        loadComponent: () => import('./features/prestataire/profil/profil').then(m => m.PrestataireProfilComponent),
+      },
+    ],
+  },
+
+  // ── Espace admin ────────────────────────────────────────────────────────────
+  {
+    path: 'admin',
+    canActivate: [roleGuard('admin')],
+    children: [
+      {
+        path: '',
+        title: 'Administration',
+        loadComponent: () => import('./features/admin/dashboard/dashboard').then(m => m.AdminDashboardComponent),
+      },
+    ],
+  },
+
+  // ── 404 ─────────────────────────────────────────────────────────────────────
+  {
+    path: '**',
+    title: 'Page introuvable',
+    loadComponent: () => import('./features/not-found/not-found').then(m => m.NotFoundComponent),
+  },
+];

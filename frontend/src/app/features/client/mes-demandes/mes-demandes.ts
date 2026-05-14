@@ -5,37 +5,24 @@ import { FormsModule } from '@angular/forms';
 import { DemandeService } from '../../../core/services/demande.service';
 import { AvisService } from '../../../core/services/avis.service';
 import { HeaderComponent } from '../layout/header/header';
-import { ModalAlertComponent } from '../../../shared/components/modal-alert.component';
 
 @Component({
   selector: 'app-mes-demandes',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, HeaderComponent, ModalAlertComponent],
+  imports: [CommonModule, RouterModule, FormsModule, HeaderComponent],
   templateUrl: './mes-demandes.html',
-  styleUrls: ['./mes-demandes.css'],
 })
-export class MesDemandes implements OnInit {
-  demandes: any[] = [];
-  loading = true;
-  errorMessage: string | null = null;
-  avisLoading: Record<number, boolean> = {};
-  showAvisForm: Record<number, boolean> = {};
-  avisData: Record<number, { note: number; commentaire: string }> = {};
+export class MesDemandesComponent implements OnInit {
+  demandes: any[]       = [];
+  loading               = true;
+  actionLoading: number | null = null;
 
-  // Modal properties
-  modalOpen = false;
-  modalTitle = '';
-  modalMessage = '';
-  modalType: 'success' | 'error' | 'warning' | 'info' = 'info';
-  modalIsConfirm = false;
-  modalCallback: (() => void) | null = null;
-
-  statusColors: Record<string, { bg: string; text: string; label: string }> = {
-    en_attente: { bg: 'bg-yellow-50', text: 'text-yellow-600', label: 'En attente' },
-    acceptee: { bg: 'bg-green-50', text: 'text-green-600', label: 'Acceptée' },
-    terminee: { bg: 'bg-blue-50', text: 'text-blue-600', label: 'Terminée' },
-    annulee: { bg: 'bg-red-50', text: 'text-red-600', label: 'Annulée' },
-  };
+  // État du formulaire d'avis
+  avisDemandeId: number | null = null;
+  avisNote        = 0;
+  avisCommentaire = '';
+  avisLoading     = false;
+  avisError       = '';
 
   constructor(
     private demandeService: DemandeService,
@@ -43,197 +30,87 @@ export class MesDemandes implements OnInit {
     private cdr: ChangeDetectorRef,
   ) {}
 
-  ngOnInit() {
-    this.loadDemandes();
-  }
+  ngOnInit(): void { this.charger(); }
 
-  loadDemandes() {
+  charger(): void {
     this.loading = true;
-    this.errorMessage = null;
-    const token = localStorage.getItem('access_token');
-    if (!token) {
-      this.errorMessage = 'Vous devez vous reconnecter pour voir vos demandes.';
-      this.loading = false;
-      return;
-    }
-
     this.demandeService.getMesDemandes().subscribe({
       next: (data: any) => {
-        if (Array.isArray(data)) {
-          this.demandes = data;
-        } else if (data?.results) {
-          this.demandes = data.results;
-        } else if (data?.demandes) {
-          this.demandes = data.demandes;
-        } else if (data?.data) {
-          this.demandes = data.data;
-        } else {
-          this.demandes = [];
-          this.errorMessage =
-            'Réponse serveur inattendue : aucun format de liste de demandes reconnu.';
-          console.warn('Réponse inattendue getMesDemandes:', data);
-        }
-        this.loading = false;
+        this.demandes = Array.isArray(data) ? data : (data.results ?? []);
+        this.loading  = false;
         this.cdr.detectChanges();
       },
-      error: (err) => {
-        console.error('Erreur getMesDemandes:', err);
-        console.error('Status:', err.status);
-        console.error('Message:', err.message);
-        console.error('Body:', err.error);
-
-        if (err.status === 401) {
-          this.errorMessage = 'Session expirée. Veuillez vous reconnecter.';
-        } else if (err.status === 403) {
-          this.errorMessage = 'Accès refusé. Vérifiez votre authentification.';
-        } else {
-          this.errorMessage = `Erreur: ${err.status} - ${err.error?.detail || err.message || 'Impossible de charger vos demandes'}`;
-        }
-        this.loading = false;
-        this.cdr.detectChanges();
-      },
+      error: () => { this.loading = false; this.cdr.detectChanges(); },
     });
   }
 
-  getStatusColor(statut: string) {
-    return this.statusColors[statut] || this.statusColors['en_attente'];
-  }
-
-  getInitiales(nom?: string, prenom?: string): string {
-    const fullName = [nom, prenom].filter(Boolean).join(' ').trim();
-    if (!fullName) {
-      return '';
-    }
-    return fullName
-      .split(' ')
-      .filter(Boolean)
-      .map((part) => part[0])
-      .join('')
-      .toUpperCase();
-  }
-
-  peutDonnerAvis(demande: any): boolean {
-    return demande.statut === 'terminee' && !demande.avis;
-  }
-
-  afficherFormulaireAvis(demandeId: number) {
-    this.showAvisForm[demandeId] = true;
-    this.avisData[demandeId] = { note: 5, commentaire: '' };
-    this.cdr.detectChanges();
-  }
-
-  annulerAvis(demandeId: number) {
-    this.showAvisForm[demandeId] = false;
-    delete this.avisData[demandeId];
-    this.cdr.detectChanges();
-  }
-
-  annulerDemande(demandeId: number) {
-    this.showConfirmModal(
-      'Annuler la demande',
-      'Êtes-vous sûr de vouloir annuler cette demande ?',
-      () => {
-        this.demandeService.changerStatut(demandeId, 'annulee').subscribe({
-          next: () => {
-            this.loadDemandes();
-            this.showSuccessModal('Succès', 'Votre demande a été annulée avec succès.');
-            this.cdr.detectChanges();
-          },
-          error: (err) => {
-            console.error("Erreur lors de l'annulation:", err);
-            this.showErrorModal(
-              'Erreur',
-              "Impossible d'annuler cette demande. Seules les demandes en attente peuvent être annulées.",
-            );
-            this.cdr.detectChanges();
-          },
-        });
+  annuler(id: number): void {
+    this.actionLoading = id;
+    this.demandeService.annuler(id).subscribe({
+      next: (updated: any) => {
+        this.demandes      = this.demandes.map(d => d.id === id ? updated : d);
+        this.actionLoading = null;
+        this.cdr.detectChanges();
       },
-    );
+      error: () => { this.actionLoading = null; this.cdr.detectChanges(); },
+    });
   }
 
-  soumettreAvis(demandeId: number) {
-    const avis = this.avisData[demandeId];
-    if (!avis || avis.note < 1 || avis.note > 5) {
-      this.showErrorModal('Erreur', 'Veuillez sélectionner une note entre 1 et 5 étoiles.');
-      return;
-    }
+  // ── Avis ──────────────────────────────────────────────────────────────────
 
-    this.avisLoading[demandeId] = true;
-    this.avisService.donnerAvis(demandeId, avis.note, avis.commentaire).subscribe({
+  ouvrirAvis(demandeId: number): void {
+    this.avisDemandeId  = demandeId;
+    this.avisNote       = 0;
+    this.avisCommentaire = '';
+    this.avisError      = '';
+  }
+
+  fermerAvis(): void {
+    this.avisDemandeId = null;
+  }
+
+  setNote(n: number): void {
+    this.avisNote = n;
+  }
+
+  envoyerAvis(): void {
+    if (!this.avisNote) { this.avisError = 'Choisissez une note.'; return; }
+    if (!this.avisCommentaire.trim()) { this.avisError = 'Ajoutez un commentaire.'; return; }
+
+    this.avisLoading = true;
+    this.avisError   = '';
+
+    this.avisService.creerAvis({
+      demande:     this.avisDemandeId!,
+      note:        this.avisNote,
+      commentaire: this.avisCommentaire,
+    }).subscribe({
       next: () => {
-        this.loadDemandes();
-        this.showAvisForm[demandeId] = false;
-        delete this.avisData[demandeId];
-        this.avisLoading[demandeId] = false;
-        this.showSuccessModal('Succès', 'Votre avis a été enregistré avec succès !');
+        // Marquer la demande comme déjà notée localement
+        this.demandes = this.demandes.map(d =>
+          d.id === this.avisDemandeId ? { ...d, has_avis: true } : d
+        );
+        this.avisLoading   = false;
+        this.avisDemandeId = null;
         this.cdr.detectChanges();
       },
-      error: (err) => {
-        console.error("Erreur lors de l'envoi de l'avis:", err);
-        this.avisLoading[demandeId] = false;
-        this.showErrorModal(
-          'Erreur',
-          "Une erreur est survenue lors de l'envoi de votre avis. Veuillez réessayer.",
-        );
+      error: (err: any) => {
+        this.avisError   = err?.error?.detail ?? err?.error?.[0] ?? 'Erreur lors de l\'envoi.';
+        this.avisLoading = false;
         this.cdr.detectChanges();
       },
     });
   }
 
-  // Modal methods
-  showSuccessModal(title: string, message: string) {
-    this.modalTitle = title;
-    this.modalMessage = message;
-    this.modalType = 'success';
-    this.modalIsConfirm = false;
-    this.modalOpen = true;
-  }
-
-  showErrorModal(title: string, message: string) {
-    this.modalTitle = title;
-    this.modalMessage = message;
-    this.modalType = 'error';
-    this.modalIsConfirm = false;
-    this.modalOpen = true;
-  }
-
-  showWarningModal(title: string, message: string) {
-    this.modalTitle = title;
-    this.modalMessage = message;
-    this.modalType = 'warning';
-    this.modalIsConfirm = false;
-    this.modalOpen = true;
-  }
-
-  showConfirmModal(title: string, message: string, callback: () => void) {
-    this.modalTitle = title;
-    this.modalMessage = message;
-    this.modalType = 'warning';
-    this.modalIsConfirm = true;
-    this.modalCallback = callback;
-    this.modalOpen = true;
-  }
-
-  onModalConfirm() {
-    if (this.modalCallback) {
-      this.modalCallback();
-      this.modalCallback = null;
-    }
-  }
-
-  onModalCancel() {
-    this.modalCallback = null;
-  }
-
-  getStarsArray(): number[] {
-    return [1, 2, 3, 4, 5];
-  }
-
-  selectNote(demandeId: number, note: number) {
-    const avis = this.avisData[demandeId];
-    if (avis) {
-      avis.note = note;
-    }
+  statutClass(statut: string): string {
+    const map: Record<string, string> = {
+      en_attente: 'bg-yellow-100 text-yellow-700',
+      acceptee:   'bg-blue-100 text-blue-700',
+      refusee:    'bg-red-100 text-red-600',
+      en_cours:   'bg-blue-100 text-blue-700',
+      terminee:   'bg-green-100 text-green-700',
+      annulee:    'bg-gray-100 text-gray-500',
+    };
+    return map[statut] ?? 'bg-gray-100 text-gray-500';
   }
 }

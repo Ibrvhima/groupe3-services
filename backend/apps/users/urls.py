@@ -1,11 +1,13 @@
 from django.urls import path
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from .views import RegisterView, MeView, AdminStatsView
+from rest_framework_simplejwt.views import TokenRefreshView
+from . import views
 
 urlpatterns = [
-    path('register/',     RegisterView.as_view()),
-    path('login/',        TokenObtainPairView.as_view()),
-    path('refresh/',      TokenRefreshView.as_view()),
-    path('me/',           MeView.as_view()),
-    path('admin/stats/',  AdminStatsView.as_view()),
+    path('register/',               views.RegisterView.as_view()),
+    path('login/',                  views.LoginView.as_view()),
+    path('refresh/',                TokenRefreshView.as_view()),
+    path('me/',                     views.MeView.as_view()),
+    # Réinitialisation de mot de passe (deux étapes)
+    path('password-reset/',         views.PasswordResetRequestView.as_view()),
+    path('password-reset/confirm/', views.PasswordResetConfirmView.as_view()),
 ]
