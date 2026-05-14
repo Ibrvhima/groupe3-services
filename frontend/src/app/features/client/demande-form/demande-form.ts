@@ -3,13 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { HeaderComponent } from '../layout/header/header';
+import { ModalAlertComponent } from '../../../shared/components/modal-alert.component';
 import { DemandeService } from '../../../core/services/demande.service';
 import { PrestataireService } from '../../../core/services/prestataire.service';
 
 @Component({
   selector: 'app-demande-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, HeaderComponent],
+  imports: [CommonModule, FormsModule, RouterModule, HeaderComponent, ModalAlertComponent],
   templateUrl: './demande-form.html',
 })
 export class DemandeFormComponent implements OnInit {
@@ -19,19 +20,28 @@ export class DemandeFormComponent implements OnInit {
   error = '';
   loading = false;
   prestataireId: number = 0;
+  private redirectTimeout: any;
+
+  // Modal properties
+  modalOpen = false;
+  modalTitle = '';
+  modalMessage = '';
+  modalType: 'success' | 'error' | 'warning' | 'info' = 'info';
+  modalIsConfirm = false;
+  modalCallback: (() => void) | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private demandeService: DemandeService,
-    private prestataireService: PrestataireService
+    private prestataireService: PrestataireService,
   ) {}
 
   ngOnInit() {
     this.prestataireId = this.route.snapshot.params['id'];
     this.prestataireService.getById(this.prestataireId).subscribe({
-      next: (data: any) => this.prestataire = data,
-      error: (err) => console.error(err)
+      next: (data: any) => (this.prestataire = data),
+      error: (err) => console.error(err),
     });
   }
 
@@ -41,22 +51,73 @@ export class DemandeFormComponent implements OnInit {
       return;
     }
     this.error = '';
+
+    this.showConfirmModal(
+      "Confirmer l'envoi",
+      'Voulez-vous envoyer cette demande au prestataire ?',
+      () => this.sendDemande(),
+    );
+  }
+
+  sendDemande() {
     this.loading = true;
 
-    this.demandeService.creer({
-      prestataire: this.prestataireId,
-      description: this.description,
-      date_intervention: this.date_intervention || null
-    }).subscribe({
-      next: () => {
-        this.loading = false;
-        this.router.navigate(['/client']);
-      },
-      error: (err) => {
-        this.loading = false;
-        this.error = 'Une erreur est survenue. Réessayez.';
-        console.error(err);
-      }
-    });
+    this.demandeService
+      .creer({
+        prestataire: this.prestataireId,
+        description: this.description,
+        date_intervention: this.date_intervention || null,
+      })
+      .subscribe({
+        next: () => {
+          this.loading = false;
+          this.showSuccessModal();
+        },
+        error: (err) => {
+          this.loading = false;
+          this.error = 'Une erreur est survenue. Réessayez.';
+          console.error(err);
+        },
+      });
+  }
+
+  showSuccessModal() {
+    this.modalTitle = 'Demande envoyée';
+    this.modalMessage =
+      "Votre demande a bien été prise en compte. Le prestataire l'examinera et vous répondra bientôt.";
+    this.modalType = 'success';
+    this.modalIsConfirm = false;
+    this.modalOpen = true;
+  }
+
+  showConfirmModal(title: string, message: string, callback: () => void) {
+    this.modalTitle = title;
+    this.modalMessage = message;
+    this.modalType = 'warning';
+    this.modalIsConfirm = true;
+    this.modalOpen = true;
+    this.modalCallback = callback;
+  }
+
+  onModalConfirm() {
+    if (this.modalCallback) {
+      this.modalCallback();
+      this.modalCallback = null;
+    }
+  }
+
+  onModalCancel() {
+    this.modalCallback = null;
+  }
+
+  goHome() {
+    this.modalOpen = false;
+    this.router.navigate(['/client']);
+  }
+
+  ngOnDestroy() {
+    if (this.redirectTimeout) {
+      clearTimeout(this.redirectTimeout);
+    }
   }
 }

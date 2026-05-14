@@ -20,4 +20,4 @@ export const routes: Routes = [
   { path: 'admin', component: DashboardComponent },
   { path: 'admin/prestataires', component: PrestatairesComponent },
   { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
-];
+]; 
