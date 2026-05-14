@@ -36,9 +36,20 @@
       ></div>
     </div>
 
+    <!-- Erreur API -->
+    <div
+      *ngIf="!loading && errorMessage"
+      class="bg-red-50 rounded-2xl shadow-sm border border-red-100 p-6 text-center text-red-700"
+    >
+      <p class="text-sm font-semibold">{{ errorMessage }}</p>
+      <p class="text-xs text-red-500 mt-2">
+        Vérifiez votre connexion ou contactez l'administration.
+      </p>
+    </div>
+
     <!-- Liste vide -->
     <div
-      *ngIf="!loading && demandes.length === 0"
+      *ngIf="!loading && !errorMessage && demandes.length === 0"
       class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center"
     >
       <svg
@@ -136,13 +147,121 @@
           </a>
           <button
             *ngIf="demande.statut === 'en_attente'"
-            (click)="loadDemandes()"
+            (click)="annulerDemande(demande.id)"
             class="flex-1 text-center bg-red-50 text-red-600 text-xs font-semibold py-2 rounded-lg hover:bg-red-100 transition"
           >
             Annuler
           </button>
+          <button
+            *ngIf="peutDonnerAvis(demande)"
+            (click)="afficherFormulaireAvis(demande.id)"
+            class="flex-1 text-center bg-blue-50 text-blue-600 text-xs font-semibold py-2 rounded-lg hover:bg-blue-100 transition"
+          >
+            Donner un avis
+          </button>
+        </div>
+
+        <!-- Formulaire d'avis -->
+        <div
+          *ngIf="showAvisForm[demande.id] && avisData[demande.id] as avis"
+          class="mt-3 pt-3 border-t border-gray-100"
+        >
+          <div class="bg-blue-50 rounded-lg p-3">
+            <h4 class="text-sm font-semibold text-gray-800 mb-2">Donner votre avis</h4>
+
+            <!-- Sélection des étoiles -->
+            <div class="mb-3">
+              <label class="text-xs text-gray-600 block mb-1">Note (1-5 étoiles)</label>
+              <div class="flex gap-1">
+                <button
+                  *ngFor="let star of getStarsArray()"
+                  (click)="selectNote(demande.id, star)"
+                  [class]="
+                    'w-8 h-8 rounded-full flex items-center justify-center text-sm transition ' +
+                    (avis.note >= star
+                      ? 'bg-yellow-400 text-white'
+                      : 'bg-gray-200 text-gray-400 hover:bg-gray-300')
+                  "
+                >
+                  ★
+                </button>
+              </div>
+            </div>
+
+            <!-- Commentaire -->
+            <div class="mb-3">
+              <label class="text-xs text-gray-600 block mb-1">Commentaire (optionnel)</label>
+              <textarea
+                [(ngModel)]="avis.commentaire"
+                placeholder="Partagez votre expérience..."
+                class="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                rows="2"
+              ></textarea>
+            </div>
+
+            <!-- Boutons d'action -->
+            <div class="flex gap-2">
+              <button
+                (click)="annulerAvis(demande.id)"
+                class="flex-1 text-center bg-gray-200 text-gray-700 text-xs font-semibold py-2 rounded-lg hover:bg-gray-300 transition"
+                [disabled]="avisLoading[demande.id]"
+              >
+                Annuler
+              </button>
+              <button
+                (click)="soumettreAvis(demande.id)"
+                class="flex-1 text-center bg-blue-600 text-white text-xs font-semibold py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+                [disabled]="avisLoading[demande.id] || !avis.note"
+              >
+                <span *ngIf="!avisLoading[demande.id]">Envoyer l'avis</span>
+                <div *ngIf="avisLoading[demande.id]" class="flex items-center justify-center">
+                  <div
+                    class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-1"
+                  ></div>
+                  Envoi...
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Avis existant -->
+        <div *ngIf="demande.avis" class="mt-3 pt-3 border-t border-gray-100">
+          <div class="bg-green-50 rounded-lg p-3">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-sm font-semibold text-gray-800">Votre avis</span>
+              <div class="flex gap-1">
+                <span
+                  *ngFor="let star of getStarsArray()"
+                  [class]="
+                    'text-sm ' + (demande.avis.note >= star ? 'text-yellow-400' : 'text-gray-300')
+                  "
+                >
+                  ★
+                </span>
+              </div>
+              <span class="text-xs text-gray-500">({{ demande.avis.note }}/5)</span>
+            </div>
+            <p *ngIf="demande.avis.commentaire" class="text-xs text-gray-600 italic">
+              "{{ demande.avis.commentaire }}"
+            </p>
+            <p class="text-xs text-gray-400 mt-1">
+              Avis donné le {{ demande.avis.date_creation | date: 'dd/MM/yyyy' }}
+            </p>
+          </div>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Modal Alert -->
+  <app-modal-alert
+    [isOpen]="modalOpen"
+    [title]="modalTitle"
+    [message]="modalMessage"
+    [type]="modalType"
+    [isConfirm]="modalIsConfirm"
+    (confirmed)="onModalConfirm()"
+    (cancelled)="onModalCancel()"
+  ></app-modal-alert>
 </div>

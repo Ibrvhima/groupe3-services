@@ -11,10 +11,18 @@ class DemandeViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
+        print(f"DEBUG: User={user}, Role={user.role}, Authenticated={user.is_authenticated}")
+        
         if user.role == 'client':
-            return Demande.objects.filter(client=user).order_by('-date_creation')
+            qs = Demande.objects.filter(client=user).order_by('-date_creation')
+            print(f"DEBUG: Client {user.id} - Demandes: {qs.count()}")
+            return qs
         elif user.role == 'prestataire':
-            return Demande.objects.filter(prestataire__user=user).order_by('-date_creation')
+            qs = Demande.objects.filter(prestataire__user=user).order_by('-date_creation')
+            print(f"DEBUG: Prestataire {user.id} - Demandes: {qs.count()}")
+            return qs
+        
+        print(f"DEBUG: Unknown role - returning none()")
         return Demande.objects.none()
 
     def perform_create(self, serializer):

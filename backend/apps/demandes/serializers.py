@@ -1,5 +1,13 @@
 from rest_framework import serializers
 from .models import Demande
+from apps.avis.models import Avis
+
+
+class AvisNestedSerializer(serializers.ModelSerializer):
+    """Serializer imbriqué pour les avis dans les demandes"""
+    class Meta:
+        model = Avis
+        fields = ['id', 'note', 'commentaire', 'date_creation']
 
 
 class DemandeSerializer(serializers.ModelSerializer):
@@ -7,6 +15,7 @@ class DemandeSerializer(serializers.ModelSerializer):
     client_prenom      = serializers.CharField(source='client.prenom', read_only=True)
     prestataire_nom    = serializers.CharField(source='prestataire.user.nom', read_only=True)
     prestataire_prenom = serializers.CharField(source='prestataire.user.prenom', read_only=True)
+    avis               = AvisNestedSerializer(read_only=True)
 
     class Meta:
         model  = Demande
