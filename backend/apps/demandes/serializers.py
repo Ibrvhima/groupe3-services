@@ -8,18 +8,37 @@ class DemandeSerializer(serializers.ModelSerializer):
     client_info      = UserSerializer(source='client', read_only=True)
     prestataire_info = PrestataireSerializer(source='prestataire', read_only=True)
     statut_display   = serializers.CharField(source='get_statut_display', read_only=True)
-    # True si le client a déjà laissé un avis pour cette demande
-    has_avis         = serializers.SerializerMethodField()
+    has_avis  = serializers.SerializerMethodField()
+    has_devis = serializers.SerializerMethodField()
+    # Données du devis imbriquées — évite un import circulaire avec devis.serializers
+    devis     = serializers.SerializerMethodField()
 
     def get_has_avis(self, obj):
         return hasattr(obj, 'avis')
+
+    def get_has_devis(self, obj):
+        return hasattr(obj, 'devis')
+
+    def get_devis(self, obj):
+        if not hasattr(obj, 'devis'):
+            return None
+        d = obj.devis
+        return {
+            'id':             d.id,
+            'montant':        str(d.montant),
+            'description':    d.description,
+            'delai':          d.delai,
+            'statut':         d.statut,
+            'statut_display': d.get_statut_display(),
+            'date_creation':  d.date_creation.isoformat(),
+        }
 
     class Meta:
         model  = Demande
         fields = [
             'id', 'client', 'client_info', 'prestataire', 'prestataire_info',
             'description', 'adresse', 'date_souhaitee', 'statut', 'statut_display',
-            'has_avis', 'date_creation', 'date_maj',
+            'has_avis', 'has_devis', 'devis', 'date_creation', 'date_maj',
         ]
         read_only_fields = ['client', 'statut', 'date_creation', 'date_maj']
 

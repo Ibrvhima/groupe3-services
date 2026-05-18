@@ -12,6 +12,12 @@ class CategorieSerializer(serializers.ModelSerializer):
 class PrestataireSerializer(serializers.ModelSerializer):
     user      = UserSerializer(read_only=True)
     categorie = CategorieSerializer(read_only=True)
+    photo     = serializers.SerializerMethodField()
+
+    def get_photo(self, obj):
+        if not obj.photo:
+            return None
+        return obj.photo.url  # /media/photos/... — résolu par le navigateur
 
     class Meta:
         model  = Prestataire
@@ -41,13 +47,13 @@ class AdminPrestataireSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'user', 'categorie', 'quartier', 'telephone',
             'description', 'photo', 'disponible', 'approuve', 'badge_verifie',
-            'note_moyenne', 'created_at',
+            'note_moyenne', 'statut', 'created_at',
         ]
 
 
 class AdminPrestataireUpdateSerializer(serializers.ModelSerializer):
-    """Mise à jour partielle par l'admin : badge et disponibilité uniquement."""
+    """Mise à jour partielle par l'admin."""
 
     class Meta:
         model  = Prestataire
-        fields = ['badge_verifie', 'disponible', 'approuve']
+        fields = ['badge_verifie', 'disponible', 'approuve', 'statut']

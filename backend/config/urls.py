@@ -11,6 +11,8 @@ urlpatterns = [
     path('api/',        include('apps.demandes.urls')),
     path('api/',        include('apps.avis.urls')),
     path('api/',        include('apps.notifications.urls')),
+    path('api/',        include('apps.devis.urls')),
+    path('api/',        include('apps.chat.urls')),
 ]
 
 # Sert les fichiers media (photos de profil) en développement

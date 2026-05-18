@@ -21,7 +21,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((error: HttpErrorResponse) => {
       if (error.status === 401) {
         // Token invalide ou expiré → déconnexion propre
-        localStorage.clear();
+        ['access_token', 'refresh_token', 'role', 'user'].forEach(k => localStorage.removeItem(k));
         router.navigate(['/auth/login']);
       }
       return throwError(() => error);

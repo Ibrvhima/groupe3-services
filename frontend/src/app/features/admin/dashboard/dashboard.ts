@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { forkJoin } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { AdminHeaderComponent } from '../layout/header/header';
+import { AdminService } from '../../../core/services/admin.service';
 import { Categorie, Prestataire, User, Demande } from '../../../core/models';
 
 interface Stats {
@@ -49,15 +50,19 @@ export class AdminDashboardComponent implements OnInit {
 
   private api = environment.apiUrl;
 
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private adminService: AdminService,
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   ngOnInit(): void {
     forkJoin({
-      stats:        this.http.get<Stats>(`${this.api}/admin/stats/`),
+      stats:        this.adminService.getStats(),
       categories:   this.http.get<Categorie[]>(`${this.api}/categories/`),
-      prestataires: this.http.get<Prestataire[]>(`${this.api}/admin/prestataires/`),
-      clients:      this.http.get<User[]>(`${this.api}/admin/clients/`),
-      demandes:     this.http.get<Demande[]>(`${this.api}/admin/demandes/`),
+      prestataires: this.adminService.getPrestataires(),
+      clients:      this.adminService.getClients(),
+      demandes:     this.adminService.getDemandes(),
     }).subscribe({
       next: ({ stats, categories, prestataires, clients, demandes }) => {
         this.stats        = stats;
@@ -75,7 +80,6 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
-  /** Badge couleur selon statut de la demande */
   statutClass(statut: string): string {
     const map: Record<string, string> = {
       en_attente: 'bg-amber-50 text-amber-600',
@@ -88,6 +92,15 @@ export class AdminDashboardComponent implements OnInit {
     return map[statut] ?? 'bg-slate-100 text-slate-500';
   }
 
+  statutPrestClass(statut: string): string {
+    const map: Record<string, string> = {
+      en_attente: 'bg-amber-50 text-amber-600',
+      approuve:   'bg-emerald-50 text-emerald-600',
+      rejete:     'bg-red-50 text-red-400',
+    };
+    return map[statut] ?? 'bg-slate-100 text-slate-500';
+  }
+
   setOnglet(o: string): void {
     this.onglet = o;
     this.cdr.detectChanges();
@@ -95,7 +108,15 @@ export class AdminDashboardComponent implements OnInit {
 
   approuver(p: Prestataire): void {
     this.prestActionId = p.id;
-    this.http.patch<Prestataire>(`${this.api}/admin/prestataires/${p.id}/`, { approuve: true }).subscribe({
+    this.adminService.approuverPrestataire(p.id).subscribe({
+      next: u => { this.prestataires = this.prestataires.map(x => x.id === u.id ? u : x); this.prestActionId = null; this.cdr.detectChanges(); },
+      error: () => { this.prestActionId = null; this.cdr.detectChanges(); },
+    });
+  }
+
+  rejeter(p: Prestataire): void {
+    this.prestActionId = p.id;
+    this.adminService.rejeterPrestataire(p.id).subscribe({
       next: u => { this.prestataires = this.prestataires.map(x => x.id === u.id ? u : x); this.prestActionId = null; this.cdr.detectChanges(); },
       error: () => { this.prestActionId = null; this.cdr.detectChanges(); },
     });
@@ -103,7 +124,7 @@ export class AdminDashboardComponent implements OnInit {
 
   toggleBadge(p: Prestataire): void {
     this.prestActionId = p.id;
-    this.http.patch<Prestataire>(`${this.api}/admin/prestataires/${p.id}/`, { badge_verifie: !p.badge_verifie }).subscribe({
+    this.adminService.updatePrestataire(p.id, { badge_verifie: !p.badge_verifie }).subscribe({
       next: u => { this.prestataires = this.prestataires.map(x => x.id === u.id ? u : x); this.prestActionId = null; this.cdr.detectChanges(); },
       error: () => { this.prestActionId = null; this.cdr.detectChanges(); },
     });
@@ -111,7 +132,7 @@ export class AdminDashboardComponent implements OnInit {
 
   toggleDisponible(p: Prestataire): void {
     this.prestActionId = p.id;
-    this.http.patch<Prestataire>(`${this.api}/admin/prestataires/${p.id}/`, { disponible: !p.disponible }).subscribe({
+    this.adminService.updatePrestataire(p.id, { disponible: !p.disponible }).subscribe({
       next: u => { this.prestataires = this.prestataires.map(x => x.id === u.id ? u : x); this.prestActionId = null; this.cdr.detectChanges(); },
       error: () => { this.prestActionId = null; this.cdr.detectChanges(); },
     });
@@ -119,7 +140,7 @@ export class AdminDashboardComponent implements OnInit {
 
   supprimerUser(user: User, liste: 'prestataires' | 'clients'): void {
     if (!confirm(`Supprimer le compte de ${user.nom} ${user.prenom} ?`)) return;
-    this.http.delete(`${this.api}/admin/users/${user.id}/`).subscribe({
+    this.adminService.supprimerUser(user.id).subscribe({
       next: () => {
         if (liste === 'prestataires') this.prestataires = this.prestataires.filter(p => p.user.id !== user.id);
         else this.clients = this.clients.filter(c => c.id !== user.id);
@@ -148,7 +169,6 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
-  /** Pourcentage pour les barres de progression */
   pct(val: number, total: number): string {
     return total > 0 ? (val / total * 100).toFixed(1) + '%' : '0%';
   }

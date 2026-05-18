@@ -26,6 +26,8 @@ INSTALLED_APPS = [
     'apps.demandes',
     'apps.avis',
     'apps.notifications',
+    'apps.devis',
+    'apps.chat',
 ]
 
 MIDDLEWARE = [

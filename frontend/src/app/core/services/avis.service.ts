@@ -5,8 +5,18 @@ import { environment } from '../../../environments/environment';
 
 export interface AvisCreate {
   demande:     number;
-  note:        number;   // 1 à 5
+  note:        number;
   commentaire: string;
+}
+
+export interface Avis {
+  id:           number;
+  demande:      number;
+  client:       number;
+  prestataire:  number;
+  note:         number;
+  commentaire:  string;
+  date:         string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -15,11 +25,11 @@ export class AvisService {
 
   constructor(private http: HttpClient) {}
 
-  creerAvis(data: AvisCreate): Observable<any> {
-    return this.http.post(`${this.api}/`, data);
+  creerAvis(data: AvisCreate): Observable<Avis> {
+    return this.http.post<Avis>(`${this.api}/`, data);
   }
 
-  getAvisPrestataire(prestataireId: number): Observable<any> {
-    return this.http.get(`${this.api}/?prestataire=${prestataireId}`);
+  getAvisPrestataire(prestataireId: number): Observable<Avis[]> {
+    return this.http.get<Avis[]>(`${this.api}/?prestataire=${prestataireId}`);
   }
 }

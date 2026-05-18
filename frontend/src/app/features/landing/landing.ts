@@ -20,18 +20,16 @@ export class LandingComponent implements OnInit {
 
   // Images Unsplash associées aux noms de catégories (insensible à la casse)
   readonly categoryImages: Record<string, string> = {
-    'plomberie':    'https://images.unsplash.com/photo-1676210134188-4c05dd172f89?auto=format&fit=crop&w=600&q=80',
-    'plombier':     'https://images.unsplash.com/photo-1676210134188-4c05dd172f89?auto=format&fit=crop&w=600&q=80',
-    'électricité':  'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=600&q=80',
-    'électricien':  'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=600&q=80',
-    'peinture':     'https://images.unsplash.com/photo-1562259949-e8e7689d7828?auto=format&fit=crop&w=600&q=80',
-    'peintre':      'https://images.unsplash.com/photo-1562259949-e8e7689d7828?auto=format&fit=crop&w=600&q=80',
-    'maçonnerie':   'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=600&q=80',
-    'maçon':        'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=600&q=80',
-    'menuiserie':   'https://images.unsplash.com/photo-1659930087003-2d64e33181f7?auto=format&fit=crop&w=600&q=80',
-    'menuisier':    'https://images.unsplash.com/photo-1659930087003-2d64e33181f7?auto=format&fit=crop&w=600&q=80',
-    'nettoyage':    'https://images.unsplash.com/photo-1563453392212-326f5e854473?auto=format&fit=crop&w=600&q=80',
-    'climatisation':'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=600&q=80',
+    'plombier':      'https://images.pexels.com/photos/6419128/pexels-photo-6419128.jpeg?auto=compress&cs=tinysrgb&w=600',
+    'électricien':   'https://images.pexels.com/photos/9679179/pexels-photo-9679179.jpeg?auto=compress&cs=tinysrgb&w=600',
+    'mécanicien':    'https://images.pexels.com/photos/5276374/pexels-photo-5276374.jpeg?auto=compress&cs=tinysrgb&w=600',
+    'peintre':       'https://images.pexels.com/photos/1669754/pexels-photo-1669754.jpeg?auto=compress&cs=tinysrgb&w=600',
+    'maçon':         'https://images.pexels.com/photos/11236546/pexels-photo-11236546.jpeg?auto=compress&cs=tinysrgb&w=600',
+    'menuisier':     'https://images.pexels.com/photos/5973931/pexels-photo-5973931.jpeg?auto=compress&cs=tinysrgb&w=600',
+    'climatisation': 'https://images.pexels.com/photos/13061307/pexels-photo-13061307.jpeg?auto=compress&cs=tinysrgb&w=600',
+    'jardinier':     'https://images.pexels.com/photos/6231862/pexels-photo-6231862.jpeg?auto=compress&cs=tinysrgb&w=600',
+    'informaticien': 'https://images.pexels.com/photos/6754846/pexels-photo-6754846.jpeg?auto=compress&cs=tinysrgb&w=600',
+    'couturier':     'https://images.pexels.com/photos/19188184/pexels-photo-19188184.jpeg?auto=compress&cs=tinysrgb&w=600',
   };
 
   /** Retourne l'image correspondant à une catégorie, ou une image générique */

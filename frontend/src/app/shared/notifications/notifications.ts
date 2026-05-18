@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NotificationService } from '../../core/services/notification.service';
 
@@ -8,14 +8,21 @@ import { NotificationService } from '../../core/services/notification.service';
   imports: [CommonModule],
   templateUrl: './notifications.html',
 })
-export class NotificationsComponent implements OnInit {
+export class NotificationsComponent implements OnInit, OnDestroy {
 
   protected notifService = inject(NotificationService);
   ouvert = false;
 
+  private pollInterval?: ReturnType<typeof setInterval>;
+
   ngOnInit(): void {
-    // Charge les notifications dès que le composant s'affiche
     this.notifService.charger();
+    // Rafraîchit le badge toutes les 10 secondes pour détecter les nouveaux messages
+    this.pollInterval = setInterval(() => this.notifService.charger(), 10_000);
+  }
+
+  ngOnDestroy(): void {
+    clearInterval(this.pollInterval);
   }
 
   toggleDropdown(): void {

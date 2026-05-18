@@ -5,7 +5,7 @@ export const routes: Routes = [
   // Page d'accueil publique (landing) — aucune authentification requise
   {
     path: '',
-    title: 'KonakryServices — Trouvez un prestataire à Conakry',
+    title: 'DouraKa — Trouvez un prestataire à Conakry',
     loadComponent: () => import('./features/landing/landing').then(m => m.LandingComponent),
   },
 
@@ -51,6 +51,11 @@ export const routes: Routes = [
         title: 'Mes demandes',
         loadComponent: () => import('./features/client/mes-demandes/mes-demandes').then(m => m.MesDemandesComponent),
       },
+      {
+        path: 'chat',
+        title: 'Messages',
+        loadComponent: () => import('./features/client/chat/chat').then(m => m.ChatClientComponent),
+      },
     ],
   },
 
@@ -73,6 +78,11 @@ export const routes: Routes = [
         path: 'profil',
         title: 'Mon profil',
         loadComponent: () => import('./features/prestataire/profil/profil').then(m => m.PrestataireProfilComponent),
+      },
+      {
+        path: 'chat',
+        title: 'Messages',
+        loadComponent: () => import('./features/prestataire/chat/chat').then(m => m.ChatPrestataireComponent),
       },
     ],
   },

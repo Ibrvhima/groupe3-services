@@ -63,17 +63,18 @@ export class DemandeFormComponent implements OnInit {
     this.loading = true;
 
     this.demandeService
-      .creer({
+      .creerDemande({
         prestataire: this.prestataireId,
         description: this.description,
-        date_intervention: this.date_intervention || null,
+        adresse: '',
+        date_souhaitee: this.date_intervention || undefined,
       })
       .subscribe({
         next: () => {
           this.loading = false;
           this.showSuccessModal();
         },
-        error: (err) => {
+        error: (err: unknown) => {
           this.loading = false;
           this.error = 'Une erreur est survenue. Réessayez.';
           console.error(err);

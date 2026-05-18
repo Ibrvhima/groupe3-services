@@ -29,7 +29,7 @@ class PrestataireViewSet(viewsets.ModelViewSet):
     """
     queryset = (
         Prestataire.objects
-        .filter(user__is_active=True, approuve=True)
+        .filter(user__is_active=True, approuve=True, disponible=True)
         .select_related('user', 'categorie')
         .order_by('-note_moyenne', '-id')
     )

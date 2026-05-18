@@ -35,6 +35,7 @@ export interface Prestataire {
   approuve:      boolean;
   note_moyenne:  string;          // DecimalField retourné en string par DRF
   badge_verifie: boolean;
+  statut:        'en_attente' | 'approuve' | 'rejete';
   created_at:    string;
 }
 
@@ -54,6 +55,27 @@ export type StatutDemande =
   | 'terminee'
   | 'annulee';
 
+export type StatutDevis = 'en_attente' | 'accepte' | 'refuse';
+
+/** Devis envoyé par un prestataire en réponse à une demande. */
+export interface Devis {
+  id:             number;
+  montant:        string;   // DecimalField retourné en string par DRF
+  description:    string;
+  delai:          string;
+  statut:         StatutDevis;
+  statut_display: string;
+  date_creation:  string;
+}
+
+/** Données nécessaires pour créer un nouveau devis. */
+export interface DevisCreate {
+  demande:     number;
+  montant:     number;
+  description: string;
+  delai:       string;
+}
+
 export interface Demande {
   id:               number;
   client:           number;
@@ -65,6 +87,9 @@ export interface Demande {
   date_souhaitee:   string | null;
   statut:           StatutDemande;
   statut_display:   string;
+  has_avis:         boolean;
+  has_devis:        boolean;
+  devis:            Devis | null;   // null si aucun devis n'a encore été envoyé
   date_creation:    string;
   date_maj:         string;
 }
@@ -82,4 +107,36 @@ export interface PaginatedResponse<T> {
   next:     string | null;
   previous: string | null;
   results:  T[];
+}
+
+export interface UserMinimal {
+  id:     number;
+  nom:    string;
+  prenom: string;
+  photo:  string | null;
+}
+
+export interface DernierMessage {
+  contenu:    string;
+  date_envoi: string;
+  expediteur: string;
+}
+
+export interface Conversation {
+  id:              number;
+  demande:         number;
+  client:          UserMinimal;
+  prestataire:     UserMinimal;
+  created_at:      string;
+  dernier_message: DernierMessage | null;
+  non_lus:         number;
+}
+
+export interface Message {
+  id:           number;
+  conversation: number;
+  expediteur:   UserMinimal;
+  contenu:      string;
+  date_envoi:   string;
+  lu:           boolean;
 }
