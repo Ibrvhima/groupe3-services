@@ -13,7 +13,7 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
       <div>
         <h1 class="text-xl font-bold text-slate-800">Tableau de bord</h1>
-        <p class="text-xs text-slate-400 mt-0.5">Administration · KonakryServices</p>
+        <p class="text-xs text-slate-400 mt-0.5">Administration · DouraKa</p>
       </div>
 
       <nav class="flex gap-1 bg-white rounded-2xl border border-slate-200 p-1 shadow-sm">
@@ -99,9 +99,8 @@
               <div class="min-w-0">
                 <div class="flex items-center gap-2 flex-wrap">
                   <p class="text-sm font-bold text-slate-800">{{ p.user.nom }} {{ p.user.prenom }}</p>
-                  <span *ngIf="!p.approuve"
-                    class="text-xs bg-amber-50 text-amber-600 border border-amber-200 px-2 py-0.5 rounded-full font-medium">
-                    En attente d'approbation
+                  <span [class]="'text-xs border px-2 py-0.5 rounded-full font-medium ' + statutPrestClass(p.statut)">
+                    {{ p.statut === 'en_attente' ? 'En attente' : p.statut === 'approuve' ? 'Approuvé' : 'Rejeté' }}
                   </span>
                   <span *ngIf="p.badge_verifie"
                     class="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full font-medium">
@@ -125,9 +124,13 @@
           </div>
 
           <div class="flex flex-wrap gap-2 mt-3 pt-3 border-t border-slate-50 items-center">
-            <button *ngIf="!p.approuve" (click)="approuver(p)" [disabled]="prestActionId === p.id"
-              class="text-xs px-3 py-1.5 rounded-xl bg-amber-500 text-white font-medium hover:bg-amber-600 disabled:opacity-50 transition">
+            <button *ngIf="p.statut !== 'approuve'" (click)="approuver(p)" [disabled]="prestActionId === p.id"
+              class="text-xs px-3 py-1.5 rounded-xl bg-emerald-500 text-white font-medium hover:bg-emerald-600 disabled:opacity-50 transition">
               Approuver
+            </button>
+            <button *ngIf="p.statut !== 'rejete'" (click)="rejeter(p)" [disabled]="prestActionId === p.id"
+              class="text-xs px-3 py-1.5 rounded-xl bg-red-100 text-red-600 font-medium hover:bg-red-200 disabled:opacity-50 transition">
+              Rejeter
             </button>
 
             <button (click)="toggleBadge(p)" [disabled]="prestActionId === p.id"
@@ -242,11 +245,9 @@
         <div *ngIf="catError"   class="text-xs text-red-500 bg-red-50 rounded-xl px-3 py-2 mb-3">{{ catError }}</div>
         <div *ngIf="catSuccess" class="text-xs text-emerald-600 bg-emerald-50 rounded-xl px-3 py-2 mb-3">{{ catSuccess }}</div>
 
-        <div class="grid grid-cols-2 gap-2 mb-2">
+        <div class="mb-2">
           <input [(ngModel)]="newCat.nom" type="text" placeholder="Nom (ex: Plombier)"
-            class="text-sm border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"/>
-          <input [(ngModel)]="newCat.icone" type="text" placeholder="Icône (emoji)"
-            class="text-sm border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"/>
+            class="w-full text-sm border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"/>
         </div>
         <input [(ngModel)]="newCat.description" type="text" placeholder="Description (optionnel)"
           class="w-full text-sm border border-slate-200 rounded-xl px-3 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-blue-400"/>
@@ -259,12 +260,9 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div *ngFor="let cat of categories"
           class="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <span *ngIf="cat.icone" class="text-2xl w-8 text-center">{{ cat.icone }}</span>
-            <div>
-              <p class="text-sm font-semibold text-slate-800">{{ cat.nom }}</p>
-              <p *ngIf="cat.description" class="text-xs text-slate-400">{{ cat.description }}</p>
-            </div>
+          <div>
+            <p class="text-sm font-semibold text-slate-800">{{ cat.nom }}</p>
+            <p *ngIf="cat.description" class="text-xs text-slate-400">{{ cat.description }}</p>
           </div>
           <button (click)="supprimerCategorie(cat.id)"
             class="text-xs text-red-400 hover:text-red-600 px-2 py-1.5 rounded-xl hover:bg-red-50 transition">

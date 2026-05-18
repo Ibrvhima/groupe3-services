@@ -3,31 +3,38 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DemandeService } from '../../../core/services/demande.service';
-import { AvisService } from '../../../core/services/avis.service';
+import { AvisService }    from '../../../core/services/avis.service';
+import { DevisService }   from '../../../core/services/devis.service';
 import { HeaderComponent } from '../layout/header/header';
+import { Demande } from '../../../core/models';
 
 @Component({
-  selector: 'app-mes-demandes',
-  standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, HeaderComponent],
+  selector:    'app-mes-demandes',
+  standalone:  true,
+  imports:     [CommonModule, RouterModule, FormsModule, HeaderComponent],
   templateUrl: './mes-demandes.html',
 })
 export class MesDemandesComponent implements OnInit {
-  demandes: any[]       = [];
-  loading               = true;
-  actionLoading: number | null = null;
+  demandes: Demande[]           = [];
+  loading                       = true;
+  actionLoading: number | null  = null;
 
-  // État du formulaire d'avis
-  avisDemandeId: number | null = null;
-  avisNote        = 0;
-  avisCommentaire = '';
-  avisLoading     = false;
-  avisError       = '';
+  // ── Avis ──────────────────────────────────────────────────────────────────
+  avisDemandeId: number | null  = null;
+  avisNote                      = 0;
+  avisCommentaire               = '';
+  avisLoading                   = false;
+  avisError                     = '';
+
+  // ── Devis ─────────────────────────────────────────────────────────────────
+  // ID de la demande dont on est en train d'accepter/refuser le devis
+  devisActionLoading: number | null = null;
 
   constructor(
     private demandeService: DemandeService,
-    private avisService: AvisService,
-    private cdr: ChangeDetectorRef,
+    private avisService:    AvisService,
+    private devisService:   DevisService,
+    private cdr:            ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void { this.charger(); }
@@ -44,37 +51,73 @@ export class MesDemandesComponent implements OnInit {
     });
   }
 
+  // ── Actions demande ───────────────────────────────────────────────────────
+
   annuler(id: number): void {
     this.actionLoading = id;
     this.demandeService.annuler(id).subscribe({
-      next: (updated: any) => {
-        this.demandes      = this.demandes.map(d => d.id === id ? updated : d);
-        this.actionLoading = null;
+      next:  updated => { this._majDemande(updated); this.actionLoading = null; },
+      error: ()      => { this.actionLoading = null; this.cdr.detectChanges(); },
+    });
+  }
+
+  // ── Actions devis ─────────────────────────────────────────────────────────
+
+  /**
+   * Le client accepte le devis → le backend passe la demande en "en_cours".
+   * On met à jour localement le devis ET le statut de la demande.
+   */
+  accepterDevis(demande: Demande): void {
+    if (!demande.devis) return;
+    this.devisActionLoading = demande.id;
+
+    this.devisService.accepter(demande.devis.id).subscribe({
+      next: devisUpdated => {
+        // Mise à jour locale : devis accepté + demande en cours
+        this.demandes = this.demandes.map(d =>
+          d.id === demande.id
+            ? { ...d, statut: 'en_cours', statut_display: 'En cours', devis: devisUpdated }
+            : d
+        );
+        this.devisActionLoading = null;
         this.cdr.detectChanges();
       },
-      error: () => { this.actionLoading = null; this.cdr.detectChanges(); },
+      error: () => { this.devisActionLoading = null; this.cdr.detectChanges(); },
+    });
+  }
+
+  /** Le client refuse le devis. La demande reste dans son statut actuel. */
+  refuserDevis(demande: Demande): void {
+    if (!demande.devis) return;
+    this.devisActionLoading = demande.id;
+
+    this.devisService.refuser(demande.devis.id).subscribe({
+      next: devisUpdated => {
+        this.demandes = this.demandes.map(d =>
+          d.id === demande.id ? { ...d, devis: devisUpdated } : d
+        );
+        this.devisActionLoading = null;
+        this.cdr.detectChanges();
+      },
+      error: () => { this.devisActionLoading = null; this.cdr.detectChanges(); },
     });
   }
 
   // ── Avis ──────────────────────────────────────────────────────────────────
 
   ouvrirAvis(demandeId: number): void {
-    this.avisDemandeId  = demandeId;
-    this.avisNote       = 0;
+    this.avisDemandeId   = demandeId;
+    this.avisNote        = 0;
     this.avisCommentaire = '';
-    this.avisError      = '';
+    this.avisError       = '';
   }
 
-  fermerAvis(): void {
-    this.avisDemandeId = null;
-  }
+  fermerAvis(): void { this.avisDemandeId = null; }
 
-  setNote(n: number): void {
-    this.avisNote = n;
-  }
+  setNote(n: number): void { this.avisNote = n; }
 
   envoyerAvis(): void {
-    if (!this.avisNote) { this.avisError = 'Choisissez une note.'; return; }
+    if (!this.avisNote)              { this.avisError = 'Choisissez une note.';      return; }
     if (!this.avisCommentaire.trim()) { this.avisError = 'Ajoutez un commentaire.'; return; }
 
     this.avisLoading = true;
@@ -86,7 +129,6 @@ export class MesDemandesComponent implements OnInit {
       commentaire: this.avisCommentaire,
     }).subscribe({
       next: () => {
-        // Marquer la demande comme déjà notée localement
         this.demandes = this.demandes.map(d =>
           d.id === this.avisDemandeId ? { ...d, has_avis: true } : d
         );
@@ -102,14 +144,31 @@ export class MesDemandesComponent implements OnInit {
     });
   }
 
+  // ── Utilitaires ───────────────────────────────────────────────────────────
+
+  /** Remplace la demande modifiée dans le tableau local. */
+  private _majDemande(updated: Demande): void {
+    this.demandes = this.demandes.map(d => d.id === updated.id ? updated : d);
+    this.cdr.detectChanges();
+  }
+
   statutClass(statut: string): string {
     const map: Record<string, string> = {
       en_attente: 'bg-yellow-100 text-yellow-700',
       acceptee:   'bg-blue-100 text-blue-700',
       refusee:    'bg-red-100 text-red-600',
-      en_cours:   'bg-blue-100 text-blue-700',
+      en_cours:   'bg-indigo-100 text-indigo-700',
       terminee:   'bg-green-100 text-green-700',
       annulee:    'bg-gray-100 text-gray-500',
+    };
+    return map[statut] ?? 'bg-gray-100 text-gray-500';
+  }
+
+  devisStatutClass(statut: string): string {
+    const map: Record<string, string> = {
+      en_attente: 'bg-orange-100 text-orange-700',
+      accepte:    'bg-green-100 text-green-700',
+      refuse:     'bg-gray-100 text-gray-500',
     };
     return map[statut] ?? 'bg-gray-100 text-gray-500';
   }

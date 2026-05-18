@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { TitleStrategy, RouterStateSnapshot } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 
-const APP_NAME = 'KonakryServices';
+const APP_NAME = 'DouraKa';
 
 /**
  * Met à jour le <title> de la page à chaque navigation.

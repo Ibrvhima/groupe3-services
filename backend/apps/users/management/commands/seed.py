@@ -4,16 +4,16 @@ from apps.prestataires.models import Categorie
 
 
 CATEGORIES = [
-    ('Plomberie',      '🔧'),
-    ('Électricité',    '⚡'),
-    ('Mécanique',      '🔩'),
-    ('Maçonnerie',     '🏗️'),
-    ('Peinture',       '🎨'),
-    ('Menuiserie',     '🪚'),
-    ('Climatisation',  '❄️'),
-    ('Jardinage',      '🌿'),
-    ('Informatique',   '💻'),
-    ('Couture',        '🧵'),
+    ('Plombier',      '🔧'),
+    ('Électricien',   '⚡'),
+    ('Mécanicien',    '🔩'),
+    ('Maçon',         '🏗️'),
+    ('Peintre',       '🎨'),
+    ('Menuisier',     '🪚'),
+    ('Climatisation', '❄️'),
+    ('Jardinier',     '🌿'),
+    ('Informaticien', '💻'),
+    ('Couturier',     '🧵'),
 ]
 
 
@@ -25,20 +25,20 @@ class Command(BaseCommand):
         self._creer_categories()
 
     def _creer_admin(self):
-        if User.objects.filter(email='admin@konakry.com').exists():
+        if User.objects.filter(email='admin@douraka.com').exists():
             self.stdout.write('  ✓ Admin déjà présent.')
             return
 
         User.objects.create_superuser(
-            email='admin@konakry.com',
+            email='admin@douraka.com',
             password='Admin@123',
             nom='Admin',
-            prenom='KonakryServices',
+            prenom='DouraKa',
             telephone='000000000',   # champ requis sur le modèle
             role='admin',
         )
         self.stdout.write(self.style.SUCCESS(
-            '  ✓ Admin créé — admin@konakry.com / Admin@123'
+            '  ✓ Admin créé — admin@douraka.com / Admin@123'
         ))
 
     def _creer_categories(self):

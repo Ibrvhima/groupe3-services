@@ -22,31 +22,44 @@ class RegisterView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
+        from django.db import transaction
 
-        if user.role == 'prestataire':
+        # Valider la catégorie AVANT de créer l'utilisateur (évite orphelins)
+        if request.data.get('role') == 'prestataire':
             categorie_id = request.data.get('categorie_id')
-            quartier     = request.data.get('quartier', '')
-            description  = request.data.get('description', '')
-            telephone    = request.data.get('telephone_pro', user.telephone)
-
+            if not categorie_id:
+                return Response(
+                    {'categorie_id': ['Ce champ est requis pour un prestataire.']},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            try:
+                categorie = Categorie.objects.get(id=categorie_id)
+            except Categorie.DoesNotExist:
+                return Response(
+                    {'categorie_id': ['Catégorie introuvable.']},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        else:
             categorie = None
-            if categorie_id:
-                try:
-                    categorie = Categorie.objects.get(id=categorie_id)
-                except Categorie.DoesNotExist:
-                    pass
 
-            Prestataire.objects.create(
-                user        = user,
-                categorie   = categorie,
-                quartier    = quartier,
-                description = description,
-                telephone   = telephone,
-                disponible  = True,
-            )
+        with transaction.atomic():
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            user = serializer.save()
+
+            if user.role == 'prestataire':
+                quartier    = request.data.get('quartier', '')
+                description = request.data.get('description', '')
+                telephone   = request.data.get('telephone_pro', user.telephone)
+
+                Prestataire.objects.create(
+                    user        = user,
+                    categorie   = categorie,
+                    quartier    = quartier,
+                    description = description,
+                    telephone   = telephone,
+                    disponible  = True,
+                )
 
         tokens = RefreshToken.for_user(user)
         return Response({
@@ -131,12 +144,15 @@ class AdminPrestataireListView(generics.ListAPIView):
     pagination_class   = None   # tableau direct, pas de {count, results}
 
     def get_queryset(self):
-        # select_related évite les requêtes N+1 sur user et categorie
-        return (
+        qs = (
             Prestataire.objects
             .select_related('user', 'categorie')
-            .order_by('-user__created_at')   # plus récents en premier
+            .order_by('-user__created_at')
         )
+        approuve = self.request.query_params.get('approuve')
+        if approuve is not None:
+            qs = qs.filter(approuve=(approuve.lower() == 'true'))
+        return qs
 
 
 class AdminPrestataireUpdateView(generics.UpdateAPIView):
@@ -238,9 +254,9 @@ class PasswordResetConfirmView(APIView):
         token_value   = request.data.get('token', '')
         new_password  = request.data.get('password', '')
 
-        if not new_password or len(new_password) < 6:
+        if not new_password or len(new_password) < 8:
             return Response(
-                {'detail': 'Le mot de passe doit contenir au moins 6 caractères.'},
+                {'detail': 'Le mot de passe doit contenir au moins 8 caractères.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         try:

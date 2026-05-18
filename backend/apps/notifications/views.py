@@ -15,7 +15,7 @@ class NotificationListView(generics.ListAPIView):
     pagination_class   = None   # liste courte, pas de pagination nécessaire
 
     def get_queryset(self):
-        return Notification.objects.filter(user=self.request.user)[:30]
+        return Notification.objects.filter(user=self.request.user).order_by('-created_at')[:50]
 
 
 @api_view(['POST'])

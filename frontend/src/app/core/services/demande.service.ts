@@ -39,4 +39,8 @@ export class DemandeService {
   annuler(id: number): Observable<Demande> {
     return this.http.post<Demande>(`${this.api}/${id}/annuler/`, {});
   }
+
+  getStats(): Observable<{ en_attente: number; acceptees: number; terminees: number; total: number }> {
+    return this.http.get<any>(`${this.api}/stats/`);
+  }
 }

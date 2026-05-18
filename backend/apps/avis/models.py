@@ -6,7 +6,7 @@ from apps.demandes.models import Demande
 
 
 class Avis(models.Model):
-    demande     = models.OneToOneField(Demande, on_delete=models.CASCADE)
+    demande     = models.OneToOneField(Demande, on_delete=models.CASCADE, related_name='avis')
     client      = models.ForeignKey(User, on_delete=models.CASCADE)
     prestataire = models.ForeignKey(Prestataire, on_delete=models.CASCADE)
     note        = models.PositiveSmallIntegerField(

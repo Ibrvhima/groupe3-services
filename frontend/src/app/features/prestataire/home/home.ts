@@ -6,7 +6,7 @@ import { forkJoin } from 'rxjs';
 import { DemandeService } from '../../../core/services/demande.service';
 import { PrestataireService } from '../../../core/services/prestataire.service';
 import { PrestataireHeaderComponent } from '../layout/header/header';
-import { Prestataire, Demande } from '../../../core/models';
+import { Prestataire } from '../../../core/models';
 
 @Component({
   selector: 'app-prestataire-home',
@@ -20,7 +20,6 @@ export class PrestataireHomeComponent implements OnInit {
   loading           = true;
   disponibleLoading = false;
 
-  // Getters pour compatibilité avec le template existant
   get user()       { return this.profil?.user ?? null; }
   get disponible() { return this.profil?.disponible ?? false; }
 
@@ -30,20 +29,14 @@ export class PrestataireHomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Charge profil + demandes en parallèle via forkJoin
+    // Stats via endpoint dédié (pas de troncature par pagination)
     forkJoin({
-      profil:   this.prestataireService.getMonProfil(),
-      demandes: this.demandeService.getMesDemandes(),
+      profil: this.prestataireService.getMonProfil(),
+      stats:  this.demandeService.getStats(),
     }).subscribe({
-      next: ({ profil, demandes }) => {
+      next: ({ profil, stats }) => {
         this.profil = profil;
-        const list  = demandes.results ?? [];
-        this.stats  = {
-          total:      list.length,
-          en_attente: list.filter((d: Demande) => d.statut === 'en_attente').length,
-          acceptees:  list.filter((d: Demande) => d.statut === 'acceptee' || d.statut === 'en_cours').length,
-          terminees:  list.filter((d: Demande) => d.statut === 'terminee').length,
-        };
+        this.stats  = stats;
         this.loading = false;
       },
       error: () => { this.loading = false; },
