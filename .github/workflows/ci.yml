@@ -5,6 +5,7 @@ on:
     branches: [main, develop]
   pull_request:
     branches: [main]
+  workflow_dispatch:  # permet de lancer manuellement depuis GitHub
 
 jobs:
   # ── Backend : tests Django (SQLite en mémoire) ─────────────────────────────
