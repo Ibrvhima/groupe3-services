@@ -98,19 +98,19 @@
             class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0"
           >
             <img
-              *ngIf="p.user?.photo"
+              *ngIf="p.user.photo"
               [src]="p.user.photo"
               class="w-12 h-12 rounded-full object-cover"
             />
-            <span *ngIf="!p.user?.photo" class="text-blue-600 font-bold text-sm">
-              {{ getInitiales(p.user?.nom, p.user?.prenom) }}
+            <span *ngIf="!p.user.photo" class="text-blue-600 font-bold text-sm">
+              {{ getInitiales(p.user.nom, p.user.prenom) }}
             </span>
           </div>
           <!-- Infos -->
           <div class="flex-1 min-w-0">
             <div class="flex items-center gap-1">
               <h3 class="text-sm font-semibold text-gray-800 truncate">
-                {{ p.user?.nom }} {{ p.user?.prenom }}
+                {{ p.user.nom }} {{ p.user.prenom }}
               </h3>
               <svg
                 *ngIf="p.badge_verifie"
