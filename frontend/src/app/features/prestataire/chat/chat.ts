@@ -5,6 +5,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { ChatService } from '../../../core/services/chat.service';
 import { PrestataireHeaderComponent } from '../layout/header/header';
 import { Conversation, Message } from '../../../core/models';
@@ -28,7 +29,7 @@ export class ChatPrestataireComponent implements OnInit, OnDestroy, AfterViewChe
 
   currentUser: any = JSON.parse(localStorage.getItem('user') || '{}');
 
-  private pollInterval: any;
+  private wsSub!:       Subscription;
   private shouldScroll = false;
 
   constructor(
@@ -57,7 +58,8 @@ export class ChatPrestataireComponent implements OnInit, OnDestroy, AfterViewChe
   }
 
   ngOnDestroy(): void {
-    clearInterval(this.pollInterval);
+    this.wsSub?.unsubscribe();
+    this.chatService.deconnecterWebSocket();
   }
 
   ngAfterViewChecked(): void {
@@ -82,18 +84,35 @@ export class ChatPrestataireComponent implements OnInit, OnDestroy, AfterViewChe
     this.convActive = conv;
     this.messages   = [];
     this.cdr.detectChanges();
-    clearInterval(this.pollInterval);
+
+    // Nettoie l'ancienne connexion WebSocket
+    this.wsSub?.unsubscribe();
+    this.chatService.deconnecterWebSocket();
+
+    // Charge les messages existants via REST
     this.chargerMessages();
-    this.pollInterval = setInterval(() => this.chargerMessages(true), 3000);
+
+    // Ouvre le WebSocket pour recevoir les nouveaux messages en temps réel
+    this.chatService.connecterWebSocket(conv.id);
+    this.wsSub = this.chatService.message$.subscribe(msg => {
+      // Évite les doublons (message qu'on a envoyé nous-mêmes déjà ajouté localement)
+      if (!this.messages.find(m => m.id === msg.id)) {
+        this.messages     = [...this.messages, msg];
+        this.shouldScroll = true;
+        this.conversations = this.conversations.map(c =>
+          c.id === this.convActive!.id ? { ...c, non_lus: 0 } : c
+        );
+        this.cdr.detectChanges();
+      }
+    });
   }
 
-  chargerMessages(silencieux = false): void {
+  chargerMessages(): void {
     if (!this.convActive) return;
     this.chatService.getMessages(this.convActive.id).subscribe({
       next: msgs => {
-        const avant = this.messages.length;
-        this.messages = msgs;
-        if (msgs.length !== avant || !silencieux) this.shouldScroll = true;
+        this.messages     = msgs;
+        this.shouldScroll = true;
         this.conversations = this.conversations.map(c =>
           c.id === this.convActive!.id ? { ...c, non_lus: 0 } : c
         );
@@ -106,17 +125,41 @@ export class ChatPrestataireComponent implements OnInit, OnDestroy, AfterViewChe
     const texte = this.contenu.trim();
     if (!texte || this.sending || !this.convActive) return;
 
-    this.sending = true;
-    this.chatService.envoyerMessage(this.convActive.id, texte).subscribe({
-      next: msg => {
-        this.messages     = [...this.messages, msg];
-        this.contenu      = '';
-        this.sending      = false;
-        this.shouldScroll = true;
-        this.cdr.detectChanges();
-      },
-      error: () => { this.sending = false; this.cdr.detectChanges(); },
-    });
+    // Tentative via WebSocket (temps réel)
+    const sent = this.chatService.envoyerViaWebSocket(texte);
+
+    if (sent) {
+      // Ajoute le message localement immédiatement (optimistic update)
+      const msgLocal: any = {
+        id:         Date.now(),   // ID temporaire, remplacé par le vrai à la prochaine synchro
+        contenu:    texte,
+        date_envoi: new Date().toISOString(),
+        lu:         false,
+        expediteur: {
+          id:     this.currentUser.id,
+          nom:    this.currentUser.nom,
+          prenom: this.currentUser.prenom,
+          photo:  this.currentUser.photo || null,
+        },
+      };
+      this.messages     = [...this.messages, msgLocal];
+      this.contenu      = '';
+      this.shouldScroll = true;
+      this.cdr.detectChanges();
+    } else {
+      // Fallback HTTP si le WebSocket est fermé
+      this.sending = true;
+      this.chatService.envoyerMessage(this.convActive.id, texte).subscribe({
+        next: msg => {
+          this.messages     = [...this.messages, msg];
+          this.contenu      = '';
+          this.sending      = false;
+          this.shouldScroll = true;
+          this.cdr.detectChanges();
+        },
+        error: () => { this.sending = false; this.cdr.detectChanges(); },
+      });
+    }
   }
 
   onEnter(event: KeyboardEvent): void {
@@ -136,7 +179,8 @@ export class ChatPrestataireComponent implements OnInit, OnDestroy, AfterViewChe
 
   retourListe(): void {
     this.convActive = null;
-    clearInterval(this.pollInterval);
+    this.wsSub?.unsubscribe();
+    this.chatService.deconnecterWebSocket();
     this.cdr.detectChanges();
   }
 

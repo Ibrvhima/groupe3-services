@@ -8,4 +8,5 @@ python manage.py migrate
 # Crée le dossier media si absent (nécessaire pour les uploads de photos)
 mkdir -p /app/media/photos/prestataires
 python manage.py seed
-gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 4 --timeout 60
+# Daphne = serveur ASGI qui supporte HTTP + WebSocket (nécessaire pour Django Channels)
+daphne -b 0.0.0.0 -p 8000 config.asgi:application
