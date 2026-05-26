@@ -6,17 +6,15 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 
 @Component({
-  selector: 'app-forgot-password',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  selector:    'app-forgot-password',
+  standalone:  true,
+  imports:     [CommonModule, FormsModule, RouterModule],
   templateUrl: './forgot-password.html',
 })
 export class ForgotPasswordComponent {
-
   email   = '';
   loading = false;
-  // Token retourné par l'API (en production ce serait envoyé par email)
-  token   = '';
+  sent    = false;   // true dès que l'API répond (quelle que soit la réponse)
   error   = '';
 
   private api = environment.apiUrl;
@@ -28,11 +26,9 @@ export class ForgotPasswordComponent {
     this.loading = true;
     this.error   = '';
 
-    this.http.post<{ token: string }>(`${this.api}/users/password-reset/`, { email: this.email }).subscribe({
-      next: res => {
-        // En production, l'utilisateur reçoit un email.
-        // En MVP, on affiche le token directement pour test.
-        this.token   = res.token ?? '';
+    this.http.post(`${this.api}/users/password-reset/`, { email: this.email }).subscribe({
+      next: () => {
+        this.sent    = true;
         this.loading = false;
       },
       error: () => {

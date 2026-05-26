@@ -123,3 +123,9 @@ CHANNEL_LAYERS = {
         },
     }
 }
+
+# ── Email — Resend ─────────────────────────────────────────────────────────────
+# Créer un compte sur resend.com, générer une clé API et la mettre dans .env
+RESEND_API_KEY = config('RESEND_API_KEY', default='')
+EMAIL_FROM     = config('EMAIL_FROM', default='DoraKa <onboarding@resend.dev>')
+FRONTEND_URL   = config('FRONTEND_URL', default='http://localhost:4200')

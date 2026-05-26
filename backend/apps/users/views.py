@@ -250,14 +250,73 @@ class PasswordResetRequestView(APIView):
 
         return Response(self.REPONSE_GENERIQUE)
 
-    def _envoyer_email(self, email: str, token: str) -> None:
+    def _envoyer_email(self, to_email: str, token: str) -> None:
         """
-        À remplacer par un vrai envoi d'email.
-        En attendant, le token est loggé côté serveur (jamais côté client).
+        Envoie l'email de réinitialisation via Resend.
+        Si RESEND_API_KEY n'est pas configurée (dev/CI), le lien est loggé
+        côté serveur uniquement — jamais exposé au client.
         """
-        reset_url = f"/reset-password?token={token}"
-        # TODO: envoyer un vrai email avec reset_url
-        print(f"[PASSWORD RESET] {email} -> {reset_url}")
+        from django.conf import settings
+        import resend
+
+        frontend_url = getattr(settings, 'FRONTEND_URL', 'http://localhost:4200')
+        reset_url    = f"{frontend_url}/auth/reset-password?token={token}"
+        api_key      = getattr(settings, 'RESEND_API_KEY', '')
+
+        if not api_key:
+            # Mode dev / CI : log serveur uniquement
+            print(f"[PASSWORD RESET - DEV] {to_email} -> {reset_url}")
+            return
+
+        resend.api_key = api_key
+        resend.Emails.send({
+            "from":    getattr(settings, 'EMAIL_FROM', 'DoraKa <onboarding@resend.dev>'),
+            "to":      [to_email],
+            "subject": "Réinitialisation de votre mot de passe DoraKa",
+            "html":    self._html_reset(reset_url),
+        })
+
+    @staticmethod
+    def _html_reset(reset_url: str) -> str:
+        """Template HTML de l'email de réinitialisation."""
+        return f"""
+        <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;
+                    padding:32px 24px;background:#f8fafc;border-radius:16px;">
+
+          <div style="text-align:center;margin-bottom:24px;">
+            <span style="font-size:24px;font-weight:800;color:#1d4ed8;">DouraKa</span>
+          </div>
+
+          <div style="background:#ffffff;border-radius:12px;padding:28px;
+                      border:1px solid #e2e8f0;">
+            <h2 style="color:#1e293b;font-size:18px;margin:0 0 12px;">
+              Réinitialisation de mot de passe
+            </h2>
+            <p style="color:#475569;font-size:14px;line-height:1.6;margin:0 0 24px;">
+              Vous avez demandé à réinitialiser votre mot de passe.
+              Cliquez sur le bouton ci-dessous — ce lien expire dans <strong>1 heure</strong>.
+            </p>
+
+            <div style="text-align:center;margin-bottom:24px;">
+              <a href="{reset_url}"
+                 style="display:inline-block;background:#2563eb;color:#ffffff;
+                        padding:13px 32px;border-radius:8px;font-size:15px;
+                        font-weight:600;text-decoration:none;">
+                Réinitialiser mon mot de passe
+              </a>
+            </div>
+
+            <p style="color:#94a3b8;font-size:12px;margin:0;">
+              Si vous n'avez pas demandé cette réinitialisation, ignorez cet email.
+              Votre mot de passe restera inchangé.
+            </p>
+          </div>
+
+          <p style="color:#cbd5e1;font-size:11px;text-align:center;margin-top:20px;">
+            © DouraKa — Conakry, Guinée
+          </p>
+        </div>
+        """
 
 
 class PasswordResetConfirmView(APIView):
