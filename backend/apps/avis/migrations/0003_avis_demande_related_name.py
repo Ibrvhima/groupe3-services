@@ -4,6 +4,17 @@ import django.db.models.deletion
 from django.db import migrations, models
 
 
+def drop_date_creation(apps, schema_editor):
+    # MySQL supporte "DROP COLUMN IF EXISTS" ; SQLite non — on utilise try/except
+    if schema_editor.connection.vendor == 'mysql':
+        schema_editor.execute("ALTER TABLE avis_avis DROP COLUMN IF EXISTS date_creation")
+    else:
+        try:
+            schema_editor.execute("ALTER TABLE avis_avis DROP COLUMN date_creation")
+        except Exception:
+            pass
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -14,10 +25,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.SeparateDatabaseAndState(
             database_operations=[
-                migrations.RunSQL(
-                    "ALTER TABLE avis_avis DROP COLUMN IF EXISTS date_creation",
-                    reverse_sql=migrations.RunSQL.noop,
-                )
+                migrations.RunPython(drop_date_creation, migrations.RunPython.noop),
             ],
             state_operations=[
                 migrations.RemoveField(model_name='avis', name='date_creation'),
