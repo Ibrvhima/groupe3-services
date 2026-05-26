@@ -29,3 +29,6 @@ CHANNEL_LAYERS = {
         'BACKEND': 'channels.layers.InMemoryChannelLayer',
     }
 }
+
+# Désactive l'envoi d'emails en test → utilise le fallback print()
+RESEND_API_KEY = ''
