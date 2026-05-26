@@ -1,12 +1,21 @@
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.db.models import Avg
 from .models import Avis
 
 
+def _recalculer_note(prestataire):
+    """Recalcule et persiste note_moyenne pour un prestataire donné."""
+    moyenne = Avis.objects.filter(prestataire=prestataire).aggregate(Avg('note'))['note__avg']
+    prestataire.note_moyenne = round(moyenne, 2) if moyenne is not None else 0.00
+    prestataire.save(update_fields=['note_moyenne'])
+
+
 @receiver(post_save, sender=Avis)
-def update_note_moyenne(sender, instance, **kwargs):
-    p = instance.prestataire
-    moyenne = Avis.objects.filter(prestataire=p).aggregate(Avg('note'))['note__avg']
-    p.note_moyenne = round(moyenne, 2)
-    p.save()
+def avis_cree_ou_modifie(sender, instance, **kwargs):
+    _recalculer_note(instance.prestataire)
+
+
+@receiver(post_delete, sender=Avis)
+def avis_supprime(sender, instance, **kwargs):
+    _recalculer_note(instance.prestataire)
