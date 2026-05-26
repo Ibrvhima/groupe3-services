@@ -19,7 +19,7 @@ export class DemandeFormComponent implements OnInit {
   date_intervention = '';
   error = '';
   loading = false;
-  prestataireId: number = 0;
+  prestataireUuid = '';
   private redirectTimeout: any;
 
   // Modal properties
@@ -38,10 +38,10 @@ export class DemandeFormComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.prestataireId = this.route.snapshot.params['id'];
-    this.prestataireService.getById(this.prestataireId).subscribe({
+    this.prestataireUuid = this.route.snapshot.params['uuid'];
+    this.prestataireService.getByUuid(this.prestataireUuid).subscribe({
       next: (data: any) => (this.prestataire = data),
-      error: (err) => console.error(err),
+      error: (err: unknown) => console.error(err),
     });
   }
 
@@ -64,7 +64,7 @@ export class DemandeFormComponent implements OnInit {
 
     this.demandeService
       .creerDemande({
-        prestataire: this.prestataireId,
+        prestataire: this.prestataire?.id,
         description: this.description,
         adresse: '',
         date_souhaitee: this.date_intervention || undefined,

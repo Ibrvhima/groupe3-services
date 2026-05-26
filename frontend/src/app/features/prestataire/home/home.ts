@@ -46,7 +46,7 @@ export class PrestataireHomeComponent implements OnInit {
   toggleDisponible(): void {
     if (!this.profil) return;
     this.disponibleLoading = true;
-    this.prestataireService.updateProfil(this.profil.id, { disponible: !this.profil.disponible }).subscribe({
+    this.prestataireService.updateProfil(this.profil.uuid, { disponible: !this.profil.disponible }).subscribe({
       next: updated => {
         if (this.profil) this.profil.disponible = updated.disponible;
         this.disponibleLoading = false;

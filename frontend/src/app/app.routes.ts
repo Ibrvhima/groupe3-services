@@ -47,6 +47,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/client/prestataire-detail/prestataire-detail').then(m => m.PrestataireDetailComponent),
       },
       {
+        path: 'demander/:uuid',
+        title: 'Faire une demande',
+        loadComponent: () => import('./features/client/demande-form/demande-form').then(m => m.DemandeFormComponent),
+      },
+      {
         path: 'mes-demandes',
         title: 'Mes demandes',
         loadComponent: () => import('./features/client/mes-demandes/mes-demandes').then(m => m.MesDemandesComponent),
