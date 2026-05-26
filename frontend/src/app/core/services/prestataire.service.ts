@@ -17,8 +17,8 @@ export class PrestataireService {
     return this.http.get<PaginatedResponse<Prestataire>>(`${this.api}/prestataires/`, { params });
   }
 
-  getById(id: number): Observable<Prestataire> {
-    return this.http.get<Prestataire>(`${this.api}/prestataires/${id}/`);
+  getByUuid(uuid: string): Observable<Prestataire> {
+    return this.http.get<Prestataire>(`${this.api}/prestataires/${uuid}/`);
   }
 
   /** Retourne le profil prestataire de l'utilisateur connecté. */
@@ -31,15 +31,15 @@ export class PrestataireService {
     return this.http.get<Categorie[]>(`${this.api}/categories/`);
   }
 
-  updateProfil(id: number, data: Partial<Prestataire>): Observable<Prestataire> {
-    return this.http.patch<Prestataire>(`${this.api}/prestataires/${id}/`, data);
+  updateProfil(uuid: string, data: Partial<Prestataire>): Observable<Prestataire> {
+    return this.http.patch<Prestataire>(`${this.api}/prestataires/${uuid}/`, data);
   }
 
   /**
    * Met à jour le profil avec photo.
    * Utilise FormData car l'envoi d'un fichier nécessite multipart/form-data.
    */
-  updateProfilAvecPhoto(id: number, data: FormData): Observable<Prestataire> {
-    return this.http.patch<Prestataire>(`${this.api}/prestataires/${id}/`, data);
+  updateProfilAvecPhoto(uuid: string, data: FormData): Observable<Prestataire> {
+    return this.http.patch<Prestataire>(`${this.api}/prestataires/${uuid}/`, data);
   }
 }

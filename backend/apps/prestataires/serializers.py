@@ -22,7 +22,7 @@ class PrestataireSerializer(serializers.ModelSerializer):
     class Meta:
         model  = Prestataire
         fields = [
-            'id', 'user', 'categorie', 'description', 'quartier',
+            'id', 'uuid', 'user', 'categorie', 'description', 'quartier',
             'telephone', 'photo', 'disponible', 'approuve',
             'note_moyenne', 'badge_verifie', 'created_at',
         ]

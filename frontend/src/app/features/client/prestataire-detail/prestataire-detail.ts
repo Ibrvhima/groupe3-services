@@ -34,17 +34,23 @@ export class PrestataireDetailComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const id = +this.route.snapshot.params['id'];
+    const uuid = this.route.snapshot.params['uuid'];
 
-    forkJoin({
-      prestataire: this.prestataireService.getById(id),
-      avis:        this.avisService.getAvisPrestataire(id),
-    }).subscribe({
-      next: ({ prestataire, avis }: any) => {
+    this.prestataireService.getByUuid(uuid).subscribe({
+      next: (prestataire: any) => {
         this.prestataire = prestataire;
-        this.avis        = Array.isArray(avis) ? avis : (avis.results ?? []);
-        this.loading     = false;
-        this.cdr.detectChanges();
+        // On récupère les avis via l'ID interne (non visible dans l'URL)
+        this.avisService.getAvisPrestataire(prestataire.id).subscribe({
+          next: (avis: any) => {
+            this.avis    = Array.isArray(avis) ? avis : (avis.results ?? []);
+            this.loading = false;
+            this.cdr.detectChanges();
+          },
+          error: () => {
+            this.loading = false;
+            this.cdr.detectChanges();
+          },
+        });
       },
       error: () => {
         this.loading = false;

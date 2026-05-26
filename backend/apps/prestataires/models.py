@@ -1,3 +1,4 @@
+import uuid as uuid_lib
 from django.db import models
 from apps.users.models import User
 
@@ -18,6 +19,7 @@ class Prestataire(models.Model):
         ('rejete',     'Rejeté'),
     ]
 
+    uuid          = models.UUIDField(default=uuid_lib.uuid4, unique=True, editable=False)
     user          = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profil')
     categorie     = models.ForeignKey(Categorie, on_delete=models.SET_NULL, null=True)
     description   = models.TextField()

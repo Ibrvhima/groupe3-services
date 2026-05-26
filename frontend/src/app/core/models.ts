@@ -25,6 +25,7 @@ export interface Categorie {
 
 export interface Prestataire {
   id:            number;
+  uuid:          string;
   user:          User;
   categorie:     Categorie | null;
   description:   string;

@@ -110,7 +110,7 @@ export class PrestataireProfilComponent implements OnInit {
       formData.append('photo', this.photoFile);
     }
 
-    this.prestataireService.updateProfilAvecPhoto(this.profil.id, formData).subscribe({
+    this.prestataireService.updateProfilAvecPhoto(this.profil.uuid, formData).subscribe({
       next: updated => {
         this.profil  = updated;
         this.success = 'Profil mis à jour avec succès.';

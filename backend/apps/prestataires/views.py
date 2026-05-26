@@ -26,6 +26,7 @@ class PrestataireViewSet(viewsets.ModelViewSet):
     """
     Liste publique des prestataires actifs avec recherche et filtres.
     Triés par note décroissante pour mettre les meilleurs en premier.
+    Lookup via UUID (non-devinable) plutôt que PK entier.
     """
     queryset = (
         Prestataire.objects
@@ -37,6 +38,7 @@ class PrestataireViewSet(viewsets.ModelViewSet):
     search_fields       = ['user__nom', 'user__prenom', 'quartier', 'description']
     ordering_fields     = ['note_moyenne', 'created_at']
     permission_classes  = [permissions.IsAuthenticatedOrReadOnly]
+    lookup_field        = 'uuid'
 
     def get_serializer_class(self):
         if self.action in ['create', 'update', 'partial_update']:
@@ -58,11 +60,12 @@ class PrestataireViewSet(viewsets.ModelViewSet):
         Pour les actions d'écriture (update/partial_update), on bypass le filtre
         approuve=True et on s'assure que le prestataire ne peut modifier que son propre profil.
         Pour la lecture publique, on garde le comportement standard (approuve=True obligatoire).
+        Lookup via UUID dans les deux cas.
         """
         if self.action in ['partial_update', 'update']:
             obj = get_object_or_404(
                 Prestataire.objects.select_related('user', 'categorie'),
-                pk=self.kwargs['pk'],
+                uuid=self.kwargs['uuid'],
                 user=self.request.user,   # un prestataire ne peut modifier que son propre profil
             )
             self.check_object_permissions(self.request, obj)

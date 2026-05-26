@@ -42,7 +42,7 @@ export const routes: Routes = [
         loadComponent: () => import('./features/client/home/home').then(m => m.HomeComponent),
       },
       {
-        path: 'prestataire/:id',
+        path: 'prestataire/:uuid',
         title: 'Profil prestataire',
         loadComponent: () => import('./features/client/prestataire-detail/prestataire-detail').then(m => m.PrestataireDetailComponent),
       },
