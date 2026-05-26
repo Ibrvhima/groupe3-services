@@ -224,22 +224,40 @@ class PasswordResetRequestView(APIView):
     """
     POST /api/users/password-reset/
     Corps : { "email": "..." }
-    Crée un token de réinitialisation et le retourne (pas d'email en MVP).
-    En production, envoyer un email avec le lien contenant le token.
+
+    Génère un token de réinitialisation et l'envoie par email.
+    La réponse est toujours identique (200 + message générique) pour ne pas
+    révéler si l'adresse email est enregistrée ou non (protection anti-énumération).
+
+    TODO : brancher un backend email (SMTP / SendGrid) et remplacer le
+           print() ci-dessous par un vrai envoi de mail.
     """
     permission_classes = [permissions.AllowAny]
+
+    # Message identique quelle que soit l'issue (adresse connue ou inconnue)
+    REPONSE_GENERIQUE = {
+        'detail': 'Si cet email est enregistré, un lien de réinitialisation a été envoyé.'
+    }
 
     def post(self, request):
         email = request.data.get('email', '').strip()
         try:
             user  = User.objects.get(email=email)
             token = PasswordResetToken.objects.create(user=user)
-            # En production : envoyer l'email ici
-            # Pour le MVP, on retourne le token directement
-            return Response({'token': str(token.token)})
+            self._envoyer_email(email, str(token.token))
         except User.DoesNotExist:
-            # On répond toujours 200 pour ne pas révéler si l'email existe
-            return Response({'token': None})
+            pass   # On ne révèle pas que l'email est inconnu
+
+        return Response(self.REPONSE_GENERIQUE)
+
+    def _envoyer_email(self, email: str, token: str) -> None:
+        """
+        À remplacer par un vrai envoi d'email.
+        En attendant, le token est loggé côté serveur (jamais côté client).
+        """
+        reset_url = f"/reset-password?token={token}"
+        # TODO: envoyer un vrai email avec reset_url
+        print(f"[PASSWORD RESET] {email} -> {reset_url}")
 
 
 class PasswordResetConfirmView(APIView):

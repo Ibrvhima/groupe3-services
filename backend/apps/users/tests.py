@@ -122,24 +122,31 @@ class PasswordResetTest(TestCase):
         self.assertFalse(token.is_valid)
 
     def test_flux_complet(self):
+        # Étape 1 : demande de reset → réponse générique (token jamais dans la réponse)
         res = self.api.post('/api/users/password-reset/', {'email': 'reset@test.com'})
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        token_str = res.data['token']
-        self.assertIsNotNone(token_str)
+        self.assertNotIn('token', res.data)   # sécurité : token absent de la réponse HTTP
 
+        # Le token est en base — le lire comme le ferait un vrai email
+        token_str = str(PasswordResetToken.objects.get(user=self.user).token)
+
+        # Étape 2 : confirmation avec le token
         res2 = self.api.post('/api/users/password-reset/confirm/', {
             'token': token_str, 'password': 'NouveauPass456',
         })
         self.assertEqual(res2.status_code, status.HTTP_200_OK)
 
+        # Étape 3 : login avec le nouveau mot de passe
         res3 = self.api.post('/api/users/login/', {
             'email': 'reset@test.com', 'password': 'NouveauPass456',
         })
         self.assertEqual(res3.status_code, status.HTTP_200_OK)
 
     def test_email_inexistant_repond_200(self):
+        # Anti-énumération : même réponse que pour un email valide
         res = self.api.post('/api/users/password-reset/', {'email': 'nobody@test.com'})
         self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertNotIn('token', res.data)
 
     def test_token_trop_court_mot_de_passe(self):
         token = PasswordResetToken.objects.create(user=self.user)
