@@ -5,11 +5,11 @@ from apps.demandes.serializers import DemandeSerializer
 
 
 class DevisSerializer(serializers.ModelSerializer):
-    demande_info   = DemandeSerializer(source='demande', read_only=True)
+    demande_info = DemandeSerializer(source='demande', read_only=True)
     statut_display = serializers.CharField(source='get_statut_display', read_only=True)
 
     class Meta:
-        model  = Devis
+        model = Devis
         fields = [
             'id', 'demande', 'demande_info', 'montant', 'description',
             'delai', 'statut', 'statut_display', 'date_creation', 'date_maj',
@@ -23,6 +23,6 @@ class DevisCreateSerializer(serializers.ModelSerializer):
     demande = serializers.PrimaryKeyRelatedField(queryset=Demande.objects.all())
 
     class Meta:
-        model      = Devis
-        fields     = ['demande', 'montant', 'description', 'delai']
+        model = Devis
+        fields = ['demande', 'montant', 'description', 'delai']
         validators = []

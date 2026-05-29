@@ -5,7 +5,7 @@ from apps.users.models import User
 
 class UserMinimalSerializer(serializers.ModelSerializer):
     class Meta:
-        model  = User
+        model = User
         fields = ['id', 'nom', 'prenom', 'photo']
 
 
@@ -13,26 +13,26 @@ class MessageSerializer(serializers.ModelSerializer):
     expediteur = UserMinimalSerializer(read_only=True)
 
     class Meta:
-        model  = Message
+        model = Message
         fields = ['id', 'conversation', 'expediteur', 'contenu', 'date_envoi', 'lu']
         read_only_fields = ['id', 'expediteur', 'date_envoi', 'lu']
 
 
 class ConversationSerializer(serializers.ModelSerializer):
-    client           = UserMinimalSerializer(read_only=True)
-    prestataire      = UserMinimalSerializer(read_only=True)
-    dernier_message  = serializers.SerializerMethodField()
-    non_lus          = serializers.SerializerMethodField()
+    client = UserMinimalSerializer(read_only=True)
+    prestataire = UserMinimalSerializer(read_only=True)
+    dernier_message = serializers.SerializerMethodField()
+    non_lus = serializers.SerializerMethodField()
 
     class Meta:
-        model  = Conversation
+        model = Conversation
         fields = ['id', 'demande', 'client', 'prestataire', 'created_at', 'dernier_message', 'non_lus']
 
     def get_dernier_message(self, obj):
         msg = obj.messages.last()
         if msg:
             return {
-                'contenu':    msg.contenu,
+                'contenu': msg.contenu,
                 'date_envoi': msg.date_envoi,
                 'expediteur': msg.expediteur.nom,
             }

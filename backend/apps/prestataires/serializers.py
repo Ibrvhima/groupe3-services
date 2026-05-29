@@ -5,14 +5,14 @@ from apps.users.serializers import UserSerializer
 
 class CategorieSerializer(serializers.ModelSerializer):
     class Meta:
-        model  = Categorie
+        model = Categorie
         fields = '__all__'
 
 
 class PrestataireSerializer(serializers.ModelSerializer):
-    user      = UserSerializer(read_only=True)
+    user = UserSerializer(read_only=True)
     categorie = CategorieSerializer(read_only=True)
-    photo     = serializers.SerializerMethodField()
+    photo = serializers.SerializerMethodField()
 
     def get_photo(self, obj):
         if not obj.photo:
@@ -20,7 +20,7 @@ class PrestataireSerializer(serializers.ModelSerializer):
         return obj.photo.url
 
     class Meta:
-        model  = Prestataire
+        model = Prestataire
         fields = [
             'id', 'uuid', 'user', 'categorie', 'description', 'quartier',
             'telephone', 'photo', 'disponible', 'approuve',
@@ -30,16 +30,16 @@ class PrestataireSerializer(serializers.ModelSerializer):
 
 class PrestataireWriteSerializer(serializers.ModelSerializer):
     class Meta:
-        model  = Prestataire
+        model = Prestataire
         fields = ['categorie', 'description', 'quartier', 'telephone', 'disponible', 'photo']
 
 
 class AdminPrestataireSerializer(serializers.ModelSerializer):
-    user      = UserSerializer(read_only=True)
+    user = UserSerializer(read_only=True)
     categorie = CategorieSerializer(read_only=True)
 
     class Meta:
-        model  = Prestataire
+        model = Prestataire
         fields = [
             'id', 'user', 'categorie', 'quartier', 'telephone',
             'description', 'photo', 'disponible', 'approuve', 'badge_verifie',
@@ -49,5 +49,5 @@ class AdminPrestataireSerializer(serializers.ModelSerializer):
 
 class AdminPrestataireUpdateSerializer(serializers.ModelSerializer):
     class Meta:
-        model  = Prestataire
+        model = Prestataire
         fields = ['badge_verifie', 'disponible', 'approuve', 'statut']

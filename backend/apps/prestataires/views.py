@@ -8,7 +8,7 @@ from apps.users.views import IsAdmin
 
 
 class CategorieViewSet(viewsets.ModelViewSet):
-    queryset         = Categorie.objects.all().order_by('nom')
+    queryset = Categorie.objects.all().order_by('nom')
     serializer_class = CategorieSerializer
     pagination_class = None
 
@@ -25,11 +25,11 @@ class PrestataireViewSet(viewsets.ModelViewSet):
         .select_related('user', 'categorie')
         .order_by('-note_moyenne', '-id')
     )
-    filter_backends    = [filters.SearchFilter, filters.OrderingFilter]
-    search_fields      = ['user__nom', 'user__prenom', 'quartier', 'description']
-    ordering_fields    = ['note_moyenne', 'created_at']
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['user__nom', 'user__prenom', 'quartier', 'description']
+    ordering_fields = ['note_moyenne', 'created_at']
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    lookup_field       = 'uuid'
+    lookup_field = 'uuid'
 
     def get_serializer_class(self):
         if self.action in ['create', 'update', 'partial_update']:
@@ -39,7 +39,7 @@ class PrestataireViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         qs = super().get_queryset()
         categorie = self.request.query_params.get('categorie')
-        quartier  = self.request.query_params.get('quartier')
+        quartier = self.request.query_params.get('quartier')
         if categorie:
             qs = qs.filter(categorie__id=categorie)
         if quartier:
@@ -58,7 +58,7 @@ class PrestataireViewSet(viewsets.ModelViewSet):
         return super().get_object()
 
     def partial_update(self, request, *args, **kwargs):
-        instance   = self.get_object()
+        instance = self.get_object()
         serializer = PrestataireWriteSerializer(instance, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()

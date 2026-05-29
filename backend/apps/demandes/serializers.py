@@ -5,13 +5,13 @@ from apps.prestataires.serializers import PrestataireSerializer
 
 
 class DemandeSerializer(serializers.ModelSerializer):
-    client_info      = UserSerializer(source='client', read_only=True)
+    client_info = UserSerializer(source='client', read_only=True)
     prestataire_info = PrestataireSerializer(source='prestataire', read_only=True)
-    statut_display   = serializers.CharField(source='get_statut_display', read_only=True)
-    has_avis  = serializers.SerializerMethodField()
+    statut_display = serializers.CharField(source='get_statut_display', read_only=True)
+    has_avis = serializers.SerializerMethodField()
     has_devis = serializers.SerializerMethodField()
-    # Données du devis imbriquées — évite un import circulaire avec devis.serializers
-    devis     = serializers.SerializerMethodField()
+    # import circulaire évité : données du devis calculées ici
+    devis = serializers.SerializerMethodField()
 
     def get_has_avis(self, obj):
         return hasattr(obj, 'avis')
@@ -24,17 +24,17 @@ class DemandeSerializer(serializers.ModelSerializer):
             return None
         d = obj.devis
         return {
-            'id':             d.id,
-            'montant':        str(d.montant),
-            'description':    d.description,
-            'delai':          d.delai,
-            'statut':         d.statut,
+            'id': d.id,
+            'montant': str(d.montant),
+            'description': d.description,
+            'delai': d.delai,
+            'statut': d.statut,
             'statut_display': d.get_statut_display(),
-            'date_creation':  d.date_creation.isoformat(),
+            'date_creation': d.date_creation.isoformat(),
         }
 
     class Meta:
-        model  = Demande
+        model = Demande
         fields = [
             'id', 'client', 'client_info', 'prestataire', 'prestataire_info',
             'description', 'adresse', 'date_souhaitee', 'statut', 'statut_display',
@@ -45,5 +45,5 @@ class DemandeSerializer(serializers.ModelSerializer):
 
 class DemandeCreateSerializer(serializers.ModelSerializer):
     class Meta:
-        model  = Demande
+        model = Demande
         fields = ['prestataire', 'description', 'adresse', 'date_souhaitee']

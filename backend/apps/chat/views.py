@@ -12,7 +12,7 @@ from apps.notifications.models import Notification
 
 class ConversationViewSet(viewsets.GenericViewSet):
     permission_classes = [permissions.IsAuthenticated]
-    serializer_class   = ConversationSerializer
+    serializer_class = ConversationSerializer
 
     def get_queryset(self):
         from django.db.models import Q
@@ -43,7 +43,7 @@ class ConversationViewSet(viewsets.GenericViewSet):
         conv, _ = Conversation.objects.get_or_create(
             demande=demande,
             defaults={
-                'client':      demande.client,
+                'client': demande.client,
                 'prestataire': prestataire_user,
             }
         )

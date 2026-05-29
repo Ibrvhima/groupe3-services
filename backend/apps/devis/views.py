@@ -15,7 +15,7 @@ def _notifier(user, titre, message):
 
 class DevisViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
-    http_method_names  = ['get', 'post', 'head', 'options']
+    http_method_names = ['get', 'post', 'head', 'options']
 
     def get_serializer_class(self):
         if self.action == 'create':

@@ -17,10 +17,10 @@ class IsAdmin(permissions.BasePermission):
 
 
 class RegisterView(generics.CreateAPIView):
-    queryset           = User.objects.all()
-    serializer_class   = RegisterSerializer
+    queryset = User.objects.all()
+    serializer_class = RegisterSerializer
     permission_classes = [permissions.AllowAny]
-    throttle_scope     = 'register'
+    throttle_scope = 'register'
 
     def create(self, request, *args, **kwargs):
         from django.db import transaction
@@ -59,36 +59,36 @@ class RegisterView(generics.CreateAPIView):
 
         tokens = RefreshToken.for_user(user)
         return Response({
-            'user':    UserSerializer(user).data,
-            'access':  str(tokens.access_token),
+            'user': UserSerializer(user).data,
+            'access': str(tokens.access_token),
             'refresh': str(tokens),
         })
 
 
 class LoginView(APIView):
     permission_classes = [permissions.AllowAny]
-    throttle_scope     = 'login'
+    throttle_scope = 'login'
 
     def post(self, request):
         from django.contrib.auth import authenticate
 
-        email    = request.data.get('email', '')
+        email = request.data.get('email', '')
         password = request.data.get('password', '')
-        user     = authenticate(request, username=email, password=password)
+        user = authenticate(request, username=email, password=password)
 
         if not user:
             return Response({'detail': 'Email ou mot de passe incorrect.'}, status=400)
 
         tokens = RefreshToken.for_user(user)
         return Response({
-            'access':  str(tokens.access_token),
+            'access': str(tokens.access_token),
             'refresh': str(tokens),
-            'user':    UserSerializer(user).data,
+            'user': UserSerializer(user).data,
         })
 
 
 class MeView(generics.RetrieveUpdateAPIView):
-    serializer_class   = UserSerializer
+    serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
@@ -121,17 +121,17 @@ class StatsView(APIView):
         )
 
         return Response({
-            'users':        user_agg,
+            'users': user_agg,
             'prestataires': prest_agg,
-            'demandes':     dem_agg,
-            'categories':   Categorie.objects.count(),
+            'demandes': dem_agg,
+            'categories': Categorie.objects.count(),
         })
 
 
 class AdminPrestataireListView(generics.ListAPIView):
-    serializer_class   = AdminPrestataireSerializer
+    serializer_class = AdminPrestataireSerializer
     permission_classes = [IsAdmin]
-    pagination_class   = None
+    pagination_class = None
 
     def get_queryset(self):
         qs = (
@@ -146,13 +146,13 @@ class AdminPrestataireListView(generics.ListAPIView):
 
 
 class AdminPrestataireUpdateView(generics.UpdateAPIView):
-    serializer_class   = AdminPrestataireUpdateSerializer
+    serializer_class = AdminPrestataireUpdateSerializer
     permission_classes = [IsAdmin]
-    queryset           = Prestataire.objects.all()
-    http_method_names  = ['patch']
+    queryset = Prestataire.objects.all()
+    http_method_names = ['patch']
 
     def patch(self, request, *args, **kwargs):
-        instance   = self.get_object()
+        instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -160,9 +160,9 @@ class AdminPrestataireUpdateView(generics.UpdateAPIView):
 
 
 class AdminClientListView(generics.ListAPIView):
-    serializer_class   = UserSerializer
+    serializer_class = UserSerializer
     permission_classes = [IsAdmin]
-    pagination_class   = None
+    pagination_class = None
 
     def get_queryset(self):
         return User.objects.filter(role='client').order_by('-created_at')
@@ -170,7 +170,7 @@ class AdminClientListView(generics.ListAPIView):
 
 class AdminUserDeleteView(generics.DestroyAPIView):
     permission_classes = [IsAdmin]
-    queryset           = User.objects.all()
+    queryset = User.objects.all()
 
     def destroy(self, request, *args, **kwargs):
         user = self.get_object()
@@ -185,7 +185,7 @@ class AdminUserDeleteView(generics.DestroyAPIView):
 
 class PasswordResetRequestView(APIView):
     permission_classes = [permissions.AllowAny]
-    throttle_scope     = 'password_reset'
+    throttle_scope = 'password_reset'
 
     REPONSE_GENERIQUE = {
         'detail': 'Si cet email est enregistré, un lien de réinitialisation a été envoyé.'
@@ -194,11 +194,11 @@ class PasswordResetRequestView(APIView):
     def post(self, request):
         email = request.data.get('email', '').strip()
         try:
-            user  = User.objects.get(email=email)
+            user = User.objects.get(email=email)
             token = PasswordResetToken.objects.create(user=user)
             self._envoyer_email(email, str(token.token))
         except User.DoesNotExist:
-            pass  # même réponse pour ne pas révéler si l'email existe
+            pass
 
         return Response(self.REPONSE_GENERIQUE)
 
@@ -207,8 +207,8 @@ class PasswordResetRequestView(APIView):
         import resend
 
         frontend_url = getattr(settings, 'FRONTEND_URL', 'http://localhost:4200')
-        reset_url    = f"{frontend_url}/auth/reset-password?token={token}"
-        api_key      = getattr(settings, 'RESEND_API_KEY', '')
+        reset_url = f"{frontend_url}/auth/reset-password?token={token}"
+        api_key = getattr(settings, 'RESEND_API_KEY', '')
 
         if not api_key:
             print(f"[PASSWORD RESET - DEV] {to_email} -> {reset_url}")
@@ -216,10 +216,10 @@ class PasswordResetRequestView(APIView):
 
         resend.api_key = api_key
         resend.Emails.send({
-            "from":    getattr(settings, 'EMAIL_FROM', 'DoraKa <onboarding@resend.dev>'),
-            "to":      [to_email],
+            "from": getattr(settings, 'EMAIL_FROM', 'DoraKa <onboarding@resend.dev>'),
+            "to": [to_email],
             "subject": "Réinitialisation de votre mot de passe DoraKa",
-            "html":    self._html_reset(reset_url),
+            "html": self._html_reset(reset_url),
         })
 
     @staticmethod
@@ -261,7 +261,7 @@ class PasswordResetConfirmView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
-        token_value  = request.data.get('token', '')
+        token_value = request.data.get('token', '')
         new_password = request.data.get('password', '')
 
         if not new_password or len(new_password) < 8:

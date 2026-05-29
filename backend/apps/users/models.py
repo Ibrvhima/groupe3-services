@@ -10,7 +10,7 @@ class UserManager(BaseUserManager):
         if not email:
             raise ValueError('L\'email est obligatoire')
         email = self.normalize_email(email)
-        user  = self.model(email=email, **extra_fields)
+        user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
@@ -24,24 +24,24 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     ROLES = [
-        ('client',       'Client'),
-        ('prestataire',  'Prestataire'),
-        ('admin',        'Admin'),
+        ('client', 'Client'),
+        ('prestataire', 'Prestataire'),
+        ('admin', 'Admin'),
     ]
 
-    email      = models.EmailField(unique=True)
-    nom        = models.CharField(max_length=100)
-    prenom     = models.CharField(max_length=100)
-    telephone  = models.CharField(max_length=20)
-    role       = models.CharField(max_length=20, choices=ROLES, default='client')
-    photo      = models.ImageField(upload_to='users/', null=True, blank=True)
-    is_active  = models.BooleanField(default=True)
-    is_staff   = models.BooleanField(default=False)
+    email = models.EmailField(unique=True)
+    nom = models.CharField(max_length=100)
+    prenom = models.CharField(max_length=100)
+    telephone = models.CharField(max_length=20)
+    role = models.CharField(max_length=20, choices=ROLES, default='client')
+    photo = models.ImageField(upload_to='users/', null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     objects = UserManager()
 
-    USERNAME_FIELD  = 'email'
+    USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['nom', 'prenom', 'telephone', 'role']
 
     def __str__(self):
@@ -49,13 +49,12 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class PasswordResetToken(models.Model):
-    user       = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reset_tokens')
-    token      = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reset_tokens')
+    token = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     expires_at = models.DateTimeField()
-    used       = models.BooleanField(default=False)
+    used = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
-        # Définit l'expiration à 1 h si nouveau token
         if not self.pk:
             self.expires_at = timezone.now() + timedelta(hours=1)
         super().save(*args, **kwargs)
