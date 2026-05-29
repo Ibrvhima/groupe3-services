@@ -118,4 +118,19 @@ class DemandeViewSet(viewsets.ModelViewSet):
             raise ValidationError(f"Impossible d'annuler une demande au statut '{demande.statut}'.")
         demande.statut = 'annulee'
         demande.save()
+
+        # Notifier l'autre partie
+        if request.user.role == 'client':
+            _notifier(
+                demande.prestataire.user,
+                "Demande annulée",
+                f"{request.user.nom} {request.user.prenom} a annulé sa demande.",
+            )
+        else:
+            _notifier(
+                demande.client,
+                "Demande annulée",
+                f"{request.user.nom} {request.user.prenom} a annulé la prestation.",
+            )
+
         return Response(DemandeSerializer(demande).data)
