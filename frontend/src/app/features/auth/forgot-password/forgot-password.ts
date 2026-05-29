@@ -12,10 +12,11 @@ import { environment } from '../../../../environments/environment';
   templateUrl: './forgot-password.html',
 })
 export class ForgotPasswordComponent {
-  email   = '';
-  loading = false;
-  sent    = false;   // true dès que l'API répond (quelle que soit la réponse)
-  error   = '';
+  email       = '';
+  loading     = false;
+  sent        = false;
+  error       = '';
+  devResetUrl = '';   // lien visible uniquement en mode dev (DEBUG=True, pas de Resend)
 
   private api = environment.apiUrl;
 
@@ -26,10 +27,11 @@ export class ForgotPasswordComponent {
     this.loading = true;
     this.error   = '';
 
-    this.http.post(`${this.api}/users/password-reset/`, { email: this.email }).subscribe({
-      next: () => {
-        this.sent    = true;
-        this.loading = false;
+    this.http.post<any>(`${this.api}/users/password-reset/`, { email: this.email }).subscribe({
+      next: (res) => {
+        this.devResetUrl = res?.dev_reset_url ?? '';
+        this.sent        = true;
+        this.loading     = false;
       },
       error: () => {
         this.error   = 'Une erreur est survenue. Réessayez.';

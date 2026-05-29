@@ -192,19 +192,26 @@ class PasswordResetRequestView(APIView):
     }
 
     def post(self, request):
+        from django.conf import settings
+
         email = request.data.get('email', '').strip()
+        dev_url = None
         try:
             user = User.objects.get(email=email)
             token = PasswordResetToken.objects.create(user=user)
-            self._envoyer_email(email, str(token.token))
+            dev_url = self._envoyer_email(email, str(token.token))
         except User.DoesNotExist:
             pass  # réponse identique pour ne pas révéler si l'email est enregistré
 
+        # En mode dev (pas de clé Resend) on renvoie le lien directement
+        # pour permettre les tests sans serveur email
+        if dev_url and getattr(settings, 'DEBUG', False):
+            return Response({**self.REPONSE_GENERIQUE, 'dev_reset_url': dev_url})
+
         return Response(self.REPONSE_GENERIQUE)
 
-    def _envoyer_email(self, to_email: str, token: str) -> None:
+    def _envoyer_email(self, to_email: str, token: str):
         from django.conf import settings
-        import resend
 
         frontend_url = getattr(settings, 'FRONTEND_URL', 'http://localhost:4200')
         reset_url = f"{frontend_url}/auth/reset-password?token={token}"
@@ -212,8 +219,9 @@ class PasswordResetRequestView(APIView):
 
         if not api_key:
             print(f"[PASSWORD RESET - DEV] {to_email} -> {reset_url}")
-            return
+            return reset_url   # retourné uniquement en dev
 
+        import resend
         resend.api_key = api_key
         resend.Emails.send({
             "from": getattr(settings, 'EMAIL_FROM', 'DoraKa <onboarding@resend.dev>'),
@@ -221,6 +229,7 @@ class PasswordResetRequestView(APIView):
             "subject": "Réinitialisation de votre mot de passe DoraKa",
             "html": self._html_reset(reset_url),
         })
+        return None
 
     @staticmethod
     def _html_reset(reset_url: str) -> str:

@@ -5,14 +5,12 @@ from django.db import migrations, models
 
 
 def drop_date_creation(apps, schema_editor):
-    # MySQL supporte "DROP COLUMN IF EXISTS" ; SQLite non — on utilise try/except
-    if schema_editor.connection.vendor == 'mysql':
-        schema_editor.execute("ALTER TABLE avis_avis DROP COLUMN IF EXISTS date_creation")
-    else:
-        try:
-            schema_editor.execute("ALTER TABLE avis_avis DROP COLUMN date_creation")
-        except Exception:
-            pass
+    # DROP COLUMN IF EXISTS n'est pas disponible sur toutes les versions MySQL
+    # on utilise un try/except pour ignorer si la colonne n'existe plus
+    try:
+        schema_editor.execute("ALTER TABLE avis_avis DROP COLUMN date_creation")
+    except Exception:
+        pass
 
 
 class Migration(migrations.Migration):
