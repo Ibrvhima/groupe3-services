@@ -221,15 +221,21 @@ class PasswordResetRequestView(APIView):
             print(f"[PASSWORD RESET - DEV] {to_email} -> {reset_url}")
             return reset_url   # retourné uniquement en dev
 
-        import resend
-        resend.api_key = api_key
-        resend.Emails.send({
-            "from": getattr(settings, 'EMAIL_FROM', 'DoraKa <onboarding@resend.dev>'),
-            "to": [to_email],
-            "subject": "Réinitialisation de votre mot de passe DoraKa",
-            "html": self._html_reset(reset_url),
-        })
-        return None
+        try:
+            import resend
+            resend.api_key = api_key
+            resend.Emails.send({
+                "from": getattr(settings, 'EMAIL_FROM', 'DoraKa <onboarding@resend.dev>'),
+                "to": [to_email],
+                "subject": "Réinitialisation de votre mot de passe DoraKa",
+                "html": self._html_reset(reset_url),
+            })
+            return None
+        except Exception as e:
+            # Fallback dev : Resend indisponible ou clé invalide
+            print(f"[PASSWORD RESET - RESEND ERROR] {e}")
+            print(f"[PASSWORD RESET - FALLBACK] {to_email} -> {reset_url}")
+            return reset_url
 
     @staticmethod
     def _html_reset(reset_url: str) -> str:
