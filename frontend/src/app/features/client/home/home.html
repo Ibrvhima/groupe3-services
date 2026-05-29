@@ -4,7 +4,7 @@
 
   <div class="max-w-6xl mx-auto px-4 py-6">
     <!-- Bannière -->
-    <div class="bg-gradient-to-r from-orange-700 to-orange-500 rounded-2xl p-5 mb-6 text-white relative overflow-hidden">
+    <div class="bg-gradient-to-r from-orange-700 to-orange-500 rounded-xl p-5 mb-6 text-white relative overflow-hidden">
       <div class="absolute right-0 top-0 w-32 h-32 bg-amber-400 opacity-10 rounded-full -translate-y-8 translate-x-8"></div>
       <p class="text-xs opacity-80 mb-1">Bienvenue sur DouraKa 🇬🇳</p>
       <h1 class="text-xl font-bold mb-1">Trouvez un prestataire fiable</h1>
@@ -89,7 +89,7 @@
     <div *ngIf="!loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <div
         *ngFor="let p of prestataires"
-        class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition"
+        class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 hover:shadow-sm transition"
       >
         <!-- Top card -->
         <div class="flex items-center gap-3 mb-3">
@@ -115,7 +115,7 @@
               <svg
                 *ngIf="p.badge_verifie"
                 xmlns="http://www.w3.org/2000/svg"
-                class="w-3.5 h-3.5 text-orange-500 flex-shrink-0"
+                class="w-3.5 h-3.5 text-orange-600 flex-shrink-0"
                 viewBox="0 0 20 20"
                 fill="currentColor"
               >

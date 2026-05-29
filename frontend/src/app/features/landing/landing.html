@@ -1,6 +1,6 @@
 <div class="min-h-screen bg-white">
 
-  <!-- ══ NAVBAR ═══════════════════════════════════════════════════════ -->
+  <!-- navbar -->
   <header class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-100 shadow-sm">
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
       <div class="flex items-center gap-2">
@@ -26,7 +26,7 @@
     </div>
   </header>
 
-  <!-- ══ HERO ══════════════════════════════════════════════════════════ -->
+  <!-- hero -->
   <section class="relative min-h-[88vh] flex items-center overflow-hidden">
 
     <!-- Image de fond : ouvrier africain en chantier -->
@@ -61,7 +61,7 @@
         <div class="flex flex-col sm:flex-row gap-3">
           <a routerLink="/auth/register"
             class="inline-flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700
-                   text-white font-bold px-8 py-3.5 rounded-2xl transition text-sm shadow-sm">
+                   text-white font-bold px-8 py-3.5 rounded-xl transition text-sm shadow-sm">
             Trouver un prestataire
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -69,7 +69,7 @@
           </a>
           <a routerLink="/auth/register"
             class="inline-flex items-center justify-center bg-white/15 hover:bg-white/25
-                   text-white font-semibold px-8 py-3.5 rounded-2xl transition text-sm border border-white/30 backdrop-blur">
+                   text-white font-semibold px-8 py-3.5 rounded-xl transition text-sm border border-white/30 backdrop-blur">
             Je suis prestataire
           </a>
         </div>
@@ -84,7 +84,7 @@
     </div>
   </section>
 
-  <!-- ══ CHIFFRES CLÉS ═════════════════════════════════════════════════ -->
+  <!-- chiffres clés -->
   <section class="bg-orange-600 py-8 px-4">
     <div class="max-w-3xl mx-auto grid grid-cols-3 gap-6 text-center text-white">
       <div>
@@ -102,7 +102,7 @@
     </div>
   </section>
 
-  <!-- ══ CATÉGORIES ════════════════════════════════════════════════════ -->
+  <!-- catégories -->
   <section class="py-16 px-4 bg-gray-50">
     <div class="max-w-5xl mx-auto">
       <div class="text-center mb-10">
@@ -112,14 +112,14 @@
 
       <!-- Skeleton pendant le chargement -->
       <div *ngIf="categories.length === 0" class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-        <div *ngFor="let _ of [1,2,3,4,5,6]" class="bg-gray-200 rounded-2xl h-44 animate-pulse"></div>
+        <div *ngFor="let _ of [1,2,3,4,5,6]" class="bg-gray-200 rounded-xl h-44 animate-pulse"></div>
       </div>
 
       <!-- Cards catégories avec photo -->
       <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
         <a *ngFor="let cat of categories"
           routerLink="/auth/register"
-          class="group relative rounded-2xl overflow-hidden shadow-sm hover:shadow-sm transition-shadow cursor-pointer h-44">
+          class="group relative rounded-xl overflow-hidden shadow-sm hover:shadow-sm transition-shadow cursor-pointer h-44">
 
           <!-- Photo de fond -->
           <img [src]="getCategoryImage(cat.nom)"
@@ -140,7 +140,7 @@
     </div>
   </section>
 
-  <!-- ══ COMMENT ÇA MARCHE ════════════════════════════════════════════ -->
+  <!-- comment ça marche -->
   <section class="py-16 px-4 bg-white">
     <div class="max-w-5xl mx-auto">
       <div class="text-center mb-12">
@@ -151,7 +151,7 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
 
         <!-- Image mise en relation -->
-        <div class="relative rounded-3xl overflow-hidden shadow-xl h-72 md:h-96">
+        <div class="relative rounded-xl overflow-hidden shadow-sm h-72 md:h-96">
           <img
             src="https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=800&q=80"
             alt="Mise en relation professionnelle"
@@ -166,7 +166,7 @@
         <!-- Étapes -->
         <div class="space-y-6">
           <div class="flex items-start gap-4">
-            <div class="w-10 h-10 bg-orange-100 rounded-2xl flex items-center justify-center flex-shrink-0">
+            <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center flex-shrink-0">
               <span class="text-orange-600 font-extrabold">1</span>
             </div>
             <div>
@@ -176,7 +176,7 @@
           </div>
 
           <div class="flex items-start gap-4">
-            <div class="w-10 h-10 bg-amber-100 rounded-2xl flex items-center justify-center flex-shrink-0">
+            <div class="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0">
               <span class="text-amber-600 font-extrabold">2</span>
             </div>
             <div>
@@ -186,7 +186,7 @@
           </div>
 
           <div class="flex items-start gap-4">
-            <div class="w-10 h-10 bg-emerald-100 rounded-2xl flex items-center justify-center flex-shrink-0">
+            <div class="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center flex-shrink-0">
               <span class="text-emerald-600 font-extrabold">3</span>
             </div>
             <div>
@@ -196,7 +196,7 @@
           </div>
 
           <div class="flex items-start gap-4">
-            <div class="w-10 h-10 bg-orange-100 rounded-2xl flex items-center justify-center flex-shrink-0">
+            <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center flex-shrink-0">
               <span class="text-orange-600 font-extrabold">4</span>
             </div>
             <div>
@@ -207,7 +207,7 @@
 
           <a routerLink="/auth/register"
             class="inline-flex items-center gap-2 bg-orange-600 text-white font-semibold
-                   px-6 py-3 rounded-2xl hover:bg-orange-700 transition text-sm">
+                   px-6 py-3 rounded-xl hover:bg-orange-700 transition text-sm">
             Commencer maintenant
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -219,7 +219,7 @@
     </div>
   </section>
 
-  <!-- ══ MEILLEURS PRESTATAIRES ════════════════════════════════════════ -->
+  <!-- meilleurs prestataires -->
   <section *ngIf="prestataires.length > 0" class="py-16 px-4 bg-gray-50">
     <div class="max-w-5xl mx-auto">
       <div class="text-center mb-10">
@@ -229,7 +229,7 @@
 
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         <div *ngFor="let p of prestataires"
-          class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition">
+          class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-sm transition">
 
           <!-- Photo ou bandeau coloré -->
           <div class="h-28 bg-gradient-to-br from-orange-500 to-orange-700 relative flex items-center justify-center">
@@ -264,14 +264,14 @@
 
       <div class="text-center mt-8">
         <a routerLink="/auth/register"
-          class="inline-block bg-orange-600 text-white font-semibold px-8 py-3 rounded-2xl hover:bg-orange-700 transition text-sm">
+          class="inline-block bg-orange-600 text-white font-semibold px-8 py-3 rounded-xl hover:bg-orange-700 transition text-sm">
           Voir tous les prestataires
         </a>
       </div>
     </div>
   </section>
 
-  <!-- ══ BANDEAU PRESTATAIRE ═══════════════════════════════════════════ -->
+  <!-- bandeau prestataire -->
   <section class="relative py-16 px-4 overflow-hidden">
     <img
       src="https://images.unsplash.com/photo-1650753174235-7dae04cefd0d?auto=format&fit=crop&w=1600&q=80"
@@ -285,13 +285,13 @@
         Rejoignez DouraKa, développez votre clientèle et gérez vos demandes facilement depuis votre téléphone.
       </p>
       <a routerLink="/auth/register"
-        class="inline-block bg-orange-600 hover:bg-orange-700 text-white font-bold px-8 py-3 rounded-2xl transition text-sm">
+        class="inline-block bg-orange-600 hover:bg-orange-700 text-white font-bold px-8 py-3 rounded-xl transition text-sm">
         Inscrire mon activité gratuitement
       </a>
     </div>
   </section>
 
-  <!-- ══ FOOTER ════════════════════════════════════════════════════════ -->
+  <!-- footer -->
   <footer class="bg-gray-900 text-gray-400 py-8 px-4">
     <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
       <div>

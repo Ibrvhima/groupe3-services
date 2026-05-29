@@ -3,7 +3,7 @@
 
   <!-- Spinner initial -->
   <div *ngIf="loading" class="flex flex-col items-center justify-center py-32 gap-3">
-    <div class="w-10 h-10 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+    <div class="w-10 h-10 border-4 border-orange-600 border-t-transparent rounded-full animate-spin"></div>
     <p class="text-sm text-slate-400">Chargement…</p>
   </div>
 
@@ -16,45 +16,45 @@
         <p class="text-xs text-slate-400 mt-0.5">Administration · DouraKa</p>
       </div>
 
-      <nav class="flex gap-1 bg-white rounded-2xl border border-slate-200 p-1 shadow-sm">
+      <nav class="flex gap-1 bg-white rounded-xl border border-slate-200 p-1 shadow-sm">
         <button *ngFor="let t of tabs"
           (click)="setOnglet(t.id)"
           [class]="t.id === onglet
-            ? 'px-4 py-2 rounded-xl bg-orange-600 text-white text-xs font-semibold transition-all'
-            : 'px-4 py-2 rounded-xl text-slate-500 hover:bg-slate-50 text-xs font-medium transition-all'">
+            ? 'px-4 py-2 rounded-xl bg-orange-600 text-white text-xs font-semibold transition'
+            : 'px-4 py-2 rounded-xl text-slate-500 hover:bg-slate-50 text-xs font-medium transition'">
           {{ t.label }}
         </button>
       </nav>
     </div>
 
-    <!-- ══ STATISTIQUES ══════════════════════════════════════════════ -->
+    <!-- statistiques -->
     <div [hidden]="onglet !== 'stats'">
       <div *ngIf="stats">
 
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
+          <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
             <p class="text-3xl font-bold text-orange-600">{{ stats.users.total }}</p>
             <p class="text-xs text-slate-500 mt-1">Utilisateurs</p>
             <p class="text-xs text-slate-300 mt-0.5">{{ stats.users.clients }} clients · {{ stats.users.prestataires }} pros</p>
           </div>
-          <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
+          <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
             <p class="text-3xl font-bold text-orange-600">{{ stats.prestataires.total }}</p>
             <p class="text-xs text-slate-500 mt-1">Prestataires</p>
             <p class="text-xs text-slate-300 mt-0.5">{{ stats.prestataires.verifies }} vérifiés</p>
           </div>
-          <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
+          <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
             <p class="text-3xl font-bold text-amber-500">{{ stats.demandes.total }}</p>
             <p class="text-xs text-slate-500 mt-1">Demandes</p>
             <p class="text-xs text-amber-400 mt-0.5">{{ stats.demandes.en_attente }} en attente</p>
           </div>
-          <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
+          <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
             <p class="text-3xl font-bold text-emerald-600">{{ stats.demandes.terminees }}</p>
             <p class="text-xs text-slate-500 mt-1">Terminées</p>
             <p class="text-xs text-slate-300 mt-0.5">{{ stats.categories }} catégories</p>
           </div>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-5">
           <h2 class="text-sm font-semibold text-slate-700 mb-4">Répartition des demandes</h2>
           <div class="space-y-3">
             <div *ngFor="let item of [
@@ -75,19 +75,19 @@
       </div>
     </div>
 
-    <!-- ══ PRESTATAIRES ══════════════════════════════════════════════ -->
+    <!-- prestataires -->
     <div [hidden]="onglet !== 'prestataires'">
 
       <p class="text-xs text-slate-400 mb-4">{{ prestataires.length }} prestataire(s) inscrit(s)</p>
 
       <p *ngIf="prestataires.length === 0"
-        class="text-center text-sm text-slate-400 py-12 bg-white rounded-2xl border border-slate-100">
+        class="text-center text-sm text-slate-400 py-12 bg-white rounded-xl border border-slate-100">
         Aucun prestataire inscrit.
       </p>
 
       <div class="space-y-3">
         <div *ngFor="let p of prestataires"
-          class="bg-white rounded-2xl border border-slate-100 shadow-sm p-4">
+          class="bg-white rounded-xl border border-slate-100 shadow-sm p-4">
 
           <div class="flex items-start justify-between gap-3">
             <div class="flex items-center gap-3 min-w-0">
@@ -135,7 +135,7 @@
 
             <button (click)="toggleBadge(p)" [disabled]="prestActionId === p.id"
               [class]="p.badge_verifie
-                ? 'text-xs px-3 py-1.5 rounded-xl bg-orange-500 text-white font-medium hover:bg-orange-600 disabled:opacity-50 transition'
+                ? 'text-xs px-3 py-1.5 rounded-xl bg-orange-600 text-white font-medium hover:bg-orange-600 disabled:opacity-50 transition'
                 : 'text-xs px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 font-medium hover:bg-slate-200 disabled:opacity-50 transition'">
               {{ p.badge_verifie ? 'Retirer la certification' : 'Certifier' }}
             </button>
@@ -160,19 +160,19 @@
       </div>
     </div>
 
-    <!-- ══ CLIENTS ═══════════════════════════════════════════════════ -->
+    <!-- clients -->
     <div [hidden]="onglet !== 'clients'">
 
       <p class="text-xs text-slate-400 mb-4">{{ clients.length }} client(s) inscrit(s)</p>
 
       <p *ngIf="clients.length === 0"
-        class="text-center text-sm text-slate-400 py-12 bg-white rounded-2xl border border-slate-100">
+        class="text-center text-sm text-slate-400 py-12 bg-white rounded-xl border border-slate-100">
         Aucun client inscrit.
       </p>
 
       <div class="space-y-2">
         <div *ngFor="let c of clients"
-          class="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 flex items-center justify-between gap-3">
+          class="bg-white rounded-xl border border-slate-100 shadow-sm p-4 flex items-center justify-between gap-3">
           <div class="flex items-center gap-3 min-w-0">
             <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
               <span class="text-amber-700 font-bold text-sm">{{ c.nom.charAt(0) }}{{ c.prenom.charAt(0) }}</span>
@@ -191,19 +191,19 @@
       </div>
     </div>
 
-    <!-- ══ DEMANDES ═════════════════════════════════════════════════ -->
+    <!-- demandes -->
     <div [hidden]="onglet !== 'demandes'">
 
       <p class="text-xs text-slate-400 mb-4">{{ demandes.length }} demande(s) au total</p>
 
       <p *ngIf="demandes.length === 0"
-        class="text-center text-sm text-slate-400 py-12 bg-white rounded-2xl border border-slate-100">
+        class="text-center text-sm text-slate-400 py-12 bg-white rounded-xl border border-slate-100">
         Aucune demande.
       </p>
 
       <div class="space-y-3">
         <div *ngFor="let d of demandes"
-          class="bg-white rounded-2xl border border-slate-100 shadow-sm p-4">
+          class="bg-white rounded-xl border border-slate-100 shadow-sm p-4">
 
           <!-- En-tête : client → prestataire + statut -->
           <div class="flex items-start justify-between gap-3 mb-2">
@@ -236,10 +236,10 @@
       </div>
     </div>
 
-    <!-- ══ CATÉGORIES ════════════════════════════════════════════════ -->
+    <!-- catégories -->
     <div [hidden]="onglet !== 'categories'">
 
-      <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 mb-4">
+      <div class="bg-white rounded-xl border border-slate-100 shadow-sm p-5 mb-4">
         <h3 class="text-sm font-semibold text-slate-700 mb-3">Ajouter une catégorie</h3>
 
         <div *ngIf="catError"   class="text-xs text-red-500 bg-red-50 rounded-xl px-3 py-2 mb-3">{{ catError }}</div>
@@ -259,7 +259,7 @@
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div *ngFor="let cat of categories"
-          class="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 flex items-center justify-between">
+          class="bg-white rounded-xl border border-slate-100 shadow-sm p-4 flex items-center justify-between">
           <div>
             <p class="text-sm font-semibold text-slate-800">{{ cat.nom }}</p>
             <p *ngIf="cat.description" class="text-xs text-slate-400">{{ cat.description }}</p>

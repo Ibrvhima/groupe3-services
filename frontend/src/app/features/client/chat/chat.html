@@ -128,7 +128,7 @@
          [class.justify-end]="isFromMe(msg)"
          [class.justify-start]="!isFromMe(msg)">
       <div class="max-w-[75%]">
-        <div class="px-4 py-2.5 rounded-2xl text-sm leading-relaxed"
+        <div class="px-4 py-2.5 rounded-xl text-sm leading-relaxed"
              [class.bg-orange-600]="isFromMe(msg)"
              [class.text-white]="isFromMe(msg)"
              [class.rounded-br-sm]="isFromMe(msg)"
@@ -149,11 +149,11 @@
   <div class="flex-shrink-0 px-3 py-3 border-t border-gray-100 bg-white flex items-end gap-2">
     <textarea [(ngModel)]="contenu" (keydown)="onEnter($event)" rows="1"
       placeholder="Écrire un message…"
-      class="flex-1 resize-none rounded-2xl border border-gray-200 px-4 py-2.5 text-sm
+      class="flex-1 resize-none rounded-xl border border-gray-200 px-4 py-2.5 text-sm
              focus:outline-none focus:ring-2 focus:ring-orange-300 max-h-28 overflow-y-auto">
     </textarea>
     <button (click)="envoyer()" [disabled]="!contenu.trim() || sending"
-      class="flex-shrink-0 bg-orange-600 text-white rounded-2xl w-10 h-10 flex items-center justify-center
+      class="flex-shrink-0 bg-orange-600 text-white rounded-xl w-10 h-10 flex items-center justify-center
              hover:bg-orange-700 transition disabled:opacity-40 disabled:cursor-not-allowed">
       <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
