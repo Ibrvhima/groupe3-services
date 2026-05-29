@@ -3,7 +3,7 @@
 
   <!-- Spinner initial -->
   <div *ngIf="loading" class="flex justify-center items-center py-32">
-    <div class="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+    <div class="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
   </div>
 
   <div *ngIf="!loading" class="max-w-lg mx-auto px-4 py-6">
@@ -35,14 +35,14 @@
 
       <div class="flex items-center gap-4">
         <!-- Avatar actuel ou prévisualisation -->
-        <div class="w-20 h-20 rounded-2xl overflow-hidden bg-blue-100 flex-shrink-0 flex items-center justify-center">
+        <div class="w-20 h-20 rounded-2xl overflow-hidden bg-orange-100 flex-shrink-0 flex items-center justify-center">
           <img *ngIf="photoPreview || profil?.photo"
             [src]="photoPreview || (mediaUrl + profil?.photo)"
             alt="Photo de profil"
             class="w-full h-full object-cover"/>
           <!-- Initiales si pas de photo -->
           <span *ngIf="!photoPreview && !profil?.photo"
-            class="text-2xl font-bold text-blue-600">
+            class="text-2xl font-bold text-orange-600">
             {{ profil?.user?.nom?.charAt(0) }}{{ profil?.user?.prenom?.charAt(0) }}
           </span>
         </div>
@@ -50,7 +50,7 @@
         <!-- Bouton d'upload -->
         <div>
           <label class="cursor-pointer inline-flex items-center gap-2 text-sm font-medium
-                         bg-blue-50 text-blue-600 px-4 py-2 rounded-xl hover:bg-blue-100 transition">
+                         bg-orange-50 text-orange-600 px-4 py-2 rounded-xl hover:bg-orange-100 transition">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
@@ -73,7 +73,7 @@
         <label class="block text-xs font-medium text-gray-600 mb-1">Catégorie de service</label>
         <select [(ngModel)]="form.categorie_id"
           class="w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5
-                 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                 focus:outline-none focus:ring-2 focus:ring-orange-400">
           <option [ngValue]="null">-- Sélectionner --</option>
           <option *ngFor="let c of categories" [ngValue]="c.id">{{ c.nom }}</option>
         </select>
@@ -84,7 +84,7 @@
         <label class="block text-xs font-medium text-gray-600 mb-1">Quartier</label>
         <input [(ngModel)]="form.quartier" type="text" placeholder="Ex : Kaloum, Matam..."
           class="w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5
-                 focus:outline-none focus:ring-2 focus:ring-blue-400"/>
+                 focus:outline-none focus:ring-2 focus:ring-orange-400"/>
       </div>
 
       <!-- Téléphone -->
@@ -92,7 +92,7 @@
         <label class="block text-xs font-medium text-gray-600 mb-1">Téléphone professionnel</label>
         <input [(ngModel)]="form.telephone" type="tel" placeholder="Ex : 620 00 00 00"
           class="w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5
-                 focus:outline-none focus:ring-2 focus:ring-blue-400"/>
+                 focus:outline-none focus:ring-2 focus:ring-orange-400"/>
       </div>
 
       <!-- Description -->
@@ -101,13 +101,13 @@
         <textarea [(ngModel)]="form.description" rows="4"
           placeholder="Décrivez votre expertise, vos années d'expérience..."
           class="w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5
-                 focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"></textarea>
+                 focus:outline-none focus:ring-2 focus:ring-orange-400 resize-none"></textarea>
       </div>
 
       <!-- Bouton sauvegarder -->
       <button (click)="sauvegarder()" [disabled]="saving"
-        class="w-full bg-blue-600 text-white text-sm font-semibold py-3 rounded-xl
-               hover:bg-blue-700 disabled:opacity-50 transition">
+        class="w-full bg-orange-600 text-white text-sm font-semibold py-3 rounded-xl
+               hover:bg-orange-700 disabled:opacity-50 transition">
         {{ saving ? 'Enregistrement…' : 'Sauvegarder les modifications' }}
       </button>
     </div>

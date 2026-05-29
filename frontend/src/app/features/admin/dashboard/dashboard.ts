@@ -83,8 +83,8 @@ export class AdminDashboardComponent implements OnInit {
   statutClass(statut: string): string {
     const map: Record<string, string> = {
       en_attente: 'bg-amber-50 text-amber-600',
-      acceptee:   'bg-blue-50 text-blue-600',
-      en_cours:   'bg-blue-50 text-blue-600',
+      acceptee:   'bg-sky-50 text-sky-600',
+      en_cours:   'bg-indigo-50 text-indigo-600',
       terminee:   'bg-emerald-50 text-emerald-600',
       refusee:    'bg-red-50 text-red-400',
       annulee:    'bg-slate-100 text-slate-500',

@@ -4,12 +4,12 @@
   <div class="max-w-2xl mx-auto px-3 py-4">
     <div class="flex items-center justify-between mb-4">
       <h1 class="text-lg font-bold text-gray-800">Mes demandes</h1>
-      <a routerLink="/client" class="text-xs text-blue-600 hover:underline">Trouver un prestataire</a>
+      <a routerLink="/client" class="text-xs text-orange-600 hover:underline">Trouver un prestataire</a>
     </div>
 
     <!-- Chargement -->
     <div *ngIf="loading" class="flex justify-center py-16">
-      <div class="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+      <div class="w-8 h-8 border-4 border-orange-600 border-t-transparent rounded-full animate-spin"></div>
     </div>
 
     <!-- Liste vide -->
@@ -20,7 +20,7 @@
           d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
       </svg>
       <p class="text-gray-400 text-sm">Aucune demande pour l'instant</p>
-      <a routerLink="/client" class="text-blue-600 text-sm mt-2 inline-block">Trouver un prestataire</a>
+      <a routerLink="/client" class="text-orange-600 text-sm mt-2 inline-block">Trouver un prestataire</a>
     </div>
 
     <!-- Liste des demandes -->
@@ -34,7 +34,7 @@
             <p class="text-sm font-semibold text-gray-800">
               {{ d.prestataire_info.user.nom }} {{ d.prestataire_info.user.prenom }}
             </p>
-            <p class="text-xs text-blue-600">{{ d.prestataire_info.categorie?.nom }}</p>
+            <p class="text-xs text-orange-600">{{ d.prestataire_info.categorie?.nom }}</p>
           </div>
           <span [class]="'text-xs font-medium px-2.5 py-1 rounded-full ' + statutClass(d.statut)">
             {{ d.statut_display }}
@@ -106,7 +106,7 @@
           <!-- Ouvrir le chat -->
           <a *ngIf="d.statut !== 'annulee' && d.statut !== 'refusee'"
             [routerLink]="['/client/chat']" [queryParams]="{ demandeId: d.id }"
-            class="flex items-center justify-center gap-2 w-full bg-blue-600 hover:bg-blue-700
+            class="flex items-center justify-center gap-2 w-full bg-orange-600 hover:bg-orange-700
                    text-white text-sm font-semibold py-2.5 rounded-xl transition shadow-sm">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

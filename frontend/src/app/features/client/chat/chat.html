@@ -20,11 +20,11 @@
       </div>
       <ul *ngIf="!loading && conversations.length > 0" class="flex-1 overflow-y-auto divide-y divide-gray-50">
         <li *ngFor="let conv of conversations" (click)="selectionner(conv)"
-            class="px-4 py-3 cursor-pointer hover:bg-blue-50 transition"
-            [class.bg-blue-50]="convActive?.id === conv.id">
+            class="px-4 py-3 cursor-pointer hover:bg-orange-50 transition"
+            [class.bg-orange-50]="convActive?.id === conv.id">
           <div class="flex items-center justify-between">
             <span class="font-medium text-gray-800 text-sm truncate">{{ interlocuteur(conv) }}</span>
-            <span *ngIf="conv.non_lus > 0" class="bg-blue-600 text-white text-xs rounded-full px-1.5 py-0.5 ml-1 flex-shrink-0">{{ conv.non_lus }}</span>
+            <span *ngIf="conv.non_lus > 0" class="bg-orange-600 text-white text-xs rounded-full px-1.5 py-0.5 ml-1 flex-shrink-0">{{ conv.non_lus }}</span>
           </div>
           <p *ngIf="conv.dernier_message" class="text-xs text-gray-500 truncate mt-0.5">{{ conv.dernier_message.contenu }}</p>
           <p *ngIf="!conv.dernier_message" class="text-xs text-gray-400 mt-0.5 italic">Aucun message</p>
@@ -64,14 +64,14 @@
       </div>
       <ul *ngIf="!loading && conversations.length > 0" class="flex-1 overflow-y-auto divide-y divide-gray-100 bg-white">
         <li *ngFor="let conv of conversations" (click)="selectionner(conv)"
-            class="px-4 py-4 cursor-pointer hover:bg-blue-50 active:bg-blue-50 transition flex items-center gap-3">
-          <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-sm flex-shrink-0">
+            class="px-4 py-4 cursor-pointer hover:bg-orange-50 active:bg-orange-50 transition flex items-center gap-3">
+          <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 font-bold text-sm flex-shrink-0">
             {{ interlocuteur(conv).charAt(0) }}
           </div>
           <div class="flex-1 min-w-0">
             <div class="flex items-center justify-between">
               <span class="font-semibold text-gray-800 text-sm truncate">{{ interlocuteur(conv) }}</span>
-              <span *ngIf="conv.non_lus > 0" class="bg-blue-600 text-white text-xs rounded-full px-1.5 py-0.5 ml-2 flex-shrink-0">{{ conv.non_lus }}</span>
+              <span *ngIf="conv.non_lus > 0" class="bg-orange-600 text-white text-xs rounded-full px-1.5 py-0.5 ml-2 flex-shrink-0">{{ conv.non_lus }}</span>
             </div>
             <p *ngIf="conv.dernier_message" class="text-xs text-gray-500 truncate mt-0.5">{{ conv.dernier_message.contenu }}</p>
             <p *ngIf="!conv.dernier_message" class="text-xs text-gray-400 mt-0.5 italic">Aucun message</p>
@@ -87,12 +87,12 @@
     <div *ngIf="convActive" class="flex-1 min-h-0 flex flex-col bg-white">
       <!-- Header mobile avec bouton retour -->
       <div class="px-4 py-3 border-b border-gray-100 flex items-center gap-3 flex-shrink-0">
-        <button (click)="retourListe()" class="p-1 -ml-1 text-gray-500 hover:text-blue-600 transition">
+        <button (click)="retourListe()" class="p-1 -ml-1 text-gray-500 hover:text-orange-600 transition">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
           </svg>
         </button>
-        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-xs flex-shrink-0">
+        <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 font-bold text-xs flex-shrink-0">
           {{ interlocuteur(convActive).charAt(0) }}
         </div>
         <div>
@@ -110,7 +110,7 @@
 <ng-template #tplMessages>
   <!-- En-tête desktop uniquement -->
   <div class="hidden md:flex px-5 py-3 border-b border-gray-100 items-center gap-3 flex-shrink-0">
-    <div class="w-9 h-9 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-sm flex-shrink-0">
+    <div class="w-9 h-9 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 font-bold text-sm flex-shrink-0">
       {{ interlocuteur(convActive!).charAt(0) }}
     </div>
     <div>
@@ -129,7 +129,7 @@
          [class.justify-start]="!isFromMe(msg)">
       <div class="max-w-[75%]">
         <div class="px-4 py-2.5 rounded-2xl text-sm leading-relaxed"
-             [class.bg-blue-600]="isFromMe(msg)"
+             [class.bg-orange-600]="isFromMe(msg)"
              [class.text-white]="isFromMe(msg)"
              [class.rounded-br-sm]="isFromMe(msg)"
              [class.bg-gray-100]="!isFromMe(msg)"
@@ -150,11 +150,11 @@
     <textarea [(ngModel)]="contenu" (keydown)="onEnter($event)" rows="1"
       placeholder="Écrire un message…"
       class="flex-1 resize-none rounded-2xl border border-gray-200 px-4 py-2.5 text-sm
-             focus:outline-none focus:ring-2 focus:ring-blue-300 max-h-28 overflow-y-auto">
+             focus:outline-none focus:ring-2 focus:ring-orange-300 max-h-28 overflow-y-auto">
     </textarea>
     <button (click)="envoyer()" [disabled]="!contenu.trim() || sending"
-      class="flex-shrink-0 bg-blue-600 text-white rounded-2xl w-10 h-10 flex items-center justify-center
-             hover:bg-blue-700 transition disabled:opacity-40 disabled:cursor-not-allowed">
+      class="flex-shrink-0 bg-orange-600 text-white rounded-2xl w-10 h-10 flex items-center justify-center
+             hover:bg-orange-700 transition disabled:opacity-40 disabled:cursor-not-allowed">
       <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
       </svg>

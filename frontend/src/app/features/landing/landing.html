@@ -4,7 +4,7 @@
   <header class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-100 shadow-sm">
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
       <div class="flex items-center gap-2">
-        <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+        <div class="w-8 h-8 bg-orange-600 rounded-lg flex items-center justify-center">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
@@ -15,11 +15,11 @@
       </div>
       <div class="flex items-center gap-2">
         <a routerLink="/auth/login"
-          class="text-sm text-gray-600 hover:text-blue-600 px-3 py-1.5 rounded-xl transition">
+          class="text-sm text-gray-600 hover:text-orange-600 px-3 py-1.5 rounded-xl transition">
           Connexion
         </a>
         <a routerLink="/auth/register"
-          class="text-sm font-semibold bg-blue-600 text-white px-4 py-1.5 rounded-xl hover:bg-blue-700 transition">
+          class="text-sm font-semibold bg-orange-600 text-white px-4 py-1.5 rounded-xl hover:bg-orange-700 transition">
           S'inscrire
         </a>
       </div>
@@ -85,19 +85,19 @@
   </section>
 
   <!-- ══ CHIFFRES CLÉS ═════════════════════════════════════════════════ -->
-  <section class="bg-blue-600 py-8 px-4">
+  <section class="bg-orange-600 py-8 px-4">
     <div class="max-w-3xl mx-auto grid grid-cols-3 gap-6 text-center text-white">
       <div>
         <p class="text-3xl font-extrabold">100+</p>
-        <p class="text-xs text-blue-200 mt-1">Prestataires actifs</p>
+        <p class="text-xs text-orange-200 mt-1">Prestataires actifs</p>
       </div>
       <div>
         <p class="text-3xl font-extrabold">500+</p>
-        <p class="text-xs text-blue-200 mt-1">Services réalisés</p>
+        <p class="text-xs text-orange-200 mt-1">Services réalisés</p>
       </div>
       <div>
         <p class="text-3xl font-extrabold text-amber-400">4.8★</p>
-        <p class="text-xs text-blue-200 mt-1">Note moyenne</p>
+        <p class="text-xs text-orange-200 mt-1">Note moyenne</p>
       </div>
     </div>
   </section>
@@ -156,18 +156,18 @@
             src="https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=800&q=80"
             alt="Mise en relation professionnelle"
             class="w-full h-full object-cover"/>
-          <div class="absolute inset-0 bg-gradient-to-t from-blue-900/50 to-transparent"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-gray-900/50 to-transparent"></div>
           <div class="absolute bottom-4 left-4 right-4 text-white">
             <p class="text-sm font-semibold">Une relation de confiance</p>
-            <p class="text-xs text-blue-200">Prestataires vérifiés et approuvés</p>
+            <p class="text-xs text-orange-200">Prestataires vérifiés et approuvés</p>
           </div>
         </div>
 
         <!-- Étapes -->
         <div class="space-y-6">
           <div class="flex items-start gap-4">
-            <div class="w-10 h-10 bg-blue-100 rounded-2xl flex items-center justify-center flex-shrink-0">
-              <span class="text-blue-600 font-extrabold">1</span>
+            <div class="w-10 h-10 bg-orange-100 rounded-2xl flex items-center justify-center flex-shrink-0">
+              <span class="text-orange-600 font-extrabold">1</span>
             </div>
             <div>
               <h3 class="text-sm font-bold text-gray-800 mb-1">Créez votre compte gratuitement</h3>
@@ -196,8 +196,8 @@
           </div>
 
           <div class="flex items-start gap-4">
-            <div class="w-10 h-10 bg-blue-100 rounded-2xl flex items-center justify-center flex-shrink-0">
-              <span class="text-blue-600 font-extrabold">4</span>
+            <div class="w-10 h-10 bg-orange-100 rounded-2xl flex items-center justify-center flex-shrink-0">
+              <span class="text-orange-600 font-extrabold">4</span>
             </div>
             <div>
               <h3 class="text-sm font-bold text-gray-800 mb-1">Laissez un avis</h3>
@@ -206,8 +206,8 @@
           </div>
 
           <a routerLink="/auth/register"
-            class="inline-flex items-center gap-2 bg-blue-600 text-white font-semibold
-                   px-6 py-3 rounded-2xl hover:bg-blue-700 transition text-sm">
+            class="inline-flex items-center gap-2 bg-orange-600 text-white font-semibold
+                   px-6 py-3 rounded-2xl hover:bg-orange-700 transition text-sm">
             Commencer maintenant
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -232,7 +232,7 @@
           class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition">
 
           <!-- Photo ou bandeau coloré -->
-          <div class="h-28 bg-gradient-to-br from-blue-500 to-blue-700 relative flex items-center justify-center">
+          <div class="h-28 bg-gradient-to-br from-orange-500 to-orange-700 relative flex items-center justify-center">
             <img *ngIf="p.photo" [src]="p.photo" [alt]="p.user.nom"
               class="w-full h-full object-cover absolute inset-0"/>
             <span *ngIf="!p.photo" class="text-3xl font-extrabold text-white/40 select-none">
@@ -254,7 +254,7 @@
                 <p class="text-xs text-gray-400">{{ p.categorie?.nom ?? '—' }} · {{ p.quartier }}</p>
               </div>
               <span *ngIf="p.badge_verifie"
-                class="shrink-0 text-[10px] bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded-full font-medium">
+                class="shrink-0 text-[10px] bg-orange-50 text-orange-600 px-1.5 py-0.5 rounded-full font-medium">
                 ✓ Vérifié
               </span>
             </div>
@@ -264,7 +264,7 @@
 
       <div class="text-center mt-8">
         <a routerLink="/auth/register"
-          class="inline-block bg-blue-600 text-white font-semibold px-8 py-3 rounded-2xl hover:bg-blue-700 transition text-sm">
+          class="inline-block bg-orange-600 text-white font-semibold px-8 py-3 rounded-2xl hover:bg-orange-700 transition text-sm">
           Voir tous les prestataires
         </a>
       </div>
@@ -277,11 +277,11 @@
       src="https://images.unsplash.com/photo-1650753174235-7dae04cefd0d?auto=format&fit=crop&w=1600&q=80"
       alt="Chantier de construction"
       class="absolute inset-0 w-full h-full object-cover"/>
-    <div class="absolute inset-0 bg-blue-900/80"></div>
+    <div class="absolute inset-0 bg-gray-900/80"></div>
 
     <div class="relative z-10 max-w-2xl mx-auto text-center text-white">
       <h2 class="text-2xl font-extrabold mb-3">Vous êtes artisan ou prestataire ?</h2>
-      <p class="text-blue-200 text-sm mb-6">
+      <p class="text-orange-200 text-sm mb-6">
         Rejoignez DouraKa, développez votre clientèle et gérez vos demandes facilement depuis votre téléphone.
       </p>
       <a routerLink="/auth/register"

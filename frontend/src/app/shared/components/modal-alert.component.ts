@@ -22,7 +22,7 @@ import { CommonModule } from '@angular/common';
                 ? 'bg-red-100'
                 : type === 'warning'
                   ? 'bg-yellow-100'
-                  : 'bg-blue-100')
+                  : 'bg-orange-100')
           "
         >
           <svg
@@ -73,7 +73,7 @@ import { CommonModule } from '@angular/common';
           <svg
             *ngIf="type === 'info'"
             xmlns="http://www.w3.org/2000/svg"
-            class="w-6 h-6 text-blue-600"
+            class="w-6 h-6 text-orange-600"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -112,7 +112,7 @@ import { CommonModule } from '@angular/common';
                   ? 'bg-red-600 hover:bg-red-700'
                   : type === 'warning'
                     ? 'bg-yellow-600 hover:bg-yellow-700'
-                    : 'bg-blue-600 hover:bg-blue-700')
+                    : 'bg-orange-600 hover:bg-orange-700')
             "
           >
             {{ isConfirm ? 'Confirmer' : 'OK' }}

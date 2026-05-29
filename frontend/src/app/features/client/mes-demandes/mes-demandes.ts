@@ -138,7 +138,7 @@ export class MesDemandesComponent implements OnInit {
   statutClass(statut: string): string {
     const map: Record<string, string> = {
       en_attente: 'bg-yellow-100 text-yellow-700',
-      acceptee: 'bg-blue-100 text-blue-700',
+      acceptee: 'bg-sky-100 text-sky-700',
       refusee: 'bg-red-100 text-red-600',
       en_cours: 'bg-indigo-100 text-indigo-700',
       terminee: 'bg-green-100 text-green-700',

@@ -5,7 +5,7 @@
     <!-- Retour -->
     <a
       [routerLink]="['/client/prestataire', prestataireUuid]"
-      class="inline-flex items-center gap-1 text-xs text-gray-500 hover:text-blue-600 mb-4 transition"
+      class="inline-flex items-center gap-1 text-xs text-gray-500 hover:text-orange-600 mb-4 transition"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -23,9 +23,9 @@
     <div *ngIf="prestataire" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
       <div class="flex items-center gap-3">
         <div
-          class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0"
+          class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0"
         >
-          <span class="text-blue-600 font-bold text-sm">
+          <span class="text-orange-600 font-bold text-sm">
             {{ prestataire.user?.nom?.charAt(0) }}{{ prestataire.user?.prenom?.charAt(0) }}
           </span>
         </div>
@@ -55,7 +55,7 @@
             name="description"
             rows="4"
             placeholder="Ex: J'ai une fuite d'eau dans ma cuisine, besoin d'une intervention urgente..."
-            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
           >
           </textarea>
         </div>
@@ -69,7 +69,7 @@
             type="date"
             [(ngModel)]="date_intervention"
             name="date_intervention"
-            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
           />
         </div>
 
@@ -85,7 +85,7 @@
         <button
           type="submit"
           [disabled]="loading"
-          class="w-full bg-blue-600 text-white py-2.5 rounded-xl font-semibold text-sm hover:bg-blue-700 active:scale-95 transition-all shadow-md disabled:opacity-50"
+          class="w-full bg-orange-600 text-white py-2.5 rounded-xl font-semibold text-sm hover:bg-orange-700 active:scale-95 transition-all shadow-md disabled:opacity-50"
         >
           {{ loading ? 'Envoi...' : 'Envoyer la demande' }}
         </button>

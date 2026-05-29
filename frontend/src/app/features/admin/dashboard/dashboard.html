@@ -3,7 +3,7 @@
 
   <!-- Spinner initial -->
   <div *ngIf="loading" class="flex flex-col items-center justify-center py-32 gap-3">
-    <div class="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+    <div class="w-10 h-10 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
     <p class="text-sm text-slate-400">Chargement…</p>
   </div>
 
@@ -20,7 +20,7 @@
         <button *ngFor="let t of tabs"
           (click)="setOnglet(t.id)"
           [class]="t.id === onglet
-            ? 'px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-semibold transition-all'
+            ? 'px-4 py-2 rounded-xl bg-orange-600 text-white text-xs font-semibold transition-all'
             : 'px-4 py-2 rounded-xl text-slate-500 hover:bg-slate-50 text-xs font-medium transition-all'">
           {{ t.label }}
         </button>
@@ -33,12 +33,12 @@
 
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
-            <p class="text-3xl font-bold text-blue-600">{{ stats.users.total }}</p>
+            <p class="text-3xl font-bold text-orange-600">{{ stats.users.total }}</p>
             <p class="text-xs text-slate-500 mt-1">Utilisateurs</p>
             <p class="text-xs text-slate-300 mt-0.5">{{ stats.users.clients }} clients · {{ stats.users.prestataires }} pros</p>
           </div>
           <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
-            <p class="text-3xl font-bold text-blue-600">{{ stats.prestataires.total }}</p>
+            <p class="text-3xl font-bold text-orange-600">{{ stats.prestataires.total }}</p>
             <p class="text-xs text-slate-500 mt-1">Prestataires</p>
             <p class="text-xs text-slate-300 mt-0.5">{{ stats.prestataires.verifies }} vérifiés</p>
           </div>
@@ -59,7 +59,7 @@
           <div class="space-y-3">
             <div *ngFor="let item of [
               {label:'En attente', val: stats.demandes.en_attente, color:'bg-amber-400'},
-              {label:'Acceptées',  val: stats.demandes.acceptees,  color:'bg-blue-400'},
+              {label:'Acceptées',  val: stats.demandes.acceptees,  color:'bg-orange-400'},
               {label:'Terminées',  val: stats.demandes.terminees,  color:'bg-emerald-400'},
               {label:'Annulées',   val: stats.demandes.annulees,   color:'bg-slate-300'}
             ]" class="flex items-center gap-3">
@@ -91,8 +91,8 @@
 
           <div class="flex items-start justify-between gap-3">
             <div class="flex items-center gap-3 min-w-0">
-              <div class="w-11 h-11 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0">
-                <span class="text-blue-700 font-bold">
+              <div class="w-11 h-11 rounded-xl bg-orange-100 flex items-center justify-center flex-shrink-0">
+                <span class="text-orange-700 font-bold">
                   {{ p.user.nom.charAt(0) }}{{ p.user.prenom.charAt(0) }}
                 </span>
               </div>
@@ -103,7 +103,7 @@
                     {{ p.statut === 'en_attente' ? 'En attente' : p.statut === 'approuve' ? 'Approuvé' : 'Rejeté' }}
                   </span>
                   <span *ngIf="p.badge_verifie"
-                    class="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full font-medium">
+                    class="text-xs bg-orange-50 text-orange-600 px-2 py-0.5 rounded-full font-medium">
                     Certifié
                   </span>
                 </div>
@@ -135,7 +135,7 @@
 
             <button (click)="toggleBadge(p)" [disabled]="prestActionId === p.id"
               [class]="p.badge_verifie
-                ? 'text-xs px-3 py-1.5 rounded-xl bg-blue-500 text-white font-medium hover:bg-blue-600 disabled:opacity-50 transition'
+                ? 'text-xs px-3 py-1.5 rounded-xl bg-orange-500 text-white font-medium hover:bg-orange-600 disabled:opacity-50 transition'
                 : 'text-xs px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 font-medium hover:bg-slate-200 disabled:opacity-50 transition'">
               {{ p.badge_verifie ? 'Retirer la certification' : 'Certifier' }}
             </button>
@@ -148,7 +148,7 @@
             </button>
 
             <div *ngIf="prestActionId === p.id"
-              class="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin">
+              class="w-4 h-4 border-2 border-orange-400 border-t-transparent rounded-full animate-spin">
             </div>
 
             <button (click)="supprimerUser(p.user, 'prestataires')"
@@ -247,12 +247,12 @@
 
         <div class="mb-2">
           <input [(ngModel)]="newCat.nom" type="text" placeholder="Nom (ex: Plombier)"
-            class="w-full text-sm border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"/>
+            class="w-full text-sm border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400"/>
         </div>
         <input [(ngModel)]="newCat.description" type="text" placeholder="Description (optionnel)"
-          class="w-full text-sm border border-slate-200 rounded-xl px-3 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-blue-400"/>
+          class="w-full text-sm border border-slate-200 rounded-xl px-3 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-orange-400"/>
         <button (click)="ajouterCategorie()" [disabled]="catLoading"
-          class="w-full text-sm font-semibold bg-blue-600 text-white py-2.5 rounded-xl hover:bg-blue-700 disabled:opacity-50 transition">
+          class="w-full text-sm font-semibold bg-orange-600 text-white py-2.5 rounded-xl hover:bg-orange-700 disabled:opacity-50 transition">
           {{ catLoading ? 'Ajout en cours…' : 'Ajouter la catégorie' }}
         </button>
       </div>
