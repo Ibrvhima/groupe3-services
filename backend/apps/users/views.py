@@ -228,7 +228,7 @@ class PasswordResetRequestView(APIView):
         <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;
                     padding:32px 24px;background:#f8fafc;border-radius:16px;">
           <div style="text-align:center;margin-bottom:24px;">
-            <span style="font-size:24px;font-weight:800;color:#1d4ed8;">DouraKa</span>
+            <span style="font-size:24px;font-weight:800;color:#ea580c;">DouraKa</span>
           </div>
           <div style="background:#ffffff;border-radius:12px;padding:28px;border:1px solid #e2e8f0;">
             <h2 style="color:#1e293b;font-size:18px;margin:0 0 12px;">
@@ -240,7 +240,7 @@ class PasswordResetRequestView(APIView):
             </p>
             <div style="text-align:center;margin-bottom:24px;">
               <a href="{reset_url}"
-                 style="display:inline-block;background:#2563eb;color:#ffffff;
+                 style="display:inline-block;background:#ea580c;color:#ffffff;
                         padding:13px 32px;border-radius:8px;font-size:15px;
                         font-weight:600;text-decoration:none;">
                 Réinitialiser mon mot de passe

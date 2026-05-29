@@ -9,7 +9,7 @@ export const routes: Routes = [
     loadComponent: () => import('./features/landing/landing').then(m => m.LandingComponent),
   },
 
-  // ── Authentification ────────────────────────────────────────────────────────
+  // auth
   {
     path: 'auth/login',
     title: 'Connexion',
@@ -31,7 +31,7 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/reset-password/reset-password').then(m => m.ResetPasswordComponent),
   },
 
-  // ── Espace client ───────────────────────────────────────────────────────────
+  // espace client
   {
     path: 'client',
     canActivate: [roleGuard('client')],
@@ -64,7 +64,7 @@ export const routes: Routes = [
     ],
   },
 
-  // ── Espace prestataire ──────────────────────────────────────────────────────
+  // espace prestataire
   {
     path: 'prestataire',
     canActivate: [roleGuard('prestataire')],
@@ -92,7 +92,7 @@ export const routes: Routes = [
     ],
   },
 
-  // ── Espace admin ────────────────────────────────────────────────────────────
+  // espace admin
   {
     path: 'admin',
     canActivate: [roleGuard('admin')],
@@ -105,7 +105,7 @@ export const routes: Routes = [
     ],
   },
 
-  // ── 404 ─────────────────────────────────────────────────────────────────────
+  // fallback 404
   {
     path: '**',
     title: 'Page introuvable',
