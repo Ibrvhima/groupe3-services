@@ -16,7 +16,7 @@ export class ForgotPasswordComponent {
   loading     = false;
   sent        = false;
   error       = '';
-  devResetUrl = '';   // lien visible uniquement en mode dev (DEBUG=True, pas de Resend)
+  devResetUrl = '';
 
   private api = environment.apiUrl;
 

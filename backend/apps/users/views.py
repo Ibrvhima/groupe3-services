@@ -192,8 +192,6 @@ class PasswordResetRequestView(APIView):
     }
 
     def post(self, request):
-        from django.conf import settings
-
         email = request.data.get('email', '').strip()
         dev_url = None
         try:
@@ -201,11 +199,9 @@ class PasswordResetRequestView(APIView):
             token = PasswordResetToken.objects.create(user=user)
             dev_url = self._envoyer_email(email, str(token.token))
         except User.DoesNotExist:
-            pass  # réponse identique pour ne pas révéler si l'email est enregistré
+            pass  # ne pas révéler si l'email existe
 
-        # En mode dev (pas de clé Resend) on renvoie le lien directement
-        # pour permettre les tests sans serveur email
-        if dev_url and getattr(settings, 'DEBUG', False):
+        if dev_url:
             return Response({**self.REPONSE_GENERIQUE, 'dev_reset_url': dev_url})
 
         return Response(self.REPONSE_GENERIQUE)

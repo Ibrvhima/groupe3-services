@@ -6,7 +6,7 @@ from apps.notifications.models import Notification
 from apps.users.models import User
 
 
-# ── Helpers ──────────────────────────────────────────────────────────────────
+# helpers
 
 def make_user(email, role='client', nom='Test', prenom='User'):
     return User.objects.create_user(
@@ -20,7 +20,7 @@ def make_notif(user, titre='Titre', message='Contenu', lu=False):
     return Notification.objects.create(user=user, titre=titre, message=message, lu=lu)
 
 
-# ── Tests ─────────────────────────────────────────────────────────────────────
+# tests
 
 class NotificationListTest(TestCase):
     def setUp(self):

@@ -8,7 +8,7 @@ from apps.prestataires.models import Categorie, Prestataire
 from apps.users.models import User
 
 
-# ── Helpers ──────────────────────────────────────────────────────────────────
+# helpers
 
 def make_user(email, role='client', nom='Test', prenom='User'):
     return User.objects.create_user(
@@ -37,7 +37,7 @@ def make_demande(client, prestataire):
     )
 
 
-# ── Tests ─────────────────────────────────────────────────────────────────────
+# tests
 
 class ConversationOuvrirTest(TestCase):
     """Ouverture et accès aux conversations via REST."""
