@@ -33,6 +33,7 @@ export class ChatService {
   connecterWebSocket(convId: number): void {
     this.deconnecterWebSocket();
 
+    // le token JWT passe en query string car les WebSocket ne supportent pas les headers HTTP
     const token  = localStorage.getItem('access_token') ?? '';
     const wsBase = environment.wsUrl
       || `${location.protocol === 'https:' ? 'wss:' : 'ws:'}//${location.host}`;

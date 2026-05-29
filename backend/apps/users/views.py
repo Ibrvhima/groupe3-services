@@ -198,7 +198,7 @@ class PasswordResetRequestView(APIView):
             token = PasswordResetToken.objects.create(user=user)
             self._envoyer_email(email, str(token.token))
         except User.DoesNotExist:
-            pass
+            pass  # réponse identique pour ne pas révéler si l'email est enregistré
 
         return Response(self.REPONSE_GENERIQUE)
 

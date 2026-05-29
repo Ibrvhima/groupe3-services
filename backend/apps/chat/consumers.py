@@ -49,6 +49,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def authenticate(self):
+        # le token JWT passe en query string car les WebSocket ne supportent pas les headers HTTP
         from apps.users.models import User
         from rest_framework_simplejwt.tokens import AccessToken
         from rest_framework_simplejwt.exceptions import InvalidToken, TokenError

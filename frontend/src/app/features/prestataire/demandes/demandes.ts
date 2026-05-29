@@ -60,6 +60,7 @@ export class PrestataireDemandesComponent implements OnInit {
   refuser(id: number): void { this._action(id, () => this.demandeService.refuser(id)); }
   terminer(id: number): void { this._action(id, () => this.demandeService.terminer(id)); }
 
+  // factorisé pour éviter la duplication entre accepter/refuser/terminer
   private _action(id: number, call: () => any): void {
     this.actionLoading = id;
     call().subscribe({

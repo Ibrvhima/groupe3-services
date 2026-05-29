@@ -47,6 +47,8 @@ class PrestataireViewSet(viewsets.ModelViewSet):
         return qs
 
     def get_object(self):
+        # pour les modifications, on cherche sans le filtre approuve=True
+        # et on s'assure que le prestataire ne peut modifier que son propre profil
         if self.action in ['partial_update', 'update']:
             obj = get_object_or_404(
                 Prestataire.objects.select_related('user', 'categorie'),

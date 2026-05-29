@@ -44,6 +44,7 @@ export class AuthService {
   }
 
   private _storeSession(res: AuthResponse): void {
+    // on stocke le role séparément pour éviter de parser le JSON à chaque guard
     localStorage.setItem('access_token',  res.access);
     localStorage.setItem('refresh_token', res.refresh);
     if (res.user?.role)  localStorage.setItem('role', res.user.role);

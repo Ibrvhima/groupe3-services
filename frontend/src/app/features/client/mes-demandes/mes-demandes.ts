@@ -62,6 +62,7 @@ export class MesDemandesComponent implements OnInit {
 
     this.devisService.accepter(demande.devis.id).subscribe({
       next: devisUpdated => {
+        // le backend passe automatiquement la demande en "en_cours" quand le devis est accepté
         this.demandes = this.demandes.map(d =>
           d.id === demande.id
             ? { ...d, statut: 'en_cours', statut_display: 'En cours', devis: devisUpdated }

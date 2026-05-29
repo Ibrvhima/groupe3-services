@@ -10,6 +10,7 @@ export class DevisService {
 
   constructor(private http: HttpClient) {}
 
+  // le backend vérifie que la demande appartient bien au prestataire connecté
   creerDevis(data: DevisCreate): Observable<Devis> {
     return this.http.post<Devis>(`${this.api}/`, data);
   }

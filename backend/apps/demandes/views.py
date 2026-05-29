@@ -57,6 +57,7 @@ class DemandeViewSet(viewsets.ModelViewSet):
             raise PermissionDenied("Action réservée aux prestataires.")
         if demande.statut not in ['en_attente']:
             raise ValidationError(f"Impossible : statut actuel '{demande.statut}'.")
+        # on bloque si le client a refusé le devis — il faut renégocier avant d'accepter
         if hasattr(demande, 'devis') and demande.devis.statut == 'refuse':
             raise ValidationError(
                 "Le client a refusé votre devis. Vous ne pouvez pas accepter cette demande."

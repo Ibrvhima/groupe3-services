@@ -54,6 +54,7 @@ class DevisViewSet(viewsets.ModelViewSet):
             )
 
         with transaction.atomic():
+            # si le client a refusé un premier devis, le prestataire peut en soumettre un nouveau
             if hasattr(demande, 'devis'):
                 if demande.devis.statut == 'refuse':
                     demande.devis.delete()
