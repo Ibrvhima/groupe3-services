@@ -43,7 +43,7 @@
     <div class="relative z-10 max-w-6xl mx-auto px-6 py-20 w-full flex justify-end">
       <div class="max-w-xl">
         <!-- Badge -->
-        <span class="inline-block bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full mb-4 uppercase tracking-wide">
+        <span class="inline-block bg-orange-600 text-white text-xs font-bold px-3 py-1 rounded-full mb-4 uppercase tracking-wide">
           Conakry, Guinée
         </span>
 
@@ -60,8 +60,8 @@
 
         <div class="flex flex-col sm:flex-row gap-3">
           <a routerLink="/auth/register"
-            class="inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600
-                   text-white font-bold px-8 py-3.5 rounded-2xl transition text-sm shadow-lg">
+            class="inline-flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700
+                   text-white font-bold px-8 py-3.5 rounded-2xl transition text-sm shadow-sm">
             Trouver un prestataire
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -119,7 +119,7 @@
       <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
         <a *ngFor="let cat of categories"
           routerLink="/auth/register"
-          class="group relative rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow cursor-pointer h-44">
+          class="group relative rounded-2xl overflow-hidden shadow-sm hover:shadow-sm transition-shadow cursor-pointer h-44">
 
           <!-- Photo de fond -->
           <img [src]="getCategoryImage(cat.nom)"
@@ -285,7 +285,7 @@
         Rejoignez DouraKa, développez votre clientèle et gérez vos demandes facilement depuis votre téléphone.
       </p>
       <a routerLink="/auth/register"
-        class="inline-block bg-amber-500 hover:bg-amber-600 text-white font-bold px-8 py-3 rounded-2xl transition text-sm">
+        class="inline-block bg-orange-600 hover:bg-orange-700 text-white font-bold px-8 py-3 rounded-2xl transition text-sm">
         Inscrire mon activité gratuitement
       </a>
     </div>

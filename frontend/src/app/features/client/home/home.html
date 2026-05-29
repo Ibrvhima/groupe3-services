@@ -47,7 +47,7 @@
           (click)="filterByCategorie('')"
           [class]="
             selectedCategorie === ''
-              ? 'flex-shrink-0 bg-amber-500 text-white text-xs px-3 py-1.5 rounded-full font-medium'
+              ? 'flex-shrink-0 bg-orange-600 text-white text-xs px-3 py-1.5 rounded-full font-medium'
               : 'flex-shrink-0 bg-white border border-gray-200 text-gray-600 text-xs px-3 py-1.5 rounded-full font-medium hover:border-orange-400 transition'
           "
         >
@@ -58,7 +58,7 @@
           (click)="filterByCategorie(cat.id)"
           [class]="
             selectedCategorie === cat.id.toString()
-              ? 'flex-shrink-0 bg-amber-500 text-white text-xs px-3 py-1.5 rounded-full font-medium'
+              ? 'flex-shrink-0 bg-orange-600 text-white text-xs px-3 py-1.5 rounded-full font-medium'
               : 'flex-shrink-0 bg-white border border-gray-200 text-gray-600 text-xs px-3 py-1.5 rounded-full font-medium hover:border-orange-400 transition'
           "
         >
@@ -170,7 +170,7 @@
         <!-- Bouton -->
         <a
           [routerLink]="['/client/prestataire', p.uuid]"
-          class="block w-full text-center bg-amber-500 text-white text-xs font-semibold py-2 rounded-lg hover:bg-amber-600 transition"
+          class="block w-full text-center bg-orange-600 text-white text-xs font-semibold py-2 rounded-lg hover:bg-orange-700 transition"
         >
           Voir le profil
         </a>

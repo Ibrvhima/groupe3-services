@@ -3,8 +3,8 @@
 
   <div class="max-w-2xl mx-auto px-3 py-4 space-y-4">
 
-    <!-- ── Carte profil + disponibilité ──────────────────────────────── -->
-    <div class="bg-gradient-to-br from-orange-700 to-orange-500 rounded-2xl p-5 text-white shadow-md">
+    <!-- carte profil -->
+    <div class="bg-gradient-to-br from-orange-700 to-orange-500 rounded-2xl p-5 text-white">
 
       <!-- Infos profil -->
       <div class="flex items-center justify-between mb-4">
@@ -35,7 +35,7 @@
         </span>
       </div>
 
-      <!-- ── Toggle disponibilité ──────────────────────────────────────── -->
+      <!-- toggle disponibilité -->
       <button
         (click)="toggleDisponible()"
         [disabled]="disponibleLoading"
@@ -81,7 +81,7 @@
       </button>
     </div>
 
-    <!-- ── Stats ──────────────────────────────────────────────────────── -->
+    <!-- stats -->
     <div class="grid grid-cols-2 gap-2">
 
       <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-3">
@@ -150,7 +150,7 @@
 
     </div>
 
-    <!-- ── CTA demandes ───────────────────────────────────────────────── -->
+    <!-- lien vers demandes -->
     <a routerLink="/prestataire/demandes"
       class="flex items-center justify-between bg-orange-600 text-white rounded-2xl px-5 py-4
              hover:bg-orange-700 transition shadow-sm">
