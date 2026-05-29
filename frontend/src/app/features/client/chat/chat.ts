@@ -41,7 +41,6 @@ export class ChatClientComponent implements OnInit, OnDestroy, AfterViewChecked 
   ngOnInit(): void {
     this.chargerConversations();
 
-    // Ouvrir directement depuis une demande via ?demandeId=X
     const demandeId = this.route.snapshot.queryParamMap.get('demandeId');
     if (demandeId) {
       this.chatService.ouvrirConversation(+demandeId).subscribe({
@@ -86,17 +85,12 @@ export class ChatClientComponent implements OnInit, OnDestroy, AfterViewChecked 
     this.messages   = [];
     this.cdr.detectChanges();
 
-    // Nettoie l'ancienne connexion WebSocket
     this.wsSub?.unsubscribe();
     this.chatService.deconnecterWebSocket();
-
-    // Charge les messages existants via REST
     this.chargerMessages();
 
-    // Ouvre le WebSocket pour recevoir les nouveaux messages en temps réel
     this.chatService.connecterWebSocket(conv.id);
     this.wsSub = this.chatService.message$.subscribe(msg => {
-      // Évite les doublons (message qu'on a envoyé nous-mêmes déjà ajouté localement)
       if (!this.messages.find(m => m.id === msg.id)) {
         this.messages     = [...this.messages, msg];
         this.shouldScroll = true;
@@ -126,13 +120,11 @@ export class ChatClientComponent implements OnInit, OnDestroy, AfterViewChecked 
     const texte = this.contenu.trim();
     if (!texte || this.sending || !this.convActive) return;
 
-    // Tentative via WebSocket (temps réel)
     const sent = this.chatService.envoyerViaWebSocket(texte);
 
     if (sent) {
-      // Ajoute le message localement immédiatement (optimistic update)
       const msgLocal: any = {
-        id:         Date.now(),   // ID temporaire, remplacé par le vrai à la prochaine synchro
+        id:         Date.now(),
         contenu:    texte,
         date_envoi: new Date().toISOString(),
         lu:         false,
@@ -148,7 +140,6 @@ export class ChatClientComponent implements OnInit, OnDestroy, AfterViewChecked 
       this.shouldScroll = true;
       this.cdr.detectChanges();
     } else {
-      // Fallback HTTP si le WebSocket est fermé
       this.sending = true;
       this.chatService.envoyerMessage(this.convActive.id, texte).subscribe({
         next: msg => {

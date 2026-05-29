@@ -5,7 +5,6 @@ from .models import Avis
 
 
 def _recalculer_note(prestataire):
-    """Recalcule et persiste note_moyenne pour un prestataire donné."""
     moyenne = Avis.objects.filter(prestataire=prestataire).aggregate(Avg('note'))['note__avg']
     prestataire.note_moyenne = round(moyenne, 2) if moyenne is not None else 0.00
     prestataire.save(update_fields=['note_moyenne'])

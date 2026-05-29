@@ -30,7 +30,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    // Debounce : attend 350 ms d'inactivité avant d'appeler l'API
     this.searchSub = this.searchSubject.pipe(
       debounceTime(350),
       distinctUntilChanged((a, b) => a.search === b.search && a.categorie === b.categorie),
@@ -72,7 +71,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.searchSubject.next({ search: this.searchQuery, categorie: this.selectedCategorie });
   }
 
-  // Recherche immédiate (touche Entrée — bypass le debounce)
   onSearch() {
     this.loadPrestataires({ search: this.searchQuery, categorie: this.selectedCategorie });
   }

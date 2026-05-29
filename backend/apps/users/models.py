@@ -49,10 +49,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class PasswordResetToken(models.Model):
-    """
-    Token à usage unique pour la réinitialisation de mot de passe.
-    Expire après 1 heure.
-    """
     user       = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reset_tokens')
     token      = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     expires_at = models.DateTimeField()

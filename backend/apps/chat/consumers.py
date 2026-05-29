@@ -4,27 +4,20 @@ from channels.db import database_sync_to_async
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
-    """
-    WebSocket consumer pour le chat en temps réel.
-    Authentification via JWT passé en query string : ?token=<access_token>
-    """
 
     async def connect(self):
         self.conversation_id = self.scope['url_route']['kwargs']['conversation_id']
         self.room_group_name = f'chat_{self.conversation_id}'
 
-        # 1. Authentification JWT
         self.user = await self.authenticate()
         if self.user is None:
-            await self.close(code=4001)   # Non authentifié
+            await self.close(code=4001)
             return
 
-        # 2. Vérifier l'accès à la conversation
         if not await self.check_access():
-            await self.close(code=4003)   # Interdit
+            await self.close(code=4003)
             return
 
-        # 3. Rejoindre le groupe de la conversation
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
 
@@ -33,7 +26,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
     async def receive(self, text_data):
-        """Reçoit un message du client WebSocket et le diffuse à tous les participants."""
         try:
             data = json.loads(text_data)
         except json.JSONDecodeError:
@@ -43,23 +35,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
         if not contenu:
             return
 
-        # Sauvegarde en base + sérialisation
         message_data = await self.save_and_serialize(contenu)
-
-        # Diffuse à tous les membres du groupe (les deux participants)
         await self.channel_layer.group_send(
             self.room_group_name,
             {'type': 'chat_message', 'message': message_data},
         )
 
     async def chat_message(self, event):
-        """Reçu du channel layer → envoyé au WebSocket du client."""
         await self.send(text_data=json.dumps({
             'type':    'message',
             'message': event['message'],
         }))
-
-    # ── Méthodes DB (sync → async) ─────────────────────────────────────────────
 
     @database_sync_to_async
     def authenticate(self):
@@ -107,7 +93,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             contenu=contenu,
         )
 
-        # Notification au destinataire
         destinataire = conv.prestataire if self.user == conv.client else conv.client
         Notification.objects.create(
             user=destinataire,

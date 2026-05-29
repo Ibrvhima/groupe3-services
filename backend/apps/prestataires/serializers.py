@@ -17,7 +17,7 @@ class PrestataireSerializer(serializers.ModelSerializer):
     def get_photo(self, obj):
         if not obj.photo:
             return None
-        return obj.photo.url  # /media/photos/... — résolu par le navigateur
+        return obj.photo.url
 
     class Meta:
         model  = Prestataire
@@ -31,14 +31,10 @@ class PrestataireSerializer(serializers.ModelSerializer):
 class PrestataireWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model  = Prestataire
-        # photo inclus pour permettre l'upload depuis le formulaire d'édition
         fields = ['categorie', 'description', 'quartier', 'telephone', 'disponible', 'photo']
 
 
-# ── Serializers réservés à l'admin ────────────────────────────────────────────
-
 class AdminPrestataireSerializer(serializers.ModelSerializer):
-    """Lecture complète d'un prestataire pour l'admin (user + categorie inclus)."""
     user      = UserSerializer(read_only=True)
     categorie = CategorieSerializer(read_only=True)
 
@@ -52,8 +48,6 @@ class AdminPrestataireSerializer(serializers.ModelSerializer):
 
 
 class AdminPrestataireUpdateSerializer(serializers.ModelSerializer):
-    """Mise à jour partielle par l'admin."""
-
     class Meta:
         model  = Prestataire
         fields = ['badge_verifie', 'disponible', 'approuve', 'statut']

@@ -8,10 +8,6 @@ from apps.users.views import IsAdmin
 
 
 class CategorieViewSet(viewsets.ModelViewSet):
-    """
-    Lecture publique, écriture réservée aux admins.
-    Pas de pagination : la liste des catégories est courte et toujours chargée en entier.
-    """
     queryset         = Categorie.objects.all().order_by('nom')
     serializer_class = CategorieSerializer
     pagination_class = None
@@ -23,22 +19,17 @@ class CategorieViewSet(viewsets.ModelViewSet):
 
 
 class PrestataireViewSet(viewsets.ModelViewSet):
-    """
-    Liste publique des prestataires actifs avec recherche et filtres.
-    Triés par note décroissante pour mettre les meilleurs en premier.
-    Lookup via UUID (non-devinable) plutôt que PK entier.
-    """
     queryset = (
         Prestataire.objects
         .filter(user__is_active=True, approuve=True, disponible=True)
         .select_related('user', 'categorie')
         .order_by('-note_moyenne', '-id')
     )
-    filter_backends     = [filters.SearchFilter, filters.OrderingFilter]
-    search_fields       = ['user__nom', 'user__prenom', 'quartier', 'description']
-    ordering_fields     = ['note_moyenne', 'created_at']
-    permission_classes  = [permissions.IsAuthenticatedOrReadOnly]
-    lookup_field        = 'uuid'
+    filter_backends    = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields      = ['user__nom', 'user__prenom', 'quartier', 'description']
+    ordering_fields    = ['note_moyenne', 'created_at']
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    lookup_field       = 'uuid'
 
     def get_serializer_class(self):
         if self.action in ['create', 'update', 'partial_update']:
@@ -46,7 +37,7 @@ class PrestataireViewSet(viewsets.ModelViewSet):
         return PrestataireSerializer
 
     def get_queryset(self):
-        qs        = super().get_queryset()
+        qs = super().get_queryset()
         categorie = self.request.query_params.get('categorie')
         quartier  = self.request.query_params.get('quartier')
         if categorie:
@@ -56,32 +47,21 @@ class PrestataireViewSet(viewsets.ModelViewSet):
         return qs
 
     def get_object(self):
-        """
-        Pour les actions d'écriture (update/partial_update), on bypass le filtre
-        approuve=True et on s'assure que le prestataire ne peut modifier que son propre profil.
-        Pour la lecture publique, on garde le comportement standard (approuve=True obligatoire).
-        Lookup via UUID dans les deux cas.
-        """
         if self.action in ['partial_update', 'update']:
             obj = get_object_or_404(
                 Prestataire.objects.select_related('user', 'categorie'),
                 uuid=self.kwargs['uuid'],
-                user=self.request.user,   # un prestataire ne peut modifier que son propre profil
+                user=self.request.user,
             )
             self.check_object_permissions(self.request, obj)
             return obj
         return super().get_object()
 
     def partial_update(self, request, *args, **kwargs):
-        """
-        PATCH : met à jour les champs envoyés et retourne le profil complet
-        (PrestataireSerializer) pour que le frontend conserve le champ id.
-        """
         instance   = self.get_object()
         serializer = PrestataireWriteSerializer(instance, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        # On retourne la vue complète pour que le frontend ait toujours l'id et les champs calculés
         return Response(PrestataireSerializer(instance).data)
 
     def perform_create(self, serializer):
@@ -89,7 +69,6 @@ class PrestataireViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'], permission_classes=[permissions.IsAuthenticated])
     def me(self, request):
-        """Retourne le profil prestataire de l'utilisateur connecté."""
         try:
             profil = (
                 Prestataire.objects

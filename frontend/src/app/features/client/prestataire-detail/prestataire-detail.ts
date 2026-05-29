@@ -2,7 +2,6 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute } from '@angular/router';
-import { forkJoin } from 'rxjs';
 import { PrestataireService } from '../../../core/services/prestataire.service';
 import { DemandeService } from '../../../core/services/demande.service';
 import { AvisService } from '../../../core/services/avis.service';
@@ -39,7 +38,6 @@ export class PrestataireDetailComponent implements OnInit {
     this.prestataireService.getByUuid(uuid).subscribe({
       next: (prestataire: any) => {
         this.prestataire = prestataire;
-        // On récupère les avis via l'ID interne (non visible dans l'URL)
         this.avisService.getAvisPrestataire(prestataire.id).subscribe({
           next: (avis: any) => {
             this.avis    = Array.isArray(avis) ? avis : (avis.results ?? []);
@@ -96,7 +94,6 @@ export class PrestataireDetailComponent implements OnInit {
     });
   }
 
-  /** Retourne un tableau [1..n] pour afficher les étoiles dans le template. */
   etoiles(n: number): number[] {
     return Array.from({ length: n }, (_, i) => i + 1);
   }

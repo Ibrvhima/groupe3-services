@@ -19,15 +19,12 @@ export class MesDemandesComponent implements OnInit {
   loading                       = true;
   actionLoading: number | null  = null;
 
-  // ── Avis ──────────────────────────────────────────────────────────────────
   avisDemandeId: number | null  = null;
   avisNote                      = 0;
   avisCommentaire               = '';
   avisLoading                   = false;
   avisError                     = '';
 
-  // ── Devis ─────────────────────────────────────────────────────────────────
-  // ID de la demande dont on est en train d'accepter/refuser le devis
   devisActionLoading: number | null = null;
 
   constructor(
@@ -51,8 +48,6 @@ export class MesDemandesComponent implements OnInit {
     });
   }
 
-  // ── Actions demande ───────────────────────────────────────────────────────
-
   annuler(id: number): void {
     this.actionLoading = id;
     this.demandeService.annuler(id).subscribe({
@@ -61,19 +56,12 @@ export class MesDemandesComponent implements OnInit {
     });
   }
 
-  // ── Actions devis ─────────────────────────────────────────────────────────
-
-  /**
-   * Le client accepte le devis → le backend passe la demande en "en_cours".
-   * On met à jour localement le devis ET le statut de la demande.
-   */
   accepterDevis(demande: Demande): void {
     if (!demande.devis) return;
     this.devisActionLoading = demande.id;
 
     this.devisService.accepter(demande.devis.id).subscribe({
       next: devisUpdated => {
-        // Mise à jour locale : devis accepté + demande en cours
         this.demandes = this.demandes.map(d =>
           d.id === demande.id
             ? { ...d, statut: 'en_cours', statut_display: 'En cours', devis: devisUpdated }
@@ -86,7 +74,6 @@ export class MesDemandesComponent implements OnInit {
     });
   }
 
-  /** Le client refuse le devis. La demande reste dans son statut actuel. */
   refuserDevis(demande: Demande): void {
     if (!demande.devis) return;
     this.devisActionLoading = demande.id;
@@ -102,8 +89,6 @@ export class MesDemandesComponent implements OnInit {
       error: () => { this.devisActionLoading = null; this.cdr.detectChanges(); },
     });
   }
-
-  // ── Avis ──────────────────────────────────────────────────────────────────
 
   ouvrirAvis(demandeId: number): void {
     this.avisDemandeId   = demandeId;
@@ -144,9 +129,6 @@ export class MesDemandesComponent implements OnInit {
     });
   }
 
-  // ── Utilitaires ───────────────────────────────────────────────────────────
-
-  /** Remplace la demande modifiée dans le tableau local. */
   private _majDemande(updated: Demande): void {
     this.demandes = this.demandes.map(d => d.id === updated.id ? updated : d);
     this.cdr.detectChanges();

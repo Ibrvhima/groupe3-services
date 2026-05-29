@@ -21,8 +21,7 @@ class ConversationViewSet(viewsets.GenericViewSet):
 
     def list(self, request):
         qs = self.get_queryset().select_related('client', 'prestataire', 'demande').prefetch_related('messages')
-        serializer = self.get_serializer(qs, many=True)
-        return Response(serializer.data)
+        return Response(self.get_serializer(qs, many=True).data)
 
     def retrieve(self, request, pk=None):
         conv = get_object_or_404(self.get_queryset(), pk=pk)
@@ -30,14 +29,12 @@ class ConversationViewSet(viewsets.GenericViewSet):
 
     @action(detail=False, methods=['post'], url_path='ouvrir')
     def ouvrir(self, request):
-        """Crée ou récupère la conversation liée à une demande."""
         demande_id = request.data.get('demande_id')
         if not demande_id:
             raise ValidationError({'demande_id': 'Ce champ est requis.'})
 
         demande = get_object_or_404(Demande, pk=demande_id)
 
-        # Seuls le client ou le prestataire de la demande peuvent ouvrir le chat
         user = request.user
         prestataire_user = demande.prestataire.user
         if user != demande.client and user != prestataire_user:
@@ -56,12 +53,8 @@ class ConversationViewSet(viewsets.GenericViewSet):
     def messages(self, request, pk=None):
         conv = get_object_or_404(self.get_queryset(), pk=pk)
         msgs = conv.messages.select_related('expediteur').all()
-
-        # Marque comme lus les messages reçus par l'utilisateur connecté
         msgs.filter(lu=False).exclude(expediteur=request.user).update(lu=True)
-
-        serializer = MessageSerializer(msgs, many=True)
-        return Response(serializer.data)
+        return Response(MessageSerializer(msgs, many=True).data)
 
     @action(detail=True, methods=['post'], url_path='messages/envoyer')
     def envoyer_message(self, request, pk=None):
@@ -77,12 +70,10 @@ class ConversationViewSet(viewsets.GenericViewSet):
             contenu=contenu,
         )
 
-        # Notifier le destinataire
         destinataire = conv.prestataire if request.user == conv.client else conv.client
-        expediteur_nom = f"{request.user.prenom} {request.user.nom}"
         Notification.objects.create(
             user=destinataire,
-            titre=f"Nouveau message de {expediteur_nom}",
+            titre=f"Nouveau message de {request.user.prenom} {request.user.nom}",
             message=contenu[:100],
         )
 

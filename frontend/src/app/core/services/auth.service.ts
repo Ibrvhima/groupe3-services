@@ -43,7 +43,6 @@ export class AuthService {
     return localStorage.getItem('access_token') || '';
   }
 
-  /** Stocke tokens + infos utilisateur après login ou register. */
   private _storeSession(res: AuthResponse): void {
     localStorage.setItem('access_token',  res.access);
     localStorage.setItem('refresh_token', res.refresh);

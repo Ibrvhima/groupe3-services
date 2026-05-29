@@ -7,20 +7,12 @@ import { Conversation, Message } from '../models';
 @Injectable({ providedIn: 'root' })
 export class ChatService {
   private api = `${environment.apiUrl}/chat/conversations`;
-
-  /** WebSocket de la conversation active. */
   private socket: WebSocket | null = null;
-
-  /** Observable qui émet chaque message reçu en temps réel. */
   private messageSubject = new Subject<Message>();
   public  message$ = this.messageSubject.asObservable();
-
-  /** Compteur de messages non lus (signal réactif). */
   readonly nonLus = signal<number>(0);
 
   constructor(private http: HttpClient) {}
-
-  // ── REST ─────────────────────────────────────────────────────────────────────
 
   getConversations(): Observable<Conversation[]> {
     return this.http.get<Conversation[]>(`${this.api}/`);
@@ -34,17 +26,10 @@ export class ChatService {
     return this.http.get<Message[]>(`${this.api}/${convId}/messages/`);
   }
 
-  /** Fallback HTTP pour envoyer un message quand le WebSocket est indisponible. */
   envoyerMessage(convId: number, contenu: string): Observable<Message> {
     return this.http.post<Message>(`${this.api}/${convId}/messages/envoyer/`, { contenu });
   }
 
-  // ── WebSocket ─────────────────────────────────────────────────────────────────
-
-  /**
-   * Ouvre une connexion WebSocket pour la conversation donnée.
-   * Le token JWT est passé en query string car WS ne supporte pas les headers custom.
-   */
   connecterWebSocket(convId: number): void {
     this.deconnecterWebSocket();
 
@@ -69,10 +54,6 @@ export class ChatService {
     };
   }
 
-  /**
-   * Envoie un message via WebSocket (instantané).
-   * Retourne true si le message a été envoyé, false si le WebSocket est fermé.
-   */
   envoyerViaWebSocket(contenu: string): boolean {
     if (this.socket?.readyState === WebSocket.OPEN) {
       this.socket.send(JSON.stringify({ contenu }));
@@ -81,15 +62,12 @@ export class ChatService {
     return false;
   }
 
-  /** Ferme la connexion WebSocket courante proprement. */
   deconnecterWebSocket(): void {
     if (this.socket) {
       this.socket.close();
       this.socket = null;
     }
   }
-
-  // ── Utilitaire ────────────────────────────────────────────────────────────────
 
   rafraichirNonLus(): void {
     this.http.get<Conversation[]>(`${this.api}/`).subscribe({

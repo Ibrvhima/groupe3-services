@@ -19,17 +19,12 @@ export class PrestataireDemandesComponent implements OnInit {
   actionLoading: number | null = null;
   activeTab                    = 'en_attente';
 
-  // ── Formulaire devis ──────────────────────────────────────────────────────
-  // ID de la demande pour laquelle on est en train de rédiger un devis
   devisDemandeId: number | null = null;
-
-  // Champs du formulaire (liés avec [(ngModel)])
   devisMontant     = '';
   devisDescription = '';
   devisDelai       = '';
-
-  devisLoading = false;
-  devisError   = '';
+  devisLoading     = false;
+  devisError       = '';
 
   constructor(
     private demandeService: DemandeService,
@@ -51,8 +46,6 @@ export class PrestataireDemandesComponent implements OnInit {
     });
   }
 
-  // ── Filtrage par onglet ───────────────────────────────────────────────────
-
   get demandesFiltrees(): Demande[] {
     if (this.activeTab === 'en_attente') {
       return this.demandes.filter(d => d.statut === 'en_attente');
@@ -60,11 +53,8 @@ export class PrestataireDemandesComponent implements OnInit {
     if (this.activeTab === 'en_cours') {
       return this.demandes.filter(d => ['acceptee', 'en_cours'].includes(d.statut));
     }
-    // Historique : tout ce qui est terminé, refusé ou annulé
     return this.demandes.filter(d => ['terminee', 'refusee', 'annulee'].includes(d.statut));
   }
-
-  // ── Actions demande ───────────────────────────────────────────────────────
 
   accepter(id: number): void { this._action(id, () => this.demandeService.accepter(id)); }
   refuser(id: number):  void { this._action(id, () => this.demandeService.refuser(id)); }
@@ -82,15 +72,12 @@ export class PrestataireDemandesComponent implements OnInit {
     });
   }
 
-  // ── Formulaire devis ──────────────────────────────────────────────────────
-
-  /** Ouvre le formulaire de création de devis pour une demande donnée. */
   ouvrirFormulaireDevis(demandeId: number): void {
-    this.devisDemandeId  = demandeId;
-    this.devisMontant    = '';
+    this.devisDemandeId   = demandeId;
+    this.devisMontant     = '';
     this.devisDescription = '';
-    this.devisDelai      = '';
-    this.devisError      = '';
+    this.devisDelai       = '';
+    this.devisError       = '';
   }
 
   fermerFormulaireDevis(): void {
@@ -98,7 +85,6 @@ export class PrestataireDemandesComponent implements OnInit {
   }
 
   envoyerDevis(): void {
-    // Validations côté client avant d'appeler l'API
     const montant = parseFloat(this.devisMontant);
     if (!montant || montant <= 0)         { this.devisError = 'Entrez un montant valide.';          return; }
     if (!this.devisDescription.trim())    { this.devisError = 'La description est obligatoire.';    return; }
@@ -114,7 +100,6 @@ export class PrestataireDemandesComponent implements OnInit {
       delai:       this.devisDelai.trim(),
     }).subscribe({
       next: devisCreated => {
-        // On met à jour localement la demande pour afficher le devis sans rechargement
         this.demandes = this.demandes.map(d =>
           d.id === this.devisDemandeId
             ? { ...d, has_devis: true, devis: devisCreated }
@@ -135,8 +120,6 @@ export class PrestataireDemandesComponent implements OnInit {
       },
     });
   }
-
-  // ── Utilitaires ───────────────────────────────────────────────────────────
 
   statutClass(statut: string): string {
     const map: Record<string, string> = {

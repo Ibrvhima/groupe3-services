@@ -10,12 +10,6 @@ export class DemandeService {
 
   constructor(private http: HttpClient) {}
 
-  /**
-   * Retourne les demandes de l'utilisateur connecté.
-   * - Client      → ses demandes envoyées
-   * - Prestataire → ses demandes reçues
-   * Le backend filtre selon le rôle JWT.
-   */
   getMesDemandes(): Observable<PaginatedResponse<Demande>> {
     return this.http.get<PaginatedResponse<Demande>>(`${this.api}/`);
   }

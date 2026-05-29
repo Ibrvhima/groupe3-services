@@ -18,14 +18,11 @@ class DevisSerializer(serializers.ModelSerializer):
 
 
 class DevisCreateSerializer(serializers.ModelSerializer):
-    # On déclare explicitement le champ 'demande' sans UniqueValidator.
-    # DRF ajoute automatiquement un UniqueValidator sur les OneToOneField,
-    # ce qui bloquerait la re-création après refus (l'ancien devis n'est
-    # supprimé que dans perform_create, APRÈS la validation du serializer).
-    # perform_create gère lui-même le cas du devis refusé existant.
+    # Déclaration explicite pour contourner le UniqueValidator automatique de DRF
+    # sur les OneToOneField. La suppression du devis refusé se fait dans perform_create.
     demande = serializers.PrimaryKeyRelatedField(queryset=Demande.objects.all())
 
     class Meta:
         model      = Devis
         fields     = ['demande', 'montant', 'description', 'delai']
-        validators = []   # retire aussi les validators au niveau Meta (par précaution)
+        validators = []

@@ -23,7 +23,6 @@ export class RegisterComponent implements OnInit {
   showPassword = false;
   loading  = false;
 
-  // Champs supplémentaires pour le rôle prestataire
   categorie_id = '';
   quartier     = '';
   description  = '';
@@ -79,7 +78,6 @@ export class RegisterComponent implements OnInit {
     this.authService.register(payload).subscribe({
       next: res => {
         this.loading = false;
-        // Le rôle est dans la réponse — pas besoin d'un second appel getMe()
         const role = res.user?.role || this.role;
         this.router.navigate([`/${role}`]);
       },

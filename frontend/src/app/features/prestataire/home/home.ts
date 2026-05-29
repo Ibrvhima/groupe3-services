@@ -29,7 +29,6 @@ export class PrestataireHomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Stats via endpoint dédié (pas de troncature par pagination)
     forkJoin({
       profil: this.prestataireService.getMonProfil(),
       stats:  this.demandeService.getStats(),
