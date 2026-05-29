@@ -3,13 +3,11 @@
 Application web de mise en relation entre clients et prestataires de services en Guinée.
 
 ## Stack technique
-- **Frontend** : Angular 17+ (Nginx)
+- **Frontend** : Angular 21 (Nginx)
 - **Backend** : Django REST Framework (Python 3.11)
 - **Base de données** : MySQL 8.4
 - **Cache** : Redis 7
 - **Déploiement** : Docker + Docker Compose
-
----
 
 ## Prérequis
 
@@ -17,8 +15,6 @@ Avant de commencer, assure-toi d'avoir installé sur ta machine :
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) (inclut Docker et Docker Compose)
 - [Git](https://git-scm.com/downloads)
-
----
 
 ## Installation et lancement
 
@@ -38,22 +34,23 @@ SECRET_KEY=douraka-secret-key-change-in-prod
 DEBUG=True
 DB_NAME=douraka_db
 DB_USER=douraka
-DB_PASSWORD=[votre mot de pass MySql]
+DB_PASSWORD=[votre mot de passe MySQL]
 DB_HOST=db
 DB_PORT=3306
+REDIS_HOST=redis
 ALLOWED_HOSTS=*
 ```
 
 ### 3. Lancer le projet
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
 La première fois, Docker va télécharger les images et construire le projet (5 à 10 minutes selon ta connexion). Les fois suivantes, utilise simplement :
 
 ```bash
-docker-compose up
+docker compose up
 ```
 
 ### 4. Accéder à la plateforme
@@ -103,16 +100,14 @@ Un compte administrateur est créé automatiquement au démarrage :
 ## Arrêter le projet
 
 ```bash
-docker-compose down
+docker compose down
 ```
 
 Pour tout arrêter et supprimer les données (repart de zéro) :
 
 ```bash
-docker-compose down -v
+docker compose down -v
 ```
-
----
 
 ## Structure du projet
 
@@ -124,8 +119,6 @@ groupe3-services/
 ├── docker-compose.yml
 └── .env              → Variables d'environnement (à créer)
 ```
-
----
 
 ## Équipe — Groupe 3
 Ibrahima Diallo, Boubacar Cherif, Mamadou Djouldé
