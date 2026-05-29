@@ -1,17 +1,6 @@
-# =========================
-# VARIABLES
-# =========================
+COMPOSE = docker compose
 
-COMPOSE=docker compose
-
-BACKEND_SERVICE=backend
-FRONTEND_SERVICE=frontend
-DB_SERVICE=db
-
-# =========================
-# BUILD / SETUP
-# =========================
-
+# docker
 build:
 	$(COMPOSE) build
 
@@ -27,55 +16,34 @@ restart:
 logs:
 	$(COMPOSE) logs -f
 
-# =========================
-# BACKEND DJANGO
-# =========================
-
+# backend django
 bash-backend:
-	$(COMPOSE) exec $(BACKEND_SERVICE) bash
+	$(COMPOSE) exec backend bash
 
 migrate:
-	$(COMPOSE) exec $(BACKEND_SERVICE) python manage.py migrate
+	$(COMPOSE) exec backend python manage.py migrate
 
 makemigrations:
-	$(COMPOSE) exec $(BACKEND_SERVICE) python manage.py makemigrations
+	$(COMPOSE) exec backend python manage.py makemigrations
 
 createsuperuser:
-	$(COMPOSE) exec $(BACKEND_SERVICE) python manage.py createsuperuser
+	$(COMPOSE) exec backend python manage.py createsuperuser
 
-collectstatic:
-	$(COMPOSE) exec $(BACKEND_SERVICE) python manage.py collectstatic --noinput
+test:
+	$(COMPOSE) exec backend python manage.py test --settings=config.settings_test
 
-test-backend:
-	$(COMPOSE) exec $(BACKEND_SERVICE) python manage.py test
+seed:
+	$(COMPOSE) exec backend python manage.py seed
 
-# =========================
-# FRONTEND ANGULAR
-# =========================
-
+# frontend angular
 bash-frontend:
-	$(COMPOSE) exec $(FRONTEND_SERVICE) sh
+	$(COMPOSE) exec frontend sh
 
-install-frontend:
-	$(COMPOSE) exec $(FRONTEND_SERVICE) npm install
-
-build-frontend:
-	$(COMPOSE) exec $(FRONTEND_SERVICE) npm run build
-
-serve-frontend:
-	$(COMPOSE) exec $(FRONTEND_SERVICE) ng serve --host 0.0.0.0
-
-# =========================
-# DATABASE
-# =========================
-
+# base de données mysql
 db-shell:
-	$(COMPOSE) exec $(DB_SERVICE) psql -U postgres
+	$(COMPOSE) exec db mysql -u douraka -p douraka_db
 
-# =========================
-# UTILITAIRES
-# =========================
-
+# nettoyage
 clean:
 	$(COMPOSE) down -v
 	docker system prune -f
