@@ -20,6 +20,7 @@ class RegisterView(generics.CreateAPIView):
     queryset           = User.objects.all()
     serializer_class   = RegisterSerializer
     permission_classes = [permissions.AllowAny]
+    throttle_scope     = 'register'
 
     def create(self, request, *args, **kwargs):
         from django.db import transaction
@@ -71,6 +72,7 @@ class RegisterView(generics.CreateAPIView):
 
 class LoginView(APIView):
     permission_classes = [permissions.AllowAny]
+    throttle_scope     = 'login'
 
     def post(self, request):
         from rest_framework_simplejwt.tokens import RefreshToken
@@ -228,11 +230,9 @@ class PasswordResetRequestView(APIView):
     Génère un token de réinitialisation et l'envoie par email.
     La réponse est toujours identique (200 + message générique) pour ne pas
     révéler si l'adresse email est enregistrée ou non (protection anti-énumération).
-
-    TODO : brancher un backend email (SMTP / SendGrid) et remplacer le
-           print() ci-dessous par un vrai envoi de mail.
     """
     permission_classes = [permissions.AllowAny]
+    throttle_scope     = 'password_reset'
 
     # Message identique quelle que soit l'issue (adresse connue ou inconnue)
     REPONSE_GENERIQUE = {

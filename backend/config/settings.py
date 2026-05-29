@@ -76,6 +76,16 @@ DATABASES = {
 
 AUTH_USER_MODEL = 'users.User'
 
+# ── Cache Redis — partagé entre tous les workers (nécessaire pour le throttling) ─
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': f"redis://{config('REDIS_HOST', default='redis')}:6379/1",
+        'OPTIONS':  {'CLIENT_CLASS': 'django_redis.client.DefaultClient'},
+        'TIMEOUT':  300,   # 5 minutes par défaut
+    }
+}
+
 # ── Django REST Framework ──────────────────────────────────────────────────────
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -87,6 +97,15 @@ REST_FRAMEWORK = {
     # 20 résultats par page pour éviter des payloads trop lourds
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
+    # ── Rate limiting (protection force brute) ─────────────────────────────────
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.ScopedRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'login':          '5/minute',    # 5 tentatives de connexion par minute par IP
+        'register':       '3/minute',    # 3 inscriptions par minute par IP
+        'password_reset': '3/minute',    # 3 demandes de reset par minute par IP
+    },
 }
 
 # ── JWT ────────────────────────────────────────────────────────────────────────

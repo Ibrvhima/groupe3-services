@@ -32,3 +32,14 @@ CHANNEL_LAYERS = {
 
 # Désactive l'envoi d'emails en test → utilise le fallback print()
 RESEND_API_KEY = ''
+
+# Cache mémoire en test → pas besoin de Redis
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    }
+}
+
+# Désactive le rate limiting en test → évite les faux échecs
+REST_FRAMEWORK['DEFAULT_THROTTLE_CLASSES'] = []
+REST_FRAMEWORK['DEFAULT_THROTTLE_RATES']   = {}
