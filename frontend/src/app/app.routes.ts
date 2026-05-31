@@ -102,6 +102,19 @@ export const routes: Routes = [
         title: 'Administration',
         loadComponent: () => import('./features/admin/dashboard/dashboard').then(m => m.AdminDashboardComponent),
       },
+      {
+        path: 'prestataires',
+        title: 'Gestion des prestataires',
+        loadComponent: () => import('./features/admin/prestataires/prestataires').then(m => m.PrestatairesComponent),
+      },
+      {
+        path: 'utilisateurs',
+        redirectTo: '',
+      },
+      {
+        path: 'signalements',
+        redirectTo: '',
+      },
     ],
   },
 

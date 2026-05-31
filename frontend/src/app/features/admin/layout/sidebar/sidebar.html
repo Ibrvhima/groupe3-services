@@ -26,26 +26,12 @@
       </svg>
       Dashboard
     </a>
-    <a routerLink="/admin/utilisateurs" routerLinkActive="bg-orange-600 text-white"
-      class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 hover:bg-gray-800 transition">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
-      </svg>
-      Utilisateurs
-    </a>
     <a routerLink="/admin/prestataires" routerLinkActive="bg-orange-600 text-white"
       class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 hover:bg-gray-800 transition">
       <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
       </svg>
       Prestataires
-    </a>
-    <a routerLink="/admin/signalements" routerLinkActive="bg-orange-600 text-white"
-      class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 hover:bg-gray-800 transition">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"/>
-      </svg>
-      Signalements
     </a>
   </nav>
 
@@ -94,8 +80,6 @@
 <!-- Menu mobile -->
 <div *ngIf="menuOpen" class="md:hidden bg-gray-900 text-white px-4 py-3 space-y-1 border-t border-gray-700">
   <a routerLink="/admin" (click)="toggleMenu()" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 hover:bg-gray-800">Dashboard</a>
-  <a routerLink="/admin/utilisateurs" (click)="toggleMenu()" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 hover:bg-gray-800">Utilisateurs</a>
   <a routerLink="/admin/prestataires" (click)="toggleMenu()" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 hover:bg-gray-800">Prestataires</a>
-  <a routerLink="/admin/signalements" (click)="toggleMenu()" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 hover:bg-gray-800">Signalements</a>
   <button (click)="logout()" class="w-full text-left px-3 py-2.5 text-sm text-red-400 hover:bg-gray-800 rounded-lg">Déconnexion</button>
 </div>
