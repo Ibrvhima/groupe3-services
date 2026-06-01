@@ -1,115 +1,110 @@
 <div class="min-h-screen bg-gray-50">
-  <app-prestataire-header></app-prestataire-header>
+  <app-prestataire-sidebar></app-prestataire-sidebar>
 
-  <div class="max-w-2xl mx-auto px-3 py-4">
-    <h1 class="text-lg font-bold text-gray-800 mb-4">Demandes reçues</h1>
+  <div class="md:ml-56">
 
-    <!-- Onglets de filtrage -->
-    <div class="flex gap-1 bg-gray-100 rounded-xl p-1 mb-4">
-      <button *ngFor="let tab of [
-          { key: 'en_attente', label: 'En attente' },
-          { key: 'en_cours',   label: 'En cours'   },
-          { key: 'historique', label: 'Historique'  }
-        ]"
-        (click)="activeTab = tab.key"
-        [class]="'flex-1 text-xs font-medium py-2 rounded-lg transition ' +
-          (activeTab === tab.key ? 'bg-white text-orange-600 shadow-sm' : 'text-gray-500 hover:text-gray-700')">
-        {{ tab.label }}
-      </button>
+    <!-- ── Topbar ── -->
+    <div class="bg-white border-b border-gray-100 px-6 py-4">
+      <h1 class="text-lg font-bold text-gray-800">Demandes reçues</h1>
+      <p class="text-xs text-gray-400">Gérez vos demandes de service</p>
     </div>
 
-    <!-- Chargement -->
-    <div *ngIf="loading" class="flex justify-center py-16">
-      <div class="w-8 h-8 border-4 border-orange-600 border-t-transparent rounded-full animate-spin"></div>
-    </div>
+    <main class="p-6">
 
-    <!-- Onglet vide -->
-    <div *ngIf="!loading && demandesFiltrees.length === 0" class="text-center py-12">
-      <p class="text-gray-400 text-sm">Aucune demande dans cet onglet</p>
-    </div>
+      <!-- ── Filtres ── -->
+      <div class="flex flex-wrap gap-2 mb-5">
+        <button *ngFor="let tab of [
+            { key: 'toutes',     label: 'Toutes'     },
+            { key: 'en_attente', label: 'En attente' },
+            { key: 'acceptees',  label: 'Acceptées'  },
+            { key: 'terminees',  label: 'Terminées'  }
+          ]"
+          (click)="activeTab = tab.key"
+          [class]="activeTab === tab.key
+            ? 'bg-orange-600 text-white text-xs px-4 py-2 rounded-lg font-medium transition'
+            : 'text-gray-500 text-xs px-4 py-2 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 transition'">
+          {{ tab.label }} ({{ countTab(tab.key) }})
+        </button>
+      </div>
 
-    <!-- Liste des demandes -->
-    <div *ngIf="!loading" class="space-y-3">
-      <div *ngFor="let d of demandesFiltrees"
-        class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+      <!-- ── Spinner ── -->
+      <div *ngIf="loading" class="flex justify-center py-16">
+        <div class="w-8 h-8 border-4 border-orange-600 border-t-transparent rounded-full animate-spin"></div>
+      </div>
 
-        <!-- En-tête : client + badge statut -->
-        <div class="flex items-start justify-between mb-2">
-          <div>
-            <p class="text-sm font-semibold text-gray-800">
-              {{ d.client_info.nom }} {{ d.client_info.prenom }}
-            </p>
-            <p class="text-xs text-gray-400">{{ d.client_info.telephone }}</p>
-          </div>
-          <span [class]="'text-xs font-medium px-2.5 py-1 rounded-full ' + statutClass(d.statut)">
-            {{ d.statut_display }}
-          </span>
-        </div>
+      <!-- ── Vide ── -->
+      <div *ngIf="!loading && demandesFiltrees.length === 0"
+        class="text-center py-16 bg-white rounded-2xl border border-gray-100">
+        <p class="text-gray-400 text-sm">Aucune demande dans cette catégorie</p>
+      </div>
 
-        <!-- Détails de la demande -->
-        <p class="text-xs text-gray-600 mb-1">{{ d.description }}</p>
-        <p class="text-xs text-gray-400">
-          <span class="font-medium text-gray-500">Adresse :</span> {{ d.adresse }}
-        </p>
-        <p *ngIf="d.date_souhaitee" class="text-xs text-gray-400 mt-0.5">
-          <span class="font-medium text-gray-500">Date souhaitée :</span>
-          {{ d.date_souhaitee | date:'dd/MM/yyyy' }}
-        </p>
-        <p class="text-xs text-gray-300 mt-1">
-          Reçue le {{ d.date_creation | date:'dd/MM/yyyy à HH:mm' }}
-        </p>
+      <!-- ── Liste des demandes ── -->
+      <div *ngIf="!loading" class="space-y-4">
+        <div *ngFor="let d of demandesFiltrees"
+          class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
 
-        <!-- résumé devis existant -->
-        <div *ngIf="d.devis" class="mt-3 rounded-xl p-3"
-          [class]="d.devis.statut === 'refuse'
-            ? 'bg-red-50 border border-red-200'
-            : d.devis.statut === 'accepte'
-              ? 'bg-green-50 border border-green-200'
-              : 'bg-gray-50 border border-gray-200'">
-          <div class="flex items-center justify-between">
-            <p class="text-xs font-semibold text-gray-600">📄 Devis envoyé</p>
-            <span [class]="'text-xs font-medium px-2 py-0.5 rounded-full ' + devisStatutClass(d.devis.statut)">
-              {{ d.devis.statut_display }}
+          <!-- En-tête : avatar + titre + badge statut -->
+          <div class="flex items-start justify-between mb-3">
+            <div class="flex items-center gap-3 min-w-0">
+              <!-- Avatar initiales client -->
+              <div [class]="'w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 ' + clientAvatarClass(d)">
+                {{ clientInitiales(d) }}
+              </div>
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-gray-800 truncate">{{ d.titre || d.description }}</p>
+                <p class="text-xs text-gray-500 mt-0.5">
+                  {{ d.client_info.nom }} {{ d.client_info.prenom }}
+                  <span *ngIf="d.adresse"> · {{ d.adresse }}</span>
+                  <span *ngIf="d.date_creation"> · {{ d.date_creation | date:'d MMM' }}</span>
+                </p>
+              </div>
+            </div>
+            <!-- Badge statut -->
+            <span [class]="'ml-3 flex-shrink-0 text-xs font-medium px-2.5 py-1 rounded-full ' + statutClass(d.statut)">
+              {{ d.statut_display }}
             </span>
           </div>
-          <p class="text-base font-bold text-gray-800 mt-1">
-            {{ d.devis.montant | number:'1.0-0' }} GNF
+
+          <!-- Description complète -->
+          <p class="text-xs text-gray-600 mb-3 bg-gray-50 rounded-xl p-3 leading-relaxed">
+            {{ d.description }}
           </p>
-          <p class="text-xs text-gray-500">Délai : {{ d.devis.delai }}</p>
 
-          <!-- Devis refusé : proposer d'en renvoyer un nouveau -->
-          <button *ngIf="d.devis.statut === 'refuse'"
-            (click)="ouvrirFormulaireDevis(d.id)"
-            class="mt-2 w-full text-xs font-medium border border-orange-300 text-orange-600
-                   py-1.5 rounded-lg hover:bg-orange-50 transition flex items-center justify-center gap-1">
-            🔄 Renvoyer un nouveau devis
-          </button>
-        </div>
-        
+          <!-- Infos date + adresse -->
+          <div class="flex items-center gap-4 text-xs text-gray-500 mb-3">
+            <span *ngIf="d.date_souhaitee">📅 {{ d.date_souhaitee | date:'dd/MM/yyyy' }}</span>
+            <span *ngIf="d.adresse">📍 {{ d.adresse }}</span>
+            <span class="text-gray-300">Reçue le {{ d.date_creation | date:'dd/MM/yyyy' }}</span>
+          </div>
 
-        <!-- actions -->
+          <!-- Résumé devis existant -->
+          <div *ngIf="d.devis" class="mb-3 rounded-xl p-3"
+            [class]="d.devis.statut === 'refuse'
+              ? 'bg-red-50 border border-red-200'
+              : d.devis.statut === 'accepte'
+                ? 'bg-green-50 border border-green-200'
+                : 'bg-orange-50 border border-orange-200'">
+            <div class="flex items-center justify-between">
+              <p class="text-xs font-semibold text-gray-600">📄 Devis envoyé</p>
+              <span [class]="'text-xs font-medium px-2 py-0.5 rounded-full ' + devisStatutClass(d.devis.statut)">
+                {{ d.devis.statut_display }}
+              </span>
+            </div>
+            <p class="text-base font-bold text-gray-800 mt-1">
+              {{ d.devis.montant | number:'1.0-0' }} GNF
+            </p>
+            <p class="text-xs text-gray-500">Délai : {{ d.devis.delai }}</p>
+            <button *ngIf="d.devis.statut === 'refuse'" (click)="ouvrirFormulaireDevis(d.id)"
+              class="mt-2 w-full text-xs font-medium border border-orange-300 text-orange-600
+                     py-1.5 rounded-lg hover:bg-orange-50 transition flex items-center justify-center gap-1">
+              🔄 Renvoyer un nouveau devis
+            </button>
+          </div>
 
-        <!-- Bouton Chat (toujours visible sauf annulée) -->
-        <div *ngIf="d.statut !== 'annulee'" class="mt-3">
-          <a [routerLink]="['/prestataire/chat']" [queryParams]="{ demandeId: d.id }"
-            class="flex items-center justify-center gap-2 w-full bg-orange-600 hover:bg-orange-700
-                   text-white text-sm font-semibold py-2.5 rounded-xl transition shadow-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
-            </svg>
-            Discuter avec le client
-          </a>
-        </div>
-
-        <!-- Demande en attente : envoyer un devis + accepter/refuser -->
-        <div *ngIf="d.statut === 'en_attente'" class="mt-3 space-y-2">
-
-          <!-- Devis refusé par le client : message d'alerte, plus de bouton Accepter -->
-          <div *ngIf="d.devis?.statut === 'refuse'"
-            class="flex items-start gap-2 bg-red-50 border border-red-200 rounded-xl px-3 py-2.5">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5"
-              fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <!-- Alerte devis refusé -->
+          <div *ngIf="d.statut === 'en_attente' && d.devis?.statut === 'refuse'"
+            class="mb-3 flex items-start gap-2 bg-red-50 border border-red-200 rounded-xl px-3 py-2.5">
+            <svg class="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
             </svg>
@@ -118,106 +113,97 @@
             </p>
           </div>
 
-          <!-- Bouton envoyer devis (si pas encore de devis) -->
-          <button *ngIf="!d.has_devis"
-            (click)="ouvrirFormulaireDevis(d.id)"
-            class="w-full text-xs font-medium border border-orange-300 text-orange-600
-                   py-2 rounded-xl hover:bg-orange-50 transition flex items-center justify-center gap-1">
-            📄 Envoyer un devis au client
-          </button>
-
-          <!-- Accepter / Refuser — masqués si le devis a été refusé -->
-          <div *ngIf="d.devis?.statut !== 'refuse'" class="flex gap-2">
-            <button (click)="accepter(d.id)" [disabled]="actionLoading === d.id"
-              class="flex-1 text-xs font-medium bg-orange-600 text-white py-2 rounded-xl
-                     hover:bg-orange-700 disabled:opacity-50 transition">
-              {{ actionLoading === d.id ? '...' : 'Accepter' }}
-            </button>
-            <button (click)="refuser(d.id)" [disabled]="actionLoading === d.id"
-              class="flex-1 text-xs font-medium bg-red-50 text-red-500 py-2 rounded-xl
-                     hover:bg-red-100 disabled:opacity-50 transition">
-              Refuser
-            </button>
-          </div>
-        </div>
-
-        <!-- Demande acceptée ou en cours : Terminer + devis si pas encore envoyé -->
-        <div *ngIf="d.statut === 'acceptee' || d.statut === 'en_cours'" class="mt-3 space-y-2">
-
-          <button *ngIf="!d.has_devis"
-            (click)="ouvrirFormulaireDevis(d.id)"
-            class="w-full text-xs font-medium border border-orange-300 text-orange-600
-                   py-2 rounded-xl hover:bg-orange-50 transition flex items-center justify-center gap-1">
-            📄 Envoyer un devis
-          </button>
-
-          <button (click)="terminer(d.id)" [disabled]="actionLoading === d.id"
-            class="w-full text-xs font-medium bg-green-600 text-white py-2 rounded-xl
-                   hover:bg-green-700 disabled:opacity-50 transition">
-            {{ actionLoading === d.id ? '...' : 'Marquer comme terminée' }}
-          </button>
-
-        </div>
-
-        <!-- formulaire devis -->
-        <div *ngIf="devisDemandeId === d.id"
-          class="mt-4 border-t border-gray-100 pt-4">
-
-          <p class="text-xs font-semibold text-gray-700 mb-3">
-            Créer un devis pour {{ d.client_info.nom }}
-          </p>
-
-          <!-- Montant -->
-          <div class="mb-3">
-            <label class="block text-xs text-gray-500 mb-1">Montant (GNF)</label>
-            <input type="number" [(ngModel)]="devisMontant" min="0" placeholder="Ex : 500000"
-              class="w-full text-sm border border-gray-200 rounded-xl px-3 py-2
-                     focus:outline-none focus:ring-2 focus:ring-orange-400"/>
+          <!-- Bouton Chat -->
+          <div *ngIf="d.statut !== 'annulee'" class="mb-2">
+            <a [routerLink]="['/prestataire/chat']" [queryParams]="{ demandeId: d.id }"
+              class="flex items-center justify-center gap-2 w-full bg-orange-600 hover:bg-orange-700
+                     text-white text-sm font-semibold py-2.5 rounded-xl transition">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+              </svg>
+              Discuter avec le client
+            </a>
           </div>
 
-          <!-- Délai -->
-          <div class="mb-3">
-            <label class="block text-xs text-gray-500 mb-1">Délai d'intervention</label>
-            <input type="text" [(ngModel)]="devisDelai" placeholder="Ex : 2 jours, 1 semaine…"
-              class="w-full text-sm border border-gray-200 rounded-xl px-3 py-2
-                     focus:outline-none focus:ring-2 focus:ring-orange-400"/>
+          <!-- Actions : demande EN ATTENTE -->
+          <div *ngIf="d.statut === 'en_attente'" class="space-y-2">
+            <button *ngIf="!d.has_devis" (click)="ouvrirFormulaireDevis(d.id)"
+              class="w-full text-xs font-medium border border-orange-300 text-orange-600
+                     py-2 rounded-xl hover:bg-orange-50 transition flex items-center justify-center gap-1">
+              📄 Envoyer un devis au client
+            </button>
+            <div *ngIf="d.devis?.statut !== 'refuse'" class="flex gap-2">
+              <button (click)="accepter(d.id)" [disabled]="actionLoading === d.id"
+                class="flex-1 text-xs font-medium bg-green-600 text-white py-2 rounded-xl
+                       hover:bg-green-700 disabled:opacity-50 transition">
+                {{ actionLoading === d.id ? '...' : 'Accepter' }}
+              </button>
+              <button (click)="refuser(d.id)" [disabled]="actionLoading === d.id"
+                class="flex-1 text-xs font-medium bg-red-50 text-red-600 py-2 rounded-xl
+                       hover:bg-red-100 disabled:opacity-50 transition">
+                Refuser
+              </button>
+            </div>
           </div>
 
-          <!-- Description -->
-          <div class="mb-3">
-            <label class="block text-xs text-gray-500 mb-1">Description des prestations</label>
-            <textarea [(ngModel)]="devisDescription" rows="3"
-              placeholder="Détaillez ce qui est inclus dans ce devis…"
-              class="w-full text-sm border border-gray-200 rounded-xl px-3 py-2
-                     focus:outline-none focus:ring-2 focus:ring-orange-400 resize-none">
-            </textarea>
+          <!-- Actions : ACCEPTÉE ou EN COURS -->
+          <div *ngIf="d.statut === 'acceptee' || d.statut === 'en_cours'" class="space-y-2">
+            <button *ngIf="!d.has_devis" (click)="ouvrirFormulaireDevis(d.id)"
+              class="w-full text-xs font-medium border border-orange-300 text-orange-600
+                     py-2 rounded-xl hover:bg-orange-50 transition flex items-center justify-center gap-1">
+              📄 Envoyer un devis
+            </button>
+            <button (click)="terminer(d.id)" [disabled]="actionLoading === d.id"
+              class="w-full text-xs font-medium bg-green-600 text-white py-2 rounded-xl
+                     hover:bg-green-700 disabled:opacity-50 transition">
+              {{ actionLoading === d.id ? '...' : 'Marquer terminé' }}
+            </button>
           </div>
 
-          <!-- Message d'erreur -->
-          <div *ngIf="devisError" class="text-xs text-red-500 mb-2">{{ devisError }}</div>
-
-          <!-- Boutons Envoyer / Annuler -->
-          <div class="flex gap-2">
-            <button (click)="fermerFormulaireDevis()"
-              class="flex-1 text-xs border border-gray-200 text-gray-500 py-2
-                     rounded-xl hover:bg-gray-50 transition">
-              Annuler
-            </button>
-            <button (click)="envoyerDevis()" [disabled]="devisLoading"
-              class="flex-1 text-xs bg-orange-600 text-white font-semibold py-2
-                     rounded-xl hover:bg-orange-600 disabled:opacity-50 transition
-                     flex items-center justify-center gap-1">
-              <span *ngIf="devisLoading"
-                class="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin">
-              </span>
-              {{ devisLoading ? 'Envoi...' : 'Envoyer le devis' }}
-            </button>
+          <!-- Formulaire devis inline -->
+          <div *ngIf="devisDemandeId === d.id" class="mt-4 border-t border-gray-100 pt-4 space-y-3">
+            <p class="text-xs font-semibold text-gray-700">
+              Créer un devis pour {{ d.client_info.nom }}
+            </p>
+            <div>
+              <label class="block text-xs text-gray-500 mb-1">Montant (GNF)</label>
+              <input type="number" [(ngModel)]="devisMontant" min="0" placeholder="Ex : 500 000"
+                class="w-full text-sm border border-gray-200 rounded-xl px-3 py-2
+                       focus:outline-none focus:ring-2 focus:ring-orange-300"/>
+            </div>
+            <div>
+              <label class="block text-xs text-gray-500 mb-1">Délai d'intervention</label>
+              <input type="text" [(ngModel)]="devisDelai" placeholder="Ex : 2 jours, 1 semaine…"
+                class="w-full text-sm border border-gray-200 rounded-xl px-3 py-2
+                       focus:outline-none focus:ring-2 focus:ring-orange-300"/>
+            </div>
+            <div>
+              <label class="block text-xs text-gray-500 mb-1">Description des prestations</label>
+              <textarea [(ngModel)]="devisDescription" rows="3"
+                placeholder="Détaillez ce qui est inclus dans ce devis…"
+                class="w-full text-sm border border-gray-200 rounded-xl px-3 py-2
+                       focus:outline-none focus:ring-2 focus:ring-orange-300 resize-none"></textarea>
+            </div>
+            <div *ngIf="devisError" class="text-xs text-red-500">{{ devisError }}</div>
+            <div class="flex gap-2">
+              <button (click)="fermerFormulaireDevis()"
+                class="flex-1 text-xs border border-gray-200 text-gray-500 py-2 rounded-xl hover:bg-gray-50 transition">
+                Annuler
+              </button>
+              <button (click)="envoyerDevis()" [disabled]="devisLoading"
+                class="flex-1 text-xs bg-orange-600 text-white font-semibold py-2 rounded-xl
+                       hover:bg-orange-700 disabled:opacity-50 transition flex items-center justify-center gap-1">
+                <span *ngIf="devisLoading"
+                  class="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                {{ devisLoading ? 'Envoi...' : 'Envoyer le devis' }}
+              </button>
+            </div>
           </div>
 
         </div>
-        
+      </div>
 
-      </div><!-- fin card demande -->
-    </div><!-- fin liste -->
+    </main>
   </div>
 </div>

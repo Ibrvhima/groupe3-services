@@ -103,38 +103,25 @@
   </section>
 
   <!-- catégories -->
-  <section class="py-16 px-4 bg-gray-50">
-    <div class="max-w-5xl mx-auto">
-      <div class="text-center mb-10">
-        <h2 class="text-2xl font-extrabold text-gray-800 mb-2">Nos catégories de services</h2>
-        <p class="text-sm text-gray-400">Des professionnels qualifiés pour chaque besoin</p>
-      </div>
+  <section class="py-14 px-4 bg-gray-50">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-xl font-bold text-gray-800 mb-2">Catégories de services</h2>
+      <p class="text-sm text-gray-500 mb-6">{{ categories.length || 10 }} catégories disponibles à Conakry</p>
 
       <!-- Skeleton pendant le chargement -->
-      <div *ngIf="categories.length === 0" class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-        <div *ngFor="let _ of [1,2,3,4,5,6]" class="bg-gray-200 rounded-xl h-44 animate-pulse"></div>
+      <div *ngIf="categories.length === 0" class="grid grid-cols-2 sm:grid-cols-5 gap-4">
+        <div *ngFor="let _ of [1,2,3,4,5,6,7,8,9,10]"
+          class="bg-gray-200 rounded-xl h-20 animate-pulse"></div>
       </div>
 
-      <!-- Cards catégories avec photo -->
-      <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+      <!-- Cards catégories -->
+      <div *ngIf="categories.length > 0" class="grid grid-cols-2 sm:grid-cols-5 gap-4">
         <a *ngFor="let cat of categories"
-          routerLink="/auth/register"
-          class="group relative rounded-xl overflow-hidden shadow-sm hover:shadow-sm transition-shadow cursor-pointer h-44">
-
-          <!-- Photo de fond -->
-          <img [src]="getCategoryImage(cat.nom)"
-               [alt]="cat.nom"
-               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"/>
-
-          <!-- Overlay dégradé -->
-          <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-
-          <!-- Texte en bas de la carte -->
-          <div class="absolute bottom-0 left-0 right-0 p-4">
-            <p *ngIf="cat.icone" class="text-lg mb-0.5">{{ cat.icone }}</p>
-            <p class="text-sm font-bold text-white">{{ cat.nom }}</p>
-            <p *ngIf="cat.description" class="text-xs text-gray-300 mt-0.5 line-clamp-1">{{ cat.description }}</p>
-          </div>
+          [routerLink]="categorieRoute"
+          class="bg-white rounded-xl p-4 flex flex-col items-center gap-2 shadow-sm border border-gray-100
+                 hover:shadow-md hover:-translate-y-0.5 transition-all cursor-pointer">
+          <span class="text-2xl">{{ cat.icone || getCategoryEmoji(cat.nom) }}</span>
+          <span class="text-xs font-medium text-gray-700 text-center">{{ cat.nom }}</span>
         </a>
       </div>
     </div>
@@ -219,52 +206,49 @@
     </div>
   </section>
 
-  <!-- meilleurs prestataires -->
-  <section *ngIf="prestataires.length > 0" class="py-16 px-4 bg-gray-50">
-    <div class="max-w-5xl mx-auto">
-      <div class="text-center mb-10">
-        <h2 class="text-2xl font-extrabold text-gray-800 mb-2">Nos prestataires les mieux notés</h2>
-        <p class="text-sm text-gray-400">Vérifiés et approuvés par notre équipe</p>
-      </div>
+  <!-- prestataires en vedette -->
+  <section *ngIf="prestataires.length > 0" class="py-14 px-4">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-xl font-bold text-gray-800 mb-6">Prestataires disponibles</h2>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
         <div *ngFor="let p of prestataires"
-          class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-sm transition">
+          class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition">
 
-          <!-- Photo ou bandeau coloré -->
-          <div class="h-28 bg-gradient-to-br from-orange-600 to-orange-800 relative flex items-center justify-center">
-            <img *ngIf="p.photo" [src]="p.photo" [alt]="p.user.nom"
-              class="w-full h-full object-cover absolute inset-0"/>
-            <span *ngIf="!p.photo" class="text-3xl font-extrabold text-white/40 select-none">
+          <!-- Avatar + infos -->
+          <div class="flex items-center gap-3 mb-3">
+            <div [class]="'w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0 ' + avatarColor(p)">
               {{ p.user.nom.charAt(0) }}{{ p.user.prenom.charAt(0) }}
-            </span>
-            <!-- Badge note -->
-            <div class="absolute top-2 right-2 bg-white/90 backdrop-blur rounded-full px-2 py-0.5 flex items-center gap-1">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-amber-400" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-              </svg>
-              <span class="text-xs font-bold text-gray-700">{{ p.note_moyenne }}</span>
+            </div>
+            <div class="min-w-0">
+              <p class="font-semibold text-gray-800 text-sm truncate">{{ p.user.nom }} {{ p.user.prenom }}</p>
+              <p class="text-xs text-gray-500 truncate">{{ p.categorie?.nom }} · {{ p.quartier }}</p>
             </div>
           </div>
 
-          <div class="p-4">
-            <div class="flex items-start justify-between gap-2">
-              <div>
-                <p class="text-sm font-bold text-gray-800">{{ p.user.nom }} {{ p.user.prenom }}</p>
-                <p class="text-xs text-gray-400">{{ p.categorie?.nom ?? '—' }} · {{ p.quartier }}</p>
-              </div>
-              <span *ngIf="p.badge_verifie"
-                class="shrink-0 text-[10px] bg-orange-50 text-orange-600 px-1.5 py-0.5 rounded-full font-medium">
-                ✓ Vérifié
-              </span>
-            </div>
+          <!-- Étoiles + note + nb avis -->
+          <div class="flex items-center gap-0.5 mb-3">
+            <span *ngFor="let s of etoilesArray(5)"
+              [class]="s <= +p.note_moyenne ? 'text-yellow-400 text-xs' : 'text-gray-200 text-xs'">★</span>
+            <span class="text-xs text-gray-500 ml-1">
+              {{ p.note_moyenne }}/5
+              <span *ngIf="p.nombre_avis > 0">({{ p.nombre_avis }} avis)</span>
+            </span>
           </div>
+
+          <!-- Bouton voir profil (route dynamique selon auth) -->
+          <a [routerLink]="prestataireRoute(p.uuid)"
+            class="block text-center bg-orange-600 text-white text-xs font-medium
+                   py-2 rounded-xl hover:bg-orange-700 transition">
+            Voir le profil
+          </a>
         </div>
       </div>
 
       <div class="text-center mt-8">
-        <a routerLink="/auth/register"
-          class="inline-block bg-orange-600 text-white font-semibold px-8 py-3 rounded-xl hover:bg-orange-700 transition text-sm">
+        <a [routerLink]="tousPrestatairesRoute"
+          class="inline-block bg-orange-600 text-white font-semibold px-8 py-3 rounded-xl
+                 hover:bg-orange-700 transition text-sm">
           Voir tous les prestataires
         </a>
       </div>

@@ -4,20 +4,20 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DemandeService } from '../../../core/services/demande.service';
 import { DevisService } from '../../../core/services/devis.service';
-import { PrestataireHeaderComponent } from '../layout/header/header';
+import { PrestataireSidebarComponent } from '../layout/sidebar/sidebar';
 import { Demande } from '../../../core/models';
 
 @Component({
   selector: 'app-prestataire-demandes',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, PrestataireHeaderComponent],
+  imports: [CommonModule, RouterModule, FormsModule, PrestataireSidebarComponent],
   templateUrl: './demandes.html',
 })
 export class PrestataireDemandesComponent implements OnInit {
   demandes: Demande[] = [];
   loading = true;
   actionLoading: number | null = null;
-  activeTab = 'en_attente';
+  activeTab = 'toutes';
 
   devisDemandeId: number | null = null;
   devisMontant = '';
@@ -47,13 +47,31 @@ export class PrestataireDemandesComponent implements OnInit {
   }
 
   get demandesFiltrees(): Demande[] {
-    if (this.activeTab === 'en_attente') {
-      return this.demandes.filter(d => d.statut === 'en_attente');
-    }
-    if (this.activeTab === 'en_cours') {
-      return this.demandes.filter(d => ['acceptee', 'en_cours'].includes(d.statut));
-    }
-    return this.demandes.filter(d => ['terminee', 'refusee', 'annulee'].includes(d.statut));
+    if (this.activeTab === 'en_attente') return this.demandes.filter(d => d.statut === 'en_attente');
+    if (this.activeTab === 'acceptees')  return this.demandes.filter(d => ['acceptee', 'en_cours'].includes(d.statut));
+    if (this.activeTab === 'terminees')  return this.demandes.filter(d => ['terminee', 'refusee', 'annulee'].includes(d.statut));
+    return this.demandes;
+  }
+
+  countTab(tab: string): number {
+    if (tab === 'toutes')     return this.demandes.length;
+    if (tab === 'en_attente') return this.demandes.filter(d => d.statut === 'en_attente').length;
+    if (tab === 'acceptees')  return this.demandes.filter(d => ['acceptee', 'en_cours'].includes(d.statut)).length;
+    if (tab === 'terminees')  return this.demandes.filter(d => ['terminee', 'refusee', 'annulee'].includes(d.statut)).length;
+    return 0;
+  }
+
+  clientInitiales(d: Demande): string {
+    const n = d.client_info?.nom?.charAt(0) ?? '';
+    const p = d.client_info?.prenom?.charAt(0) ?? '';
+    return (n + p).toUpperCase();
+  }
+
+  clientAvatarClass(d: Demande): string {
+    const colors = ['bg-blue-500', 'bg-purple-500', 'bg-green-600', 'bg-teal-500', 'bg-indigo-500', 'bg-pink-500'];
+    const nom = d.client_info?.nom ?? '';
+    const idx = nom.charCodeAt(0) % colors.length;
+    return colors[idx] ?? 'bg-blue-500';
   }
 
   accepter(id: number): void { this._action(id, () => this.demandeService.accepter(id)); }

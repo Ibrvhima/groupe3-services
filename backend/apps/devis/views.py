@@ -62,11 +62,12 @@ class DevisViewSet(viewsets.ModelViewSet):
                     raise ValidationError("Un devis est déjà en cours pour cette demande.")
             devis = serializer.save()
 
+        sujet = f"« {demande.titre} »" if demande.titre else "votre demande"
         _notifier(
             demande.client,
             "Nouveau devis reçu",
             f"{user.nom} {user.prenom} vous a envoyé un devis de "
-            f"{devis.montant} GNF pour votre demande."
+            f"{devis.montant} GNF pour {sujet}.",
         )
 
     @action(detail=True, methods=['post'])

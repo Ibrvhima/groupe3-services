@@ -1,279 +1,309 @@
-<div class="min-h-screen bg-slate-100">
-  <app-admin-header></app-admin-header>
+<div class="min-h-screen bg-gray-50">
+  <app-sidebar></app-sidebar>
 
-  <!-- Spinner initial -->
-  <div *ngIf="loading" class="flex flex-col items-center justify-center py-32 gap-3">
-    <div class="w-10 h-10 border-4 border-orange-600 border-t-transparent rounded-full animate-spin"></div>
-    <p class="text-sm text-slate-400">Chargement…</p>
-  </div>
+  <div class="md:ml-56">
 
-  <div *ngIf="!loading" class="max-w-5xl mx-auto px-4 py-6">
+    <!-- ── Topbar ── -->
+    <div class="bg-white border-b border-gray-100 px-6 py-4">
+      <h1 class="text-lg font-bold text-gray-800">Tableau de bord</h1>
+      <p class="text-xs text-gray-400">Vue d'ensemble de la plateforme DouraKa</p>
+    </div>
 
-    <!-- Titre + onglets -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-      <div>
-        <h1 class="text-xl font-bold text-slate-800">Tableau de bord</h1>
-        <p class="text-xs text-slate-400 mt-0.5">Administration · DouraKa</p>
-      </div>
+    <!-- ── Spinner ── -->
+    <div *ngIf="loading" class="flex flex-col items-center justify-center py-32 gap-3">
+      <div class="w-10 h-10 border-4 border-orange-600 border-t-transparent rounded-full animate-spin"></div>
+      <p class="text-sm text-gray-400">Chargement…</p>
+    </div>
 
-      <nav class="flex gap-1 bg-white rounded-xl border border-slate-200 p-1 shadow-sm">
+    <main *ngIf="!loading" class="p-6 space-y-5">
+
+      <!-- ── Onglets ── -->
+      <div class="flex flex-wrap gap-2">
         <button *ngFor="let t of tabs"
           (click)="setOnglet(t.id)"
           [class]="t.id === onglet
-            ? 'px-4 py-2 rounded-xl bg-orange-600 text-white text-xs font-semibold transition'
-            : 'px-4 py-2 rounded-xl text-slate-500 hover:bg-slate-50 text-xs font-medium transition'">
+            ? 'bg-orange-600 text-white text-xs px-4 py-2 rounded-lg font-medium transition'
+            : 'text-gray-500 text-xs px-4 py-2 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 transition'">
           {{ t.label }}
         </button>
-      </nav>
-    </div>
+      </div>
 
-    <!-- statistiques -->
-    <div [hidden]="onglet !== 'stats'">
-      <div *ngIf="stats">
+      <!-- ══════════════════════ STATISTIQUES ══════════════════════ -->
+      <div *ngIf="onglet === 'stats'" class="space-y-5">
 
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
-            <p class="text-3xl font-bold text-orange-600">{{ stats.users.total }}</p>
-            <p class="text-xs text-slate-500 mt-1">Utilisateurs</p>
-            <p class="text-xs text-slate-300 mt-0.5">{{ stats.users.clients }} clients · {{ stats.users.prestataires }} pros</p>
+        <!-- 4 stat cards -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+            <p class="text-xs text-gray-500 mb-1">Utilisateurs</p>
+            <p class="text-3xl font-bold text-blue-600">{{ stats?.users?.total ?? 0 }}</p>
+            <p class="text-xs text-gray-400 mt-1">{{ stats?.users?.clients }} clients · {{ stats?.users?.prestataires }} pros</p>
           </div>
-          <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
-            <p class="text-3xl font-bold text-orange-600">{{ stats.prestataires.total }}</p>
-            <p class="text-xs text-slate-500 mt-1">Prestataires</p>
-            <p class="text-xs text-slate-300 mt-0.5">{{ stats.prestataires.verifies }} vérifiés</p>
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+            <p class="text-xs text-gray-500 mb-1">Prestataires</p>
+            <p class="text-3xl font-bold text-orange-600">{{ stats?.prestataires?.total ?? 0 }}</p>
+            <p class="text-xs text-gray-400 mt-1">{{ stats?.prestataires?.verifies }} vérifiés</p>
           </div>
-          <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
-            <p class="text-3xl font-bold text-amber-500">{{ stats.demandes.total }}</p>
-            <p class="text-xs text-slate-500 mt-1">Demandes</p>
-            <p class="text-xs text-amber-400 mt-0.5">{{ stats.demandes.en_attente }} en attente</p>
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+            <p class="text-xs text-gray-500 mb-1">Demandes</p>
+            <p class="text-3xl font-bold text-green-600">{{ stats?.demandes?.total ?? 0 }}</p>
+            <p class="text-xs text-gray-400 mt-1">{{ stats?.demandes?.terminees }} terminées</p>
           </div>
-          <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
-            <p class="text-3xl font-bold text-emerald-600">{{ stats.demandes.terminees }}</p>
-            <p class="text-xs text-slate-500 mt-1">Terminées</p>
-            <p class="text-xs text-slate-300 mt-0.5">{{ stats.categories }} catégories</p>
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+            <p class="text-xs text-gray-500 mb-1">En attente</p>
+            <p class="text-3xl font-bold text-yellow-600">{{ stats?.demandes?.en_attente ?? 0 }}</p>
+            <p class="text-xs text-gray-400 mt-1">À valider</p>
           </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-5">
-          <h2 class="text-sm font-semibold text-slate-700 mb-4">Répartition des demandes</h2>
+        <!-- 2 cards : Inscriptions + Catégories -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+          <!-- Dernières inscriptions -->
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+            <h2 class="font-bold text-gray-800 mb-4">Dernières inscriptions</h2>
+            <div class="space-y-3">
+              <div *ngFor="let c of clients.slice(0, 3)" class="flex items-center gap-3">
+                <div [class]="'w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 ' + clientAvatarClass(c)">
+                  {{ c.nom.charAt(0) }}{{ c.prenom.charAt(0) }}
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-gray-800 truncate">{{ c.nom }} {{ c.prenom }}</p>
+                  <p class="text-xs text-gray-500">Client</p>
+                </div>
+                <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full flex-shrink-0">Client</span>
+              </div>
+              <div *ngFor="let p of prestataires.slice(0, 2)" class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                  {{ p.user.nom.charAt(0) }}{{ p.user.prenom.charAt(0) }}
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-gray-800 truncate">{{ p.user.nom }} {{ p.user.prenom }}</p>
+                  <p class="text-xs text-gray-500">Prestataire</p>
+                </div>
+                <span [class]="'text-xs px-2 py-0.5 rounded-full flex-shrink-0 font-medium ' + statutPrestClass(p.statut)">
+                  {{ p.statut === 'en_attente' ? 'En attente' : p.statut === 'approuve' ? 'Approuvé' : 'Rejeté' }}
+                </span>
+              </div>
+              <p *ngIf="clients.length === 0 && prestataires.length === 0"
+                class="text-xs text-gray-400 text-center py-4">Aucune inscription.</p>
+            </div>
+          </div>
+
+          <!-- Catégories actives -->
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+            <h2 class="font-bold text-gray-800 mb-4">Catégories actives ({{ stats?.categories ?? 0 }})</h2>
+            <div class="space-y-2.5">
+              <div *ngFor="let cat of categories.slice(0, 7)" class="flex items-center justify-between text-sm">
+                <span class="text-gray-700 truncate flex-1">{{ cat.nom }}</span>
+                <div class="flex items-center gap-2 flex-shrink-0 ml-3">
+                  <div class="w-20 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                    <div class="h-full bg-orange-600 rounded-full" style="width: 60%"></div>
+                  </div>
+                </div>
+              </div>
+              <p *ngIf="categories.length === 0" class="text-xs text-gray-400 text-center py-4">Aucune catégorie.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Répartition des demandes -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+          <h2 class="font-bold text-gray-800 mb-4">Répartition des demandes</h2>
           <div class="space-y-3">
             <div *ngFor="let item of [
-              {label:'En attente', val: stats.demandes.en_attente, color:'bg-amber-400'},
-              {label:'Acceptées',  val: stats.demandes.acceptees,  color:'bg-orange-400'},
-              {label:'Terminées',  val: stats.demandes.terminees,  color:'bg-emerald-400'},
-              {label:'Annulées',   val: stats.demandes.annulees,   color:'bg-slate-300'}
+              {label:'En attente', val: stats?.demandes?.en_attente ?? 0, color:'bg-yellow-400'},
+              {label:'Acceptées',  val: stats?.demandes?.acceptees ?? 0,  color:'bg-orange-400'},
+              {label:'Terminées',  val: stats?.demandes?.terminees ?? 0,  color:'bg-green-400'},
+              {label:'Annulées',   val: stats?.demandes?.annulees ?? 0,   color:'bg-gray-300'}
             ]" class="flex items-center gap-3">
-              <span class="w-22 text-xs text-slate-500 shrink-0">{{ item.label }}</span>
-              <div class="flex-1 bg-slate-100 rounded-full h-2 overflow-hidden">
+              <span class="w-24 text-xs text-gray-500 flex-shrink-0">{{ item.label }}</span>
+              <div class="flex-1 bg-gray-100 rounded-full h-2 overflow-hidden">
                 <div [class]="'h-2 rounded-full ' + item.color"
-                     [style.width]="pct(item.val, stats.demandes.total)"></div>
+                     [style.width]="pct(item.val, stats?.demandes?.total ?? 0)"></div>
               </div>
-              <span class="text-xs font-bold text-slate-600 w-6 text-right">{{ item.val }}</span>
+              <span class="text-xs font-bold text-gray-600 w-6 text-right flex-shrink-0">{{ item.val }}</span>
             </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ══════════════════════ PRESTATAIRES ══════════════════════ -->
+      <div *ngIf="onglet === 'prestataires'">
+        <p class="text-xs text-gray-400 mb-4">{{ prestataires.length }} prestataire(s) inscrit(s)</p>
+        <p *ngIf="prestataires.length === 0"
+          class="text-center text-sm text-gray-400 py-12 bg-white rounded-2xl border border-gray-100">
+          Aucun prestataire inscrit.
+        </p>
+        <div class="space-y-3">
+          <div *ngFor="let p of prestataires"
+            class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="w-11 h-11 rounded-xl bg-orange-100 flex items-center justify-center flex-shrink-0">
+                  <span class="text-orange-700 font-bold text-sm">
+                    {{ p.user.nom.charAt(0) }}{{ p.user.prenom.charAt(0) }}
+                  </span>
+                </div>
+                <div class="min-w-0">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <p class="text-sm font-bold text-gray-800">{{ p.user.nom }} {{ p.user.prenom }}</p>
+                    <span [class]="'text-xs border px-2 py-0.5 rounded-full font-medium ' + statutPrestClass(p.statut)">
+                      {{ p.statut === 'en_attente' ? 'En attente' : p.statut === 'approuve' ? 'Approuvé' : 'Rejeté' }}
+                    </span>
+                    <span *ngIf="p.badge_verifie"
+                      class="text-xs bg-orange-50 text-orange-600 px-2 py-0.5 rounded-full font-medium">
+                      Certifié ✓
+                    </span>
+                  </div>
+                  <p class="text-xs text-gray-400">{{ p.user.email }}</p>
+                  <div class="flex items-center gap-2 mt-1 text-xs text-gray-400 flex-wrap">
+                    <span class="bg-gray-100 px-2 py-0.5 rounded-full text-gray-600">{{ p.categorie?.nom ?? '—' }}</span>
+                    <span>{{ p.quartier }}</span>
+                    <span class="text-yellow-500">★ {{ p.note_moyenne }}</span>
+                  </div>
+                </div>
+              </div>
+              <span [class]="p.disponible
+                ? 'flex-shrink-0 text-xs px-2 py-1 rounded-full bg-green-50 text-green-600 font-medium'
+                : 'flex-shrink-0 text-xs px-2 py-1 rounded-full bg-red-50 text-red-400 font-medium'">
+                {{ p.disponible ? 'Actif' : 'Inactif' }}
+              </span>
+            </div>
+
+            <div class="flex flex-wrap gap-2 mt-3 pt-3 border-t border-gray-100 items-center">
+              <button *ngIf="p.statut !== 'approuve'" (click)="approuver(p)" [disabled]="prestActionId === p.id"
+                class="text-xs px-3 py-1.5 rounded-xl bg-green-500 text-white font-medium hover:bg-green-600 disabled:opacity-50 transition">
+                Approuver
+              </button>
+              <button *ngIf="p.statut !== 'rejete'" (click)="rejeter(p)" [disabled]="prestActionId === p.id"
+                class="text-xs px-3 py-1.5 rounded-xl bg-red-100 text-red-600 font-medium hover:bg-red-200 disabled:opacity-50 transition">
+                Rejeter
+              </button>
+              <button (click)="toggleBadge(p)" [disabled]="prestActionId === p.id"
+                [class]="p.badge_verifie
+                  ? 'text-xs px-3 py-1.5 rounded-xl bg-orange-600 text-white font-medium hover:bg-orange-700 disabled:opacity-50 transition'
+                  : 'text-xs px-3 py-1.5 rounded-xl bg-gray-100 text-gray-700 font-medium hover:bg-gray-200 disabled:opacity-50 transition'">
+                {{ p.badge_verifie ? 'Retirer certification' : 'Certifier' }}
+              </button>
+              <button (click)="toggleDisponible(p)" [disabled]="prestActionId === p.id"
+                [class]="p.disponible
+                  ? 'text-xs px-3 py-1.5 rounded-xl bg-orange-50 text-orange-600 font-medium hover:bg-orange-100 disabled:opacity-50 transition'
+                  : 'text-xs px-3 py-1.5 rounded-xl bg-green-50 text-green-600 font-medium hover:bg-green-100 disabled:opacity-50 transition'">
+                {{ p.disponible ? 'Suspendre' : 'Réactiver' }}
+              </button>
+              <div *ngIf="prestActionId === p.id"
+                class="w-4 h-4 border-2 border-orange-400 border-t-transparent rounded-full animate-spin">
+              </div>
+              <button (click)="supprimerUser(p.user, 'prestataires')"
+                class="ml-auto text-xs px-3 py-1.5 rounded-xl text-red-400 hover:bg-red-50 hover:text-red-600 transition">
+                Supprimer
+              </button>
+            </div>
+
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- prestataires -->
-    <div [hidden]="onglet !== 'prestataires'">
-
-      <p class="text-xs text-slate-400 mb-4">{{ prestataires.length }} prestataire(s) inscrit(s)</p>
-
-      <p *ngIf="prestataires.length === 0"
-        class="text-center text-sm text-slate-400 py-12 bg-white rounded-xl border border-slate-100">
-        Aucun prestataire inscrit.
-      </p>
-
-      <div class="space-y-3">
-        <div *ngFor="let p of prestataires"
-          class="bg-white rounded-xl border border-slate-100 shadow-sm p-4">
-
-          <div class="flex items-start justify-between gap-3">
+      <!-- ══════════════════════ CLIENTS ══════════════════════ -->
+      <div *ngIf="onglet === 'clients'">
+        <p class="text-xs text-gray-400 mb-4">{{ clients.length }} client(s) inscrit(s)</p>
+        <p *ngIf="clients.length === 0"
+          class="text-center text-sm text-gray-400 py-12 bg-white rounded-2xl border border-gray-100">
+          Aucun client inscrit.
+        </p>
+        <div class="space-y-2">
+          <div *ngFor="let c of clients"
+            class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex items-center justify-between gap-3">
             <div class="flex items-center gap-3 min-w-0">
-              <div class="w-11 h-11 rounded-xl bg-orange-100 flex items-center justify-center flex-shrink-0">
-                <span class="text-orange-700 font-bold">
-                  {{ p.user.nom.charAt(0) }}{{ p.user.prenom.charAt(0) }}
-                </span>
+              <div [class]="'w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ' + clientAvatarClass(c)">
+                <span class="text-white font-bold text-sm">{{ c.nom.charAt(0) }}{{ c.prenom.charAt(0) }}</span>
               </div>
               <div class="min-w-0">
-                <div class="flex items-center gap-2 flex-wrap">
-                  <p class="text-sm font-bold text-slate-800">{{ p.user.nom }} {{ p.user.prenom }}</p>
-                  <span [class]="'text-xs border px-2 py-0.5 rounded-full font-medium ' + statutPrestClass(p.statut)">
-                    {{ p.statut === 'en_attente' ? 'En attente' : p.statut === 'approuve' ? 'Approuvé' : 'Rejeté' }}
-                  </span>
-                  <span *ngIf="p.badge_verifie"
-                    class="text-xs bg-orange-50 text-orange-600 px-2 py-0.5 rounded-full font-medium">
-                    Certifié
-                  </span>
-                </div>
-                <p class="text-xs text-slate-400">{{ p.user.email }}</p>
-                <div class="flex items-center gap-2 mt-1 text-xs text-slate-400 flex-wrap">
-                  <span class="bg-slate-100 px-2 py-0.5 rounded-full text-slate-600">{{ p.categorie?.nom ?? '—' }}</span>
-                  <span>{{ p.quartier }}</span>
-                  <span class="text-amber-500">★ {{ p.note_moyenne }}</span>
-                </div>
+                <p class="text-sm font-bold text-gray-800 truncate">{{ c.nom }} {{ c.prenom }}</p>
+                <p class="text-xs text-gray-400 truncate">{{ c.email }}</p>
+                <p class="text-xs text-gray-300">{{ c.telephone }}</p>
               </div>
             </div>
-
-            <span [class]="p.disponible
-              ? 'shrink-0 text-xs px-2 py-1 rounded-full bg-emerald-50 text-emerald-600 font-medium'
-              : 'shrink-0 text-xs px-2 py-1 rounded-full bg-red-50 text-red-400 font-medium'">
-              {{ p.disponible ? 'Actif' : 'Inactif' }}
-            </span>
-          </div>
-
-          <div class="flex flex-wrap gap-2 mt-3 pt-3 border-t border-slate-50 items-center">
-            <button *ngIf="p.statut !== 'approuve'" (click)="approuver(p)" [disabled]="prestActionId === p.id"
-              class="text-xs px-3 py-1.5 rounded-xl bg-emerald-500 text-white font-medium hover:bg-emerald-600 disabled:opacity-50 transition">
-              Approuver
-            </button>
-            <button *ngIf="p.statut !== 'rejete'" (click)="rejeter(p)" [disabled]="prestActionId === p.id"
-              class="text-xs px-3 py-1.5 rounded-xl bg-red-100 text-red-600 font-medium hover:bg-red-200 disabled:opacity-50 transition">
-              Rejeter
-            </button>
-
-            <button (click)="toggleBadge(p)" [disabled]="prestActionId === p.id"
-              [class]="p.badge_verifie
-                ? 'text-xs px-3 py-1.5 rounded-xl bg-orange-600 text-white font-medium hover:bg-orange-600 disabled:opacity-50 transition'
-                : 'text-xs px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 font-medium hover:bg-slate-200 disabled:opacity-50 transition'">
-              {{ p.badge_verifie ? 'Retirer la certification' : 'Certifier' }}
-            </button>
-
-            <button (click)="toggleDisponible(p)" [disabled]="prestActionId === p.id"
-              [class]="p.disponible
-                ? 'text-xs px-3 py-1.5 rounded-xl bg-orange-50 text-orange-600 font-medium hover:bg-orange-100 disabled:opacity-50 transition'
-                : 'text-xs px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-600 font-medium hover:bg-emerald-100 disabled:opacity-50 transition'">
-              {{ p.disponible ? 'Suspendre' : 'Réactiver' }}
-            </button>
-
-            <div *ngIf="prestActionId === p.id"
-              class="w-4 h-4 border-2 border-orange-400 border-t-transparent rounded-full animate-spin">
-            </div>
-
-            <button (click)="supprimerUser(p.user, 'prestataires')"
-              class="ml-auto text-xs px-3 py-1.5 rounded-xl text-red-400 hover:bg-red-50 hover:text-red-600 transition">
+            <button (click)="supprimerUser(c, 'clients')"
+              class="text-xs px-3 py-1.5 rounded-xl text-red-400 hover:bg-red-50 hover:text-red-600 transition flex-shrink-0">
               Supprimer
             </button>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- clients -->
-    <div [hidden]="onglet !== 'clients'">
-
-      <p class="text-xs text-slate-400 mb-4">{{ clients.length }} client(s) inscrit(s)</p>
-
-      <p *ngIf="clients.length === 0"
-        class="text-center text-sm text-slate-400 py-12 bg-white rounded-xl border border-slate-100">
-        Aucun client inscrit.
-      </p>
-
-      <div class="space-y-2">
-        <div *ngFor="let c of clients"
-          class="bg-white rounded-xl border border-slate-100 shadow-sm p-4 flex items-center justify-between gap-3">
-          <div class="flex items-center gap-3 min-w-0">
-            <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
-              <span class="text-amber-700 font-bold text-sm">{{ c.nom.charAt(0) }}{{ c.prenom.charAt(0) }}</span>
-            </div>
-            <div class="min-w-0">
-              <p class="text-sm font-bold text-slate-800 truncate">{{ c.nom }} {{ c.prenom }}</p>
-              <p class="text-xs text-slate-400 truncate">{{ c.email }}</p>
-              <p class="text-xs text-slate-300">{{ c.telephone }}</p>
-            </div>
-          </div>
-          <button (click)="supprimerUser(c, 'clients')"
-            class="text-xs px-3 py-1.5 rounded-xl text-red-400 hover:bg-red-50 hover:text-red-600 transition flex-shrink-0">
-            Supprimer
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- demandes -->
-    <div [hidden]="onglet !== 'demandes'">
-
-      <p class="text-xs text-slate-400 mb-4">{{ demandes.length }} demande(s) au total</p>
-
-      <p *ngIf="demandes.length === 0"
-        class="text-center text-sm text-slate-400 py-12 bg-white rounded-xl border border-slate-100">
-        Aucune demande.
-      </p>
-
-      <div class="space-y-3">
-        <div *ngFor="let d of demandes"
-          class="bg-white rounded-xl border border-slate-100 shadow-sm p-4">
-
-          <!-- En-tête : client → prestataire + statut -->
-          <div class="flex items-start justify-between gap-3 mb-2">
-            <div>
-              <p class="text-sm font-bold text-slate-800">
-                {{ d.client_info.nom }} {{ d.client_info.prenom }}
-                <span class="text-slate-400 font-normal mx-1">→</span>
-                {{ d.prestataire_info.user.nom }} {{ d.prestataire_info.user.prenom }}
-              </p>
-              <p class="text-xs text-slate-400 mt-0.5">
-                {{ d.prestataire_info.categorie?.nom ?? '—' }} · {{ d.adresse }}
-              </p>
-            </div>
-            <!-- Badge statut -->
-            <span [class]="'shrink-0 text-xs px-2 py-1 rounded-full font-medium ' + statutClass(d.statut)">
-              {{ d.statut_display }}
-            </span>
-          </div>
-
-          <!-- Description + date -->
-          <p class="text-xs text-slate-600 bg-slate-50 rounded-xl px-3 py-2 mb-2">
-            {{ d.description }}
-          </p>
-          <p class="text-xs text-slate-300">
-            {{ d.date_creation | date:'d MMM yyyy, HH:mm' }}
-            <span *ngIf="d.date_souhaitee"> · Souhaitée le {{ d.date_souhaitee | date:'d MMM yyyy' }}</span>
-          </p>
-
-        </div>
-      </div>
-    </div>
-
-    <!-- catégories -->
-    <div [hidden]="onglet !== 'categories'">
-
-      <div class="bg-white rounded-xl border border-slate-100 shadow-sm p-5 mb-4">
-        <h3 class="text-sm font-semibold text-slate-700 mb-3">Ajouter une catégorie</h3>
-
-        <div *ngIf="catError"   class="text-xs text-red-500 bg-red-50 rounded-xl px-3 py-2 mb-3">{{ catError }}</div>
-        <div *ngIf="catSuccess" class="text-xs text-emerald-600 bg-emerald-50 rounded-xl px-3 py-2 mb-3">{{ catSuccess }}</div>
-
-        <div class="mb-2">
-          <input [(ngModel)]="newCat.nom" type="text" placeholder="Nom (ex: Plombier)"
-            class="w-full text-sm border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400"/>
-        </div>
-        <input [(ngModel)]="newCat.description" type="text" placeholder="Description (optionnel)"
-          class="w-full text-sm border border-slate-200 rounded-xl px-3 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-orange-400"/>
-        <button (click)="ajouterCategorie()" [disabled]="catLoading"
-          class="w-full text-sm font-semibold bg-orange-600 text-white py-2.5 rounded-xl hover:bg-orange-700 disabled:opacity-50 transition">
-          {{ catLoading ? 'Ajout en cours…' : 'Ajouter la catégorie' }}
-        </button>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <div *ngFor="let cat of categories"
-          class="bg-white rounded-xl border border-slate-100 shadow-sm p-4 flex items-center justify-between">
-          <div>
-            <p class="text-sm font-semibold text-slate-800">{{ cat.nom }}</p>
-            <p *ngIf="cat.description" class="text-xs text-slate-400">{{ cat.description }}</p>
-          </div>
-          <button (click)="supprimerCategorie(cat.id)"
-            class="text-xs text-red-400 hover:text-red-600 px-2 py-1.5 rounded-xl hover:bg-red-50 transition">
-            Supprimer
-          </button>
-        </div>
-        <p *ngIf="categories.length === 0" class="col-span-2 text-xs text-slate-400 text-center py-8">
-          Aucune catégorie.
+      <!-- ══════════════════════ DEMANDES ══════════════════════ -->
+      <div *ngIf="onglet === 'demandes'">
+        <p class="text-xs text-gray-400 mb-4">{{ demandes.length }} demande(s) au total</p>
+        <p *ngIf="demandes.length === 0"
+          class="text-center text-sm text-gray-400 py-12 bg-white rounded-2xl border border-gray-100">
+          Aucune demande.
         </p>
+        <div class="space-y-3">
+          <div *ngFor="let d of demandes"
+            class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+            <div class="flex items-start justify-between gap-3 mb-2">
+              <div>
+                <p class="text-sm font-bold text-gray-800">
+                  {{ d.client_info.nom }} {{ d.client_info.prenom }}
+                  <span class="text-gray-400 font-normal mx-1">→</span>
+                  {{ d.prestataire_info.user.nom }} {{ d.prestataire_info.user.prenom }}
+                </p>
+                <p class="text-xs text-gray-400 mt-0.5">
+                  {{ d.prestataire_info.categorie?.nom ?? '—' }} · {{ d.adresse }}
+                </p>
+              </div>
+              <span [class]="'flex-shrink-0 text-xs px-2 py-1 rounded-full font-medium ' + statutClass(d.statut)">
+                {{ d.statut_display }}
+              </span>
+            </div>
+            <p class="text-xs text-gray-600 bg-gray-50 rounded-xl px-3 py-2 mb-2">{{ d.description }}</p>
+            <p class="text-xs text-gray-300">
+              {{ d.date_creation | date:'d MMM yyyy, HH:mm' }}
+              <span *ngIf="d.date_souhaitee"> · Souhaitée le {{ d.date_souhaitee | date:'d MMM yyyy' }}</span>
+            </p>
+          </div>
+        </div>
       </div>
-    </div>
 
+      <!-- ══════════════════════ CATÉGORIES ══════════════════════ -->
+      <div *ngIf="onglet === 'categories'">
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-4">
+          <h3 class="text-sm font-semibold text-gray-700 mb-3">Ajouter une catégorie</h3>
+          <div *ngIf="catError"   class="text-xs text-red-500 bg-red-50 rounded-xl px-3 py-2 mb-3">{{ catError }}</div>
+          <div *ngIf="catSuccess" class="text-xs text-green-600 bg-green-50 rounded-xl px-3 py-2 mb-3">{{ catSuccess }}</div>
+          <div class="mb-2">
+            <input [(ngModel)]="newCat.nom" type="text" placeholder="Nom (ex: Plombier)"
+              class="w-full text-sm border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-300"/>
+          </div>
+          <input [(ngModel)]="newCat.description" type="text" placeholder="Description (optionnel)"
+            class="w-full text-sm border border-gray-200 rounded-xl px-3 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-orange-300"/>
+          <button (click)="ajouterCategorie()" [disabled]="catLoading"
+            class="w-full text-sm font-semibold bg-orange-600 text-white py-2.5 rounded-xl hover:bg-orange-700 disabled:opacity-50 transition">
+            {{ catLoading ? 'Ajout en cours…' : 'Ajouter la catégorie' }}
+          </button>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div *ngFor="let cat of categories"
+            class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex items-center justify-between">
+            <div>
+              <p class="text-sm font-semibold text-gray-800">{{ cat.nom }}</p>
+              <p *ngIf="cat.description" class="text-xs text-gray-400">{{ cat.description }}</p>
+            </div>
+            <button (click)="supprimerCategorie(cat.id)"
+              class="text-xs text-red-400 hover:text-red-600 px-2 py-1.5 rounded-xl hover:bg-red-50 transition">
+              Supprimer
+            </button>
+          </div>
+          <p *ngIf="categories.length === 0" class="col-span-2 text-xs text-gray-400 text-center py-8">
+            Aucune catégorie.
+          </p>
+        </div>
+      </div>
+
+    </main>
   </div>
 </div>

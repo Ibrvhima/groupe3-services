@@ -37,9 +37,22 @@ class PrestataireViewSet(viewsets.ModelViewSet):
         return PrestataireSerializer
 
     def get_queryset(self):
-        qs = super().get_queryset()
+        # Pour le détail (retrieve), on accepte aussi les prestataires indisponibles
+        if self.action == 'retrieve':
+            return (
+                Prestataire.objects
+                .filter(user__is_active=True, approuve=True)
+                .select_related('user', 'categorie')
+            )
+        # Pour la liste : disponibles uniquement + filtres
+        qs = (
+            Prestataire.objects
+            .filter(user__is_active=True, approuve=True, disponible=True)
+            .select_related('user', 'categorie')
+            .order_by('-note_moyenne', '-id')
+        )
         categorie = self.request.query_params.get('categorie')
-        quartier = self.request.query_params.get('quartier')
+        quartier  = self.request.query_params.get('quartier')
         if categorie:
             qs = qs.filter(categorie__id=categorie)
         if quartier:
@@ -47,13 +60,22 @@ class PrestataireViewSet(viewsets.ModelViewSet):
         return qs
 
     def get_object(self):
-        # pour les modifications, on cherche sans le filtre approuve=True
-        # et on s'assure que le prestataire ne peut modifier que son propre profil
+        # Modifications : owner uniquement, sans filtre approuve/disponible
         if self.action in ['partial_update', 'update']:
             obj = get_object_or_404(
                 Prestataire.objects.select_related('user', 'categorie'),
                 uuid=self.kwargs['uuid'],
                 user=self.request.user,
+            )
+            self.check_object_permissions(self.request, obj)
+            return obj
+        # Détail public : approuve=True mais disponible ignoré
+        if self.action == 'retrieve':
+            obj = get_object_or_404(
+                Prestataire.objects
+                .filter(user__is_active=True, approuve=True)
+                .select_related('user', 'categorie'),
+                uuid=self.kwargs['uuid'],
             )
             self.check_object_permissions(self.request, obj)
             return obj

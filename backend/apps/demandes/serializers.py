@@ -37,7 +37,8 @@ class DemandeSerializer(serializers.ModelSerializer):
         model = Demande
         fields = [
             'id', 'client', 'client_info', 'prestataire', 'prestataire_info',
-            'description', 'adresse', 'date_souhaitee', 'statut', 'statut_display',
+            'titre', 'description', 'adresse', 'urgence', 'date_souhaitee',
+            'statut', 'statut_display',
             'has_avis', 'has_devis', 'devis', 'date_creation', 'date_maj',
         ]
         read_only_fields = ['client', 'statut', 'date_creation', 'date_maj']
@@ -46,4 +47,4 @@ class DemandeSerializer(serializers.ModelSerializer):
 class DemandeCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Demande
-        fields = ['prestataire', 'description', 'adresse', 'date_souhaitee']
+        fields = ['prestataire', 'titre', 'description', 'adresse', 'urgence', 'date_souhaitee']

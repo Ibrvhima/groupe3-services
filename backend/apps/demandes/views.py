@@ -34,10 +34,11 @@ class DemandeViewSet(viewsets.ModelViewSet):
         if user.role != 'client':
             raise PermissionDenied("Seuls les clients peuvent créer des demandes.")
         demande = serializer.save(client=user)
+        sujet = f"« {demande.titre} »" if demande.titre else "de service"
         _notifier(
             demande.prestataire.user,
             "Nouvelle demande reçue",
-            f"{user.nom} {user.prenom} vous a envoyé une demande de service.",
+            f"{user.nom} {user.prenom} vous a envoyé une demande {sujet}.",
         )
 
     @action(detail=False, methods=['get'])

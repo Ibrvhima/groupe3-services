@@ -1,124 +1,90 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { HeaderComponent } from '../layout/header/header';
-import { ModalAlertComponent } from '../../../shared/components/modal-alert.component';
 import { DemandeService } from '../../../core/services/demande.service';
 import { PrestataireService } from '../../../core/services/prestataire.service';
 
 @Component({
   selector: 'app-demande-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, HeaderComponent, ModalAlertComponent],
+  imports: [CommonModule, FormsModule, RouterModule, HeaderComponent],
   templateUrl: './demande-form.html',
 })
-export class DemandeFormComponent implements OnInit {
+export class DemandeFormComponent implements OnInit, OnDestroy {
   prestataire: any = null;
-  description = '';
-  date_intervention = '';
-  error = '';
+  prestataireLoading = true;
+  prestataireUuid    = '';
+
+  titre        = '';
+  description  = '';
+  adresse      = '';
+  date_souhaitee = '';
+  urgence      = 'normal';
+
+  error   = '';
   loading = false;
-  prestataireUuid = '';
+  success = false;
+
   private redirectTimeout: any;
 
-  // Modal properties
-  modalOpen = false;
-  modalTitle = '';
-  modalMessage = '';
-  modalType: 'success' | 'error' | 'warning' | 'info' = 'info';
-  modalIsConfirm = false;
-  modalCallback: (() => void) | null = null;
+  readonly urgenceOptions = [
+    { value: 'normal',       label: 'Normal'      },
+    { value: 'urgent',       label: 'Urgent'      },
+    { value: 'tres_urgent',  label: 'Très urgent' },
+  ];
 
   constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private demandeService: DemandeService,
+    private route:             ActivatedRoute,
+    private router:            Router,
+    private demandeService:    DemandeService,
     private prestataireService: PrestataireService,
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.prestataireUuid = this.route.snapshot.params['uuid'];
     this.prestataireService.getByUuid(this.prestataireUuid).subscribe({
-      next: (data: any) => (this.prestataire = data),
-      error: (err: unknown) => console.error(err),
+      next:  data  => { this.prestataire = data; this.prestataireLoading = false; },
+      error: err   => { console.error(err);       this.prestataireLoading = false; },
     });
   }
 
-  onSubmit() {
-    if (!this.description) {
-      this.error = 'Veuillez décrire votre besoin.';
-      return;
-    }
-    this.error = '';
-
-    this.showConfirmModal(
-      "Confirmer l'envoi",
-      'Voulez-vous envoyer cette demande au prestataire ?',
-      () => this.sendDemande(),
-    );
+  ngOnDestroy(): void {
+    if (this.redirectTimeout) clearTimeout(this.redirectTimeout);
   }
 
-  sendDemande() {
+  onSubmit(): void {
+    if (!this.titre.trim())       { this.error = 'Le titre est obligatoire.';        return; }
+    if (!this.description.trim()) { this.error = 'La description est obligatoire.';  return; }
+    if (!this.adresse.trim())     { this.error = "L'adresse est obligatoire.";       return; }
+    this.error   = '';
     this.loading = true;
 
-    this.demandeService
-      .creerDemande({
-        prestataire: this.prestataire?.id,
-        description: this.description,
-        adresse: '',
-        date_souhaitee: this.date_intervention || undefined,
-      })
-      .subscribe({
-        next: () => {
-          this.loading = false;
-          this.showSuccessModal();
-        },
-        error: (err: unknown) => {
-          this.loading = false;
-          this.error = 'Une erreur est survenue. Réessayez.';
-          console.error(err);
-        },
-      });
+    this.demandeService.creerDemande({
+      prestataire:   this.prestataire?.id,
+      titre:         this.titre,
+      description:   this.description,
+      adresse:       this.adresse,
+      date_souhaitee: this.date_souhaitee || undefined,
+      urgence:       this.urgence,
+    }).subscribe({
+      next:  () => { this.loading = false; this.success = true; },
+      error: (err: any) => {
+        this.loading = false;
+        this.error   = err?.error?.detail ?? err?.error?.[0] ?? 'Une erreur est survenue. Réessayez.';
+        console.error(err);
+      },
+    });
   }
 
-  showSuccessModal() {
-    this.modalTitle = 'Demande envoyée';
-    this.modalMessage =
-      "Votre demande a bien été prise en compte. Le prestataire l'examinera et vous répondra bientôt.";
-    this.modalType = 'success';
-    this.modalIsConfirm = false;
-    this.modalOpen = true;
+  etoiles(max: number): number[] {
+    return Array.from({ length: max }, (_, i) => i + 1);
   }
 
-  showConfirmModal(title: string, message: string, callback: () => void) {
-    this.modalTitle = title;
-    this.modalMessage = message;
-    this.modalType = 'warning';
-    this.modalIsConfirm = true;
-    this.modalOpen = true;
-    this.modalCallback = callback;
-  }
-
-  onModalConfirm() {
-    if (this.modalCallback) {
-      this.modalCallback();
-      this.modalCallback = null;
-    }
-  }
-
-  onModalCancel() {
-    this.modalCallback = null;
-  }
-
-  goHome() {
-    this.modalOpen = false;
-    this.router.navigate(['/client']);
-  }
-
-  ngOnDestroy() {
-    if (this.redirectTimeout) {
-      clearTimeout(this.redirectTimeout);
-    }
+  avatarClass(): string {
+    const colors = ['bg-orange-500', 'bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-teal-500', 'bg-pink-500'];
+    const idx = (this.prestataire?.user?.nom?.charCodeAt(0) ?? 0) % colors.length;
+    return colors[idx] ?? 'bg-orange-500';
   }
 }

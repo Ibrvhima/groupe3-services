@@ -13,10 +13,18 @@ class Demande(models.Model):
         ('annulee', 'Annulée'),
     ]
 
+    URGENCES = [
+        ('normal',      'Normal'),
+        ('urgent',      'Urgent'),
+        ('tres_urgent', 'Très urgent'),
+    ]
+
     client = models.ForeignKey(User, on_delete=models.CASCADE, related_name='demandes_client')
     prestataire = models.ForeignKey(Prestataire, on_delete=models.CASCADE, related_name='demandes_recues')
+    titre = models.CharField(max_length=200, blank=True, default='')
     description = models.TextField()
     adresse = models.CharField(max_length=200, blank=True, default='')
+    urgence = models.CharField(max_length=20, choices=URGENCES, default='normal')
     date_souhaitee = models.DateField(null=True, blank=True)
     statut = models.CharField(max_length=20, choices=STATUTS, default='en_attente')
     date_creation = models.DateTimeField(auto_now_add=True)

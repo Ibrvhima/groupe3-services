@@ -5,7 +5,7 @@ import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { forkJoin } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { AdminHeaderComponent } from '../layout/header/header';
+import { SidebarComponent } from '../layout/sidebar/sidebar';
 import { AdminService } from '../../../core/services/admin.service';
 import { Categorie, Prestataire, User, Demande } from '../../../core/models';
 
@@ -19,7 +19,7 @@ interface Stats {
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, AdminHeaderComponent],
+  imports: [CommonModule, FormsModule, RouterModule, SidebarComponent],
   templateUrl: './dashboard.html',
 })
 export class AdminDashboardComponent implements OnInit {
@@ -171,5 +171,11 @@ export class AdminDashboardComponent implements OnInit {
 
   pct(val: number, total: number): string {
     return total > 0 ? (val / total * 100).toFixed(1) + '%' : '0%';
+  }
+
+  clientAvatarClass(user: User): string {
+    const colors = ['bg-blue-500', 'bg-purple-500', 'bg-teal-500', 'bg-indigo-500', 'bg-pink-500', 'bg-orange-500'];
+    const idx = (user.nom?.charCodeAt(0) ?? 0) % colors.length;
+    return colors[idx] ?? 'bg-blue-500';
   }
 }

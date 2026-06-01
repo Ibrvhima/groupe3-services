@@ -1,155 +1,222 @@
 <div class="flex flex-col h-screen bg-gray-50">
+  <app-prestataire-sidebar></app-prestataire-sidebar>
 
-  <app-prestataire-header></app-prestataire-header>
+  <div class="flex flex-col flex-1 min-h-0 md:ml-56">
 
-  <!-- desktop -->
-  <div class="hidden md:flex flex-1 min-h-0 gap-4 px-4 py-4 max-w-6xl w-full mx-auto">
+    <!-- ── Topbar ── -->
+    <div class="bg-white border-b border-gray-100 px-6 py-4 flex-shrink-0">
+      <h1 class="text-lg font-bold text-gray-800">Messages</h1>
+      <p class="text-xs text-gray-400">Vos conversations avec les clients</p>
+    </div>
 
-    <aside class="w-72 flex-shrink-0 bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col min-h-0 overflow-hidden">
-      <div class="px-4 py-3 border-b border-gray-100 flex-shrink-0">
-        <h2 class="font-semibold text-gray-800 text-sm">Mes conversations</h2>
-      </div>
-      <div *ngIf="loading" class="flex-1 flex items-center justify-center text-gray-400 text-sm">Chargement...</div>
-      <div *ngIf="!loading && conversations.length === 0"
-           class="flex-1 flex flex-col items-center justify-center text-gray-400 text-sm text-center px-4 gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
-        </svg>
-        <span>Aucune conversation.<br>Les clients démarrent le chat depuis leurs demandes.</span>
-      </div>
-      <ul *ngIf="!loading && conversations.length > 0" class="flex-1 overflow-y-auto divide-y divide-gray-50">
-        <li *ngFor="let conv of conversations" (click)="selectionner(conv)"
-            class="px-4 py-3 cursor-pointer hover:bg-orange-50 transition"
-            [class.bg-orange-50]="convActive?.id === conv.id">
-          <div class="flex items-center justify-between">
-            <span class="font-medium text-gray-800 text-sm truncate">{{ interlocuteur(conv) }}</span>
-            <span *ngIf="conv.non_lus > 0" class="bg-orange-600 text-white text-xs rounded-full px-1.5 py-0.5 ml-1 flex-shrink-0">{{ conv.non_lus }}</span>
+    <!-- ══════════════════════ DESKTOP ══════════════════════ -->
+    <div class="hidden md:flex flex-1 min-h-0 p-6">
+
+      <!-- Container principal arrondi -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-1">
+
+        <!-- ── Panneau gauche : liste conversations ── -->
+        <div class="w-64 border-r border-gray-100 flex flex-col flex-shrink-0">
+
+          <!-- Recherche -->
+          <div class="p-3 border-b border-gray-100 flex-shrink-0">
+            <input placeholder="Rechercher..." readonly
+              class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-orange-200"/>
           </div>
-          <p *ngIf="conv.dernier_message" class="text-xs text-gray-500 truncate mt-0.5">{{ conv.dernier_message.contenu }}</p>
-          <p *ngIf="!conv.dernier_message" class="text-xs text-gray-400 mt-0.5 italic">Aucun message</p>
-        </li>
-      </ul>
-    </aside>
 
-    <main class="flex-1 min-h-0 bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col overflow-hidden">
-      <div *ngIf="!convActive" class="flex-1 flex flex-col items-center justify-center text-gray-400 gap-3">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-14 h-14 text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
-        </svg>
-        <p class="text-sm">Sélectionnez une conversation</p>
-      </div>
-      <ng-container *ngIf="convActive">
-        <ng-container *ngTemplateOutlet="tplMessages"></ng-container>
-      </ng-container>
-    </main>
-  </div>
-
-  <!-- mobile -->
-  <div class="flex flex-col flex-1 min-h-0 md:hidden">
-
-    <!-- Liste mobile -->
-    <div *ngIf="!convActive" class="flex-1 flex flex-col min-h-0">
-      <div class="px-4 py-3 border-b border-gray-100 bg-white flex-shrink-0">
-        <h2 class="font-semibold text-gray-800 text-sm">Mes conversations</h2>
-      </div>
-      <div *ngIf="loading" class="flex-1 flex items-center justify-center text-gray-400 text-sm">Chargement...</div>
-      <div *ngIf="!loading && conversations.length === 0"
-           class="flex-1 flex flex-col items-center justify-center text-gray-400 text-sm text-center px-6 gap-3">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-14 h-14 text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
-        </svg>
-        <p>Aucune conversation.<br>Les clients démarrent le chat depuis leurs demandes.</p>
-      </div>
-      <ul *ngIf="!loading && conversations.length > 0" class="flex-1 overflow-y-auto divide-y divide-gray-100 bg-white">
-        <li *ngFor="let conv of conversations" (click)="selectionner(conv)"
-            class="px-4 py-4 cursor-pointer hover:bg-orange-50 active:bg-orange-50 transition flex items-center gap-3">
-          <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 font-bold text-sm flex-shrink-0">
-            {{ interlocuteur(conv).charAt(0) }}
+          <!-- Vide -->
+          <div *ngIf="loading" class="flex-1 flex items-center justify-center text-gray-400 text-sm">
+            Chargement...
           </div>
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center justify-between">
-              <span class="font-semibold text-gray-800 text-sm truncate">{{ interlocuteur(conv) }}</span>
-              <span *ngIf="conv.non_lus > 0" class="bg-orange-600 text-white text-xs rounded-full px-1.5 py-0.5 ml-2 flex-shrink-0">{{ conv.non_lus }}</span>
+          <div *ngIf="!loading && conversations.length === 0"
+            class="flex-1 flex flex-col items-center justify-center text-gray-400 text-sm text-center px-4 gap-2">
+            <svg class="w-10 h-10 text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+            </svg>
+            <span class="text-xs">Aucune conversation.<br>Les clients démarrent le chat.</span>
+          </div>
+
+          <!-- Liste -->
+          <ul *ngIf="!loading && conversations.length > 0" class="flex-1 overflow-y-auto">
+            <li *ngFor="let conv of conversations" (click)="selectionner(conv)"
+              class="px-3 py-3 cursor-pointer border-b border-gray-50 transition"
+              [class.bg-orange-50]="convActive?.id === conv.id"
+              [class.border-l-4]="convActive?.id === conv.id"
+              [class.border-l-orange-500]="convActive?.id === conv.id"
+              [class.hover:bg-gray-50]="convActive?.id !== conv.id">
+              <div class="flex items-center gap-3">
+                <!-- Avatar coloré -->
+                <div [class]="'w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 ' + avatarColor(conv)">
+                  {{ interlocuteur(conv).charAt(0).toUpperCase() }}
+                </div>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center justify-between">
+                    <span [class]="'text-sm truncate ' + (convActive?.id === conv.id ? 'font-semibold text-gray-800' : 'font-medium text-gray-700')">
+                      {{ interlocuteur(conv) }}
+                    </span>
+                    <span *ngIf="conv.non_lus > 0"
+                      class="bg-orange-600 text-white text-xs rounded-full px-1.5 py-0.5 ml-1 flex-shrink-0">
+                      {{ conv.non_lus }}
+                    </span>
+                  </div>
+                  <p *ngIf="conv.dernier_message" class="text-xs text-gray-500 truncate mt-0.5">
+                    {{ conv.dernier_message.contenu }}
+                  </p>
+                  <p *ngIf="!conv.dernier_message" class="text-xs text-gray-400 mt-0.5 italic">
+                    Aucun message
+                  </p>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- ── Panneau droit : messages ── -->
+        <div class="flex-1 flex flex-col min-h-0">
+
+          <!-- Aucune conv sélectionnée -->
+          <div *ngIf="!convActive" class="flex-1 flex flex-col items-center justify-center text-gray-400 gap-3">
+            <svg class="w-14 h-14 text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+            </svg>
+            <p class="text-sm">Sélectionnez une conversation</p>
+          </div>
+
+          <!-- Conv sélectionnée -->
+          <ng-container *ngIf="convActive">
+            <!-- Header conv -->
+            <div class="p-4 border-b border-gray-100 flex items-center gap-3 flex-shrink-0">
+              <div [class]="'w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 ' + avatarColor(convActive)">
+                {{ interlocuteur(convActive).charAt(0).toUpperCase() }}
+              </div>
+              <div>
+                <p class="text-sm font-semibold text-gray-800">{{ interlocuteur(convActive) }}</p>
+                <p class="text-xs text-gray-400">Client · <span class="text-green-500 font-medium">En ligne</span></p>
+              </div>
             </div>
-            <p *ngIf="conv.dernier_message" class="text-xs text-gray-500 truncate mt-0.5">{{ conv.dernier_message.contenu }}</p>
-            <p *ngIf="!conv.dernier_message" class="text-xs text-gray-400 mt-0.5 italic">Aucun message</p>
-          </div>
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-300 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-          </svg>
-        </li>
-      </ul>
-    </div>
 
-    <!-- Messages mobile -->
-    <div *ngIf="convActive" class="flex-1 min-h-0 flex flex-col bg-white">
-      <div class="px-4 py-3 border-b border-gray-100 flex items-center gap-3 flex-shrink-0">
-        <button (click)="retourListe()" class="p-1 -ml-1 text-gray-500 hover:text-orange-600 transition">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-          </svg>
-        </button>
-        <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 font-bold text-xs flex-shrink-0">
-          {{ interlocuteur(convActive).charAt(0) }}
-        </div>
-        <div>
-          <p class="font-semibold text-gray-800 text-sm">{{ interlocuteur(convActive) }}</p>
-          <p class="text-xs text-gray-400">Demande #{{ convActive.demande }}</p>
+            <ng-container *ngTemplateOutlet="tplMessages"></ng-container>
+          </ng-container>
+
         </div>
       </div>
-      <ng-container *ngTemplateOutlet="tplMessages"></ng-container>
     </div>
 
+    <!-- ══════════════════════ MOBILE ══════════════════════ -->
+    <div class="flex flex-col flex-1 min-h-0 md:hidden">
+
+      <!-- Liste mobile -->
+      <div *ngIf="!convActive" class="flex-1 flex flex-col min-h-0">
+        <div class="px-4 py-3 border-b border-gray-100 bg-white flex-shrink-0">
+          <h2 class="font-semibold text-gray-800 text-sm">Mes conversations</h2>
+        </div>
+        <div *ngIf="loading" class="flex-1 flex items-center justify-center text-gray-400 text-sm">
+          Chargement...
+        </div>
+        <div *ngIf="!loading && conversations.length === 0"
+          class="flex-1 flex flex-col items-center justify-center text-gray-400 text-sm text-center px-6 gap-3">
+          <svg class="w-14 h-14 text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+              d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+          </svg>
+          <p class="text-xs">Aucune conversation.<br>Les clients démarrent le chat depuis leurs demandes.</p>
+        </div>
+        <ul *ngIf="!loading && conversations.length > 0" class="flex-1 overflow-y-auto divide-y divide-gray-100 bg-white">
+          <li *ngFor="let conv of conversations" (click)="selectionner(conv)"
+            class="px-4 py-4 cursor-pointer hover:bg-orange-50 transition flex items-center gap-3">
+            <div [class]="'w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0 ' + avatarColor(conv)">
+              {{ interlocuteur(conv).charAt(0).toUpperCase() }}
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-gray-800 text-sm truncate">{{ interlocuteur(conv) }}</span>
+                <span *ngIf="conv.non_lus > 0"
+                  class="bg-orange-600 text-white text-xs rounded-full px-1.5 py-0.5 ml-2 flex-shrink-0">
+                  {{ conv.non_lus }}
+                </span>
+              </div>
+              <p *ngIf="conv.dernier_message" class="text-xs text-gray-500 truncate mt-0.5">
+                {{ conv.dernier_message.contenu }}
+              </p>
+              <p *ngIf="!conv.dernier_message" class="text-xs text-gray-400 mt-0.5 italic">Aucun message</p>
+            </div>
+            <svg class="w-4 h-4 text-gray-300 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Messages mobile -->
+      <div *ngIf="convActive" class="flex-1 min-h-0 flex flex-col bg-white">
+        <div class="px-4 py-3 border-b border-gray-100 flex items-center gap-3 flex-shrink-0">
+          <button (click)="retourListe()" class="p-1 -ml-1 text-gray-500 hover:text-orange-600 transition">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+          </button>
+          <div [class]="'w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-xs flex-shrink-0 ' + avatarColor(convActive)">
+            {{ interlocuteur(convActive).charAt(0).toUpperCase() }}
+          </div>
+          <div>
+            <p class="font-semibold text-gray-800 text-sm">{{ interlocuteur(convActive) }}</p>
+            <p class="text-xs text-gray-400">Client · Demande #{{ convActive.demande }}</p>
+          </div>
+        </div>
+        <ng-container *ngTemplateOutlet="tplMessages"></ng-container>
+      </div>
+
+    </div>
   </div>
 </div>
 
-<!-- Template partagé messages + saisie -->
+<!-- ── Template partagé : messages + saisie ── -->
 <ng-template #tplMessages>
-  <div class="hidden md:flex px-5 py-3 border-b border-gray-100 items-center gap-3 flex-shrink-0">
-    <div class="w-9 h-9 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 font-bold text-sm flex-shrink-0">
-      {{ interlocuteur(convActive!).charAt(0) }}
-    </div>
-    <div>
-      <p class="font-semibold text-gray-800 text-sm">{{ interlocuteur(convActive!) }}</p>
-      <p class="text-xs text-gray-400">Demande #{{ convActive!.demande }}</p>
-    </div>
-  </div>
-
-  <div class="flex-1 min-h-0 overflow-y-auto px-4 py-4 space-y-3">
+  <!-- Zone messages -->
+  <div class="flex-1 min-h-0 overflow-y-auto px-5 py-4 space-y-4">
     <div *ngIf="messages.length === 0" class="text-center text-gray-400 text-sm mt-10">
       Envoyez le premier message 👋
     </div>
     <div *ngFor="let msg of messages" class="flex"
-         [class.justify-end]="isFromMe(msg)"
-         [class.justify-start]="!isFromMe(msg)">
-      <div class="max-w-[75%]">
-        <div class="px-4 py-2.5 rounded-xl text-sm leading-relaxed"
-             [class.bg-orange-600]="isFromMe(msg)"
-             [class.text-white]="isFromMe(msg)"
-             [class.rounded-br-sm]="isFromMe(msg)"
-             [class.bg-gray-100]="!isFromMe(msg)"
-             [class.text-gray-800]="!isFromMe(msg)"
-             [class.rounded-bl-sm]="!isFromMe(msg)">
-          {{ msg.contenu }}
+      [class.justify-end]="isFromMe(msg)"
+      [class.justify-start]="!isFromMe(msg)">
+      <div class="max-w-[75%] flex items-end gap-2"
+        [class.flex-row-reverse]="isFromMe(msg)">
+        <!-- Avatar -->
+        <div *ngIf="!isFromMe(msg)"
+          [class]="'w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 ' + avatarColor(convActive!)">
+          {{ interlocuteur(convActive!).charAt(0).toUpperCase() }}
         </div>
-        <p class="text-xs text-gray-400 mt-1" [class.text-right]="isFromMe(msg)">
-          {{ msg.date_envoi | date:'HH:mm' }}
-        </p>
+        <div>
+          <div class="px-4 py-2.5 rounded-2xl text-sm leading-relaxed"
+            [class.bg-orange-600]="isFromMe(msg)"
+            [class.text-white]="isFromMe(msg)"
+            [class.rounded-br-sm]="isFromMe(msg)"
+            [class.bg-gray-100]="!isFromMe(msg)"
+            [class.text-gray-800]="!isFromMe(msg)"
+            [class.rounded-bl-sm]="!isFromMe(msg)">
+            {{ msg.contenu }}
+          </div>
+          <p class="text-xs text-gray-400 mt-1" [class.text-right]="isFromMe(msg)">
+            {{ msg.date_envoi | date:'HH:mm' }}
+          </p>
+        </div>
       </div>
     </div>
     <div #messagesEnd></div>
   </div>
 
-  <div class="flex-shrink-0 px-3 py-3 border-t border-gray-100 bg-white flex items-end gap-2">
-    <textarea [(ngModel)]="contenu" (keydown)="onEnter($event)" rows="1"
-      placeholder="Écrire un message…"
-      class="flex-1 resize-none rounded-xl border border-gray-200 px-4 py-2.5 text-sm
-             focus:outline-none focus:ring-2 focus:ring-orange-300 max-h-28 overflow-y-auto">
-    </textarea>
+  <!-- Zone saisie -->
+  <div class="flex-shrink-0 px-4 py-3 border-t border-gray-100 bg-white flex items-center gap-3">
+    <input [(ngModel)]="contenu" (keydown.enter)="envoyer()"
+      type="text" placeholder="Écrire un message..."
+      class="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-orange-200"/>
     <button (click)="envoyer()" [disabled]="!contenu.trim() || sending"
-      class="flex-shrink-0 bg-orange-600 text-white rounded-xl w-10 h-10 flex items-center justify-center
-             hover:bg-orange-700 transition disabled:opacity-40 disabled:cursor-not-allowed">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      class="bg-orange-600 text-white w-10 h-10 rounded-xl flex items-center justify-center
+             hover:bg-orange-700 transition disabled:opacity-40 flex-shrink-0">
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
       </svg>
     </button>

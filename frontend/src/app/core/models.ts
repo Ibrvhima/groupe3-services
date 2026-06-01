@@ -35,6 +35,7 @@ export interface Prestataire {
   disponible:    boolean;
   approuve:      boolean;
   note_moyenne:  string;          // DecimalField retourné en string par DRF
+  nombre_avis:   number;
   badge_verifie: boolean;
   statut:        'en_attente' | 'approuve' | 'rejete';
   created_at:    string;
@@ -83,8 +84,10 @@ export interface Demande {
   client_info:      User;
   prestataire:      number;
   prestataire_info: Prestataire;
+  titre:            string;         // Titre court de la demande (peut être vide sur ancien contenu)
   description:      string;
   adresse:          string;
+  urgence:          string;         // 'normal' | 'urgent' | 'tres_urgent'
   date_souhaitee:   string | null;
   statut:           StatutDemande;
   statut_display:   string;
@@ -96,9 +99,11 @@ export interface Demande {
 }
 
 export interface DemandeCreate {
-  prestataire:    number;
-  description:    string;
-  adresse:        string;
+  prestataire:     number;
+  titre?:          string;
+  description:     string;
+  adresse:         string;
+  urgence?:        string;
   date_souhaitee?: string;
 }
 

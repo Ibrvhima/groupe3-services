@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { Prestataire, Categorie } from '../../core/models';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-landing',
@@ -18,30 +19,60 @@ export class LandingComponent implements OnInit {
   loading     = true;
   currentYear = new Date().getFullYear();
 
-  // Images Unsplash associées aux noms de catégories (insensible à la casse)
-  readonly categoryImages: Record<string, string> = {
-    'plombier':      'https://images.pexels.com/photos/6419128/pexels-photo-6419128.jpeg?auto=compress&cs=tinysrgb&w=600',
-    'électricien':   'https://images.pexels.com/photos/9679179/pexels-photo-9679179.jpeg?auto=compress&cs=tinysrgb&w=600',
-    'mécanicien':    'https://images.pexels.com/photos/5276374/pexels-photo-5276374.jpeg?auto=compress&cs=tinysrgb&w=600',
-    'peintre':       'https://images.pexels.com/photos/1669754/pexels-photo-1669754.jpeg?auto=compress&cs=tinysrgb&w=600',
-    'maçon':         'https://images.pexels.com/photos/11236546/pexels-photo-11236546.jpeg?auto=compress&cs=tinysrgb&w=600',
-    'menuisier':     'https://images.pexels.com/photos/5973931/pexels-photo-5973931.jpeg?auto=compress&cs=tinysrgb&w=600',
-    'climatisation': 'https://images.pexels.com/photos/13061307/pexels-photo-13061307.jpeg?auto=compress&cs=tinysrgb&w=600',
-    'jardinier':     'https://images.pexels.com/photos/6231862/pexels-photo-6231862.jpeg?auto=compress&cs=tinysrgb&w=600',
-    'informaticien': 'https://images.pexels.com/photos/6754846/pexels-photo-6754846.jpeg?auto=compress&cs=tinysrgb&w=600',
-    'couturier':     'https://images.pexels.com/photos/19188184/pexels-photo-19188184.jpeg?auto=compress&cs=tinysrgb&w=600',
+  // Emojis associés aux noms de catégories (insensible à la casse, fallback)
+  readonly categoryEmojis: Record<string, string> = {
+    'plombier':      '🔧',
+    'électricien':   '⚡',
+    'maçon':         '🧱',
+    'menuisier':     '🪵',
+    'peintre':       '🎨',
+    'climatisation': '❄️',
+    'jardinage':     '🌿',
+    'jardinier':     '🌿',
+    'nettoyage':     '🧹',
+    'informatique':  '💻',
+    'informaticien': '💻',
+    'déménagement':  '🚚',
+    'mécanicien':    '🔩',
   };
 
-  /** Retourne l'image correspondant à une catégorie, ou une image générique */
-  getCategoryImage(nom: string): string {
-    const key = nom.toLowerCase();
-    return this.categoryImages[key]
-      ?? 'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&w=600&q=80';
+  /** Retourne l'emoji correspondant à une catégorie */
+  getCategoryEmoji(nom: string): string {
+    return this.categoryEmojis[nom.toLowerCase()] ?? '🛠️';
+  }
+
+  /** Couleur d'avatar basée sur le nom */
+  avatarColor(p: Prestataire): string {
+    const colors = ['bg-orange-500', 'bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-teal-500', 'bg-pink-500'];
+    const idx = (p.user.nom?.charCodeAt(0) ?? 0) % colors.length;
+    return colors[idx] ?? 'bg-orange-500';
+  }
+
+  /** Tableau [1..max] pour afficher les étoiles */
+  etoilesArray(max: number): number[] {
+    return Array.from({ length: max }, (_, i) => i + 1);
   }
 
   private api = environment.apiUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private auth: AuthService) {}
+
+  /** Route pour les catégories : client connecté → /client, sinon → /auth/register */
+  get categorieRoute(): string {
+    return this.auth.getRole() === 'client' ? '/client' : '/auth/register';
+  }
+
+  /** Lien vers le profil prestataire : client → détail, sinon → register */
+  prestataireRoute(uuid: string): string[] {
+    return this.auth.getRole() === 'client'
+      ? ['/client/prestataire', uuid]
+      : ['/auth/register'];
+  }
+
+  /** Lien "Voir tous les prestataires" */
+  get tousPrestatairesRoute(): string {
+    return this.auth.getRole() === 'client' ? '/client' : '/auth/register';
+  }
 
   ngOnInit(): void {
     // Charge les catégories et les meilleurs prestataires en parallèle
@@ -54,7 +85,7 @@ export class LandingComponent implements OnInit {
       next: res => {
         // Gère les deux formats : liste directe ou paginée
         const list       = res.results ?? res;
-        this.prestataires = list.slice(0, 6);
+        this.prestataires = list.slice(0, 3);
         this.loading      = false;
       },
       error: () => { this.loading = false; },

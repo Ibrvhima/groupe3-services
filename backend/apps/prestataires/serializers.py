@@ -10,21 +10,25 @@ class CategorieSerializer(serializers.ModelSerializer):
 
 
 class PrestataireSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
-    categorie = CategorieSerializer(read_only=True)
-    photo = serializers.SerializerMethodField()
+    user        = UserSerializer(read_only=True)
+    categorie   = CategorieSerializer(read_only=True)
+    photo       = serializers.SerializerMethodField()
+    nombre_avis = serializers.SerializerMethodField()
 
     def get_photo(self, obj):
         if not obj.photo:
             return None
         return obj.photo.url
 
+    def get_nombre_avis(self, obj):
+        return obj.avis_set.count()
+
     class Meta:
         model = Prestataire
         fields = [
             'id', 'uuid', 'user', 'categorie', 'description', 'quartier',
             'telephone', 'photo', 'disponible', 'approuve',
-            'note_moyenne', 'badge_verifie', 'created_at',
+            'note_moyenne', 'nombre_avis', 'badge_verifie', 'statut', 'created_at',
         ]
 
 
@@ -35,13 +39,13 @@ class PrestataireWriteSerializer(serializers.ModelSerializer):
 
 
 class AdminPrestataireSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
+    user      = UserSerializer(read_only=True)
     categorie = CategorieSerializer(read_only=True)
 
     class Meta:
         model = Prestataire
         fields = [
-            'id', 'user', 'categorie', 'quartier', 'telephone',
+            'id', 'uuid', 'user', 'categorie', 'quartier', 'telephone',
             'description', 'photo', 'disponible', 'approuve', 'badge_verifie',
             'note_moyenne', 'statut', 'created_at',
         ]

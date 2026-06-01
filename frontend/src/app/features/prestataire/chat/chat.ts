@@ -7,13 +7,13 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ChatService } from '../../../core/services/chat.service';
-import { PrestataireHeaderComponent } from '../layout/header/header';
+import { PrestataireSidebarComponent } from '../layout/sidebar/sidebar';
 import { Conversation, Message } from '../../../core/models';
 
 @Component({
   selector:    'app-chat-prestataire',
   standalone:  true,
-  imports:     [CommonModule, FormsModule, PrestataireHeaderComponent],
+  imports:     [CommonModule, FormsModule, PrestataireSidebarComponent],
   templateUrl: './chat.html',
 })
 export class ChatPrestataireComponent implements OnInit, OnDestroy, AfterViewChecked {
@@ -177,6 +177,13 @@ export class ChatPrestataireComponent implements OnInit, OnDestroy, AfterViewChe
 
   isFromMe(msg: Message): boolean {
     return msg.expediteur.id === this.currentUser?.id;
+  }
+
+  avatarColor(conv: Conversation): string {
+    const colors = ['bg-blue-500', 'bg-purple-500', 'bg-green-600', 'bg-teal-500', 'bg-indigo-500', 'bg-pink-500'];
+    const nom = this.interlocuteur(conv);
+    const idx = nom.charCodeAt(0) % colors.length;
+    return colors[idx] ?? 'bg-blue-500';
   }
 
   private scrollBas(): void {

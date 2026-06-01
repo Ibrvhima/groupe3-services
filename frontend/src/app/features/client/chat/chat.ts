@@ -178,6 +178,21 @@ export class ChatClientComponent implements OnInit, OnDestroy, AfterViewChecked 
     return msg.expediteur.id === this.currentUser?.id;
   }
 
+  avatarColor(conv: Conversation): string {
+    const colors = ['bg-orange-500', 'bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-teal-500', 'bg-pink-500'];
+    const nom = this.interlocuteur(conv);
+    const idx = nom.charCodeAt(0) % colors.length;
+    return colors[idx] ?? 'bg-orange-500';
+  }
+
+  categorieInterlocuteur(conv: Conversation): string {
+    const moi = this.currentUser?.id;
+    if (moi === conv.client.id) {
+      return (conv.prestataire as any)?.categorie?.nom ?? 'Prestataire';
+    }
+    return 'Client';
+  }
+
   private scrollBas(): void {
     try { this.messagesEnd?.nativeElement?.scrollIntoView({ behavior: 'smooth' }); } catch {}
   }

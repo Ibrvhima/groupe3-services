@@ -3,13 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PrestataireService } from '../../../core/services/prestataire.service';
-import { PrestataireHeaderComponent } from '../layout/header/header';
+import { PrestataireSidebarComponent } from '../layout/sidebar/sidebar';
 import { Prestataire, Categorie } from '../../../core/models';
 
 @Component({
   selector: 'app-prestataire-profil',
   standalone: true,
-  imports: [CommonModule, FormsModule, PrestataireHeaderComponent],
+  imports: [CommonModule, FormsModule, PrestataireSidebarComponent],
   templateUrl: './profil.html',
 })
 export class PrestataireProfilComponent implements OnInit {
@@ -25,6 +25,7 @@ export class PrestataireProfilComponent implements OnInit {
     quartier:     '',
     telephone:    '',
     categorie_id: null as number | null,
+    disponible:   true,
   };
 
   photoFile: File | null    = null;
@@ -45,6 +46,7 @@ export class PrestataireProfilComponent implements OnInit {
           quartier:     profil.quartier,
           telephone:    profil.telephone,
           categorie_id: profil.categorie?.id ?? null,
+          disponible:   profil.disponible ?? true,
         };
         this.loading = false;
       },
@@ -91,6 +93,7 @@ export class PrestataireProfilComponent implements OnInit {
     if (this.form.categorie_id) {
       formData.append('categorie', String(this.form.categorie_id));
     }
+    formData.append('disponible', String(this.form.disponible));
     if (this.photoFile) {
       formData.append('photo', this.photoFile);
     }
@@ -107,6 +110,10 @@ export class PrestataireProfilComponent implements OnInit {
         this.saving = false;
       },
     });
+  }
+
+  toggleDisponible(): void {
+    this.form.disponible = !this.form.disponible;
   }
 
   retour(): void {
