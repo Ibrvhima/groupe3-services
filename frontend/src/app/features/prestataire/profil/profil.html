@@ -4,7 +4,7 @@
   <div class="md:ml-56">
 
     <!-- ── Topbar ── -->
-    <div class="bg-white border-b border-gray-100 px-6 py-4">
+    <div class="bg-white border-b border-gray-100 px-4 md:px-6 py-3 md:py-4">
       <h1 class="text-lg font-bold text-gray-800">Mon profil professionnel</h1>
       <p class="text-xs text-gray-400">Les informations visibles par les clients</p>
     </div>
@@ -14,7 +14,7 @@
       <div class="w-10 h-10 border-4 border-orange-600 border-t-transparent rounded-full animate-spin"></div>
     </div>
 
-    <main *ngIf="!loading" class="p-6 max-w-3xl">
+    <main *ngIf="!loading" class="p-4 md:p-6 max-w-3xl">
 
       <!-- Messages feedback -->
       <div *ngIf="success"
@@ -128,8 +128,8 @@
               class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-orange-200 resize-none"></textarea>
           </div>
 
-          <!-- Disponibilité + Bouton enregistrer sur la même ligne -->
-          <div class="flex items-center justify-between pt-2">
+          <!-- Disponibilité + Bouton enregistrer -->
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-2">
 
             <!-- Toggle disponibilité -->
             <div class="flex items-center gap-3">
@@ -151,7 +151,7 @@
 
             <!-- Bouton enregistrer -->
             <button (click)="sauvegarder()" [disabled]="saving"
-              class="bg-orange-600 text-white text-sm px-6 py-2.5 rounded-xl hover:bg-orange-700 transition font-semibold disabled:opacity-50 flex items-center gap-2">
+              class="w-full sm:w-auto bg-orange-600 text-white text-sm px-6 py-3 rounded-xl hover:bg-orange-700 transition font-semibold disabled:opacity-50 flex items-center justify-center gap-2">
               <span *ngIf="saving"
                 class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
               {{ saving ? 'Enregistrement…' : 'Enregistrer' }}

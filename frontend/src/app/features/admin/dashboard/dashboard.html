@@ -4,7 +4,7 @@
   <div class="md:ml-56">
 
     <!-- ── Topbar ── -->
-    <div class="bg-white border-b border-gray-100 px-6 py-4">
+    <div class="bg-white border-b border-gray-100 px-4 md:px-6 py-3 md:py-4">
       <h1 class="text-lg font-bold text-gray-800">Tableau de bord</h1>
       <p class="text-xs text-gray-400">Vue d'ensemble de la plateforme DouraKa</p>
     </div>
@@ -15,7 +15,7 @@
       <p class="text-sm text-gray-400">Chargement…</p>
     </div>
 
-    <main *ngIf="!loading" class="p-6 space-y-5">
+    <main *ngIf="!loading" class="p-4 md:p-6 space-y-5">
 
       <!-- ── Onglets ── -->
       <div class="flex flex-wrap gap-2">
@@ -175,30 +175,30 @@
 
             <div class="flex flex-wrap gap-2 mt-3 pt-3 border-t border-gray-100 items-center">
               <button *ngIf="p.statut !== 'approuve'" (click)="approuver(p)" [disabled]="prestActionId === p.id"
-                class="text-xs px-3 py-1.5 rounded-xl bg-green-500 text-white font-medium hover:bg-green-600 disabled:opacity-50 transition">
+                class="text-xs px-4 py-2.5 rounded-xl bg-green-500 text-white font-medium hover:bg-green-600 disabled:opacity-50 transition">
                 Approuver
               </button>
               <button *ngIf="p.statut !== 'rejete'" (click)="rejeter(p)" [disabled]="prestActionId === p.id"
-                class="text-xs px-3 py-1.5 rounded-xl bg-red-100 text-red-600 font-medium hover:bg-red-200 disabled:opacity-50 transition">
+                class="text-xs px-4 py-2.5 rounded-xl bg-red-100 text-red-600 font-medium hover:bg-red-200 disabled:opacity-50 transition">
                 Rejeter
               </button>
               <button (click)="toggleBadge(p)" [disabled]="prestActionId === p.id"
                 [class]="p.badge_verifie
-                  ? 'text-xs px-3 py-1.5 rounded-xl bg-orange-600 text-white font-medium hover:bg-orange-700 disabled:opacity-50 transition'
-                  : 'text-xs px-3 py-1.5 rounded-xl bg-gray-100 text-gray-700 font-medium hover:bg-gray-200 disabled:opacity-50 transition'">
+                  ? 'text-xs px-4 py-2.5 rounded-xl bg-orange-600 text-white font-medium hover:bg-orange-700 disabled:opacity-50 transition'
+                  : 'text-xs px-4 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-medium hover:bg-gray-200 disabled:opacity-50 transition'">
                 {{ p.badge_verifie ? 'Retirer certification' : 'Certifier' }}
               </button>
               <button (click)="toggleDisponible(p)" [disabled]="prestActionId === p.id"
                 [class]="p.disponible
-                  ? 'text-xs px-3 py-1.5 rounded-xl bg-orange-50 text-orange-600 font-medium hover:bg-orange-100 disabled:opacity-50 transition'
-                  : 'text-xs px-3 py-1.5 rounded-xl bg-green-50 text-green-600 font-medium hover:bg-green-100 disabled:opacity-50 transition'">
+                  ? 'text-xs px-4 py-2.5 rounded-xl bg-orange-50 text-orange-600 font-medium hover:bg-orange-100 disabled:opacity-50 transition'
+                  : 'text-xs px-4 py-2.5 rounded-xl bg-green-50 text-green-600 font-medium hover:bg-green-100 disabled:opacity-50 transition'">
                 {{ p.disponible ? 'Suspendre' : 'Réactiver' }}
               </button>
               <div *ngIf="prestActionId === p.id"
                 class="w-4 h-4 border-2 border-orange-400 border-t-transparent rounded-full animate-spin">
               </div>
               <button (click)="supprimerUser(p.user, 'prestataires')"
-                class="ml-auto text-xs px-3 py-1.5 rounded-xl text-red-400 hover:bg-red-50 hover:text-red-600 transition">
+                class="ml-auto text-xs px-4 py-2.5 rounded-xl text-red-400 hover:bg-red-50 hover:text-red-600 transition">
                 Supprimer
               </button>
             </div>
@@ -228,7 +228,7 @@
               </div>
             </div>
             <button (click)="supprimerUser(c, 'clients')"
-              class="text-xs px-3 py-1.5 rounded-xl text-red-400 hover:bg-red-50 hover:text-red-600 transition flex-shrink-0">
+              class="text-xs px-4 py-2.5 rounded-xl text-red-400 hover:bg-red-50 hover:text-red-600 transition flex-shrink-0">
               Supprimer
             </button>
           </div>
@@ -294,7 +294,7 @@
               <p *ngIf="cat.description" class="text-xs text-gray-400">{{ cat.description }}</p>
             </div>
             <button (click)="supprimerCategorie(cat.id)"
-              class="text-xs text-red-400 hover:text-red-600 px-2 py-1.5 rounded-xl hover:bg-red-50 transition">
+              class="text-xs text-red-400 hover:text-red-600 px-4 py-2.5 rounded-xl hover:bg-red-50 transition">
               Supprimer
             </button>
           </div>
