@@ -4,7 +4,7 @@ django-cors-headers
 djangorestframework-simplejwt
 channels
 channels-redis
-mysqlclient
+psycopg2-binary
 python-decouple
 Pillow
 gunicorn>=21.2
