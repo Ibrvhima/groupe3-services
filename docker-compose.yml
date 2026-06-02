@@ -24,8 +24,9 @@ services:
     build:
       context: .
       dockerfile: ./docker/Dockerfile.backend
-    ports:
-      - "8000:8000"
+    # Port exposé uniquement en dev local (commenter en production)
+    # ports:
+    #   - "127.0.0.1:8000:8000"
     env_file:
       - ./backend/.env
     volumes:

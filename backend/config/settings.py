@@ -29,6 +29,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -115,9 +116,10 @@ else:
         default='http://localhost:4200'
     ).split(',')
 
-STATIC_URL = '/static/'
-MEDIA_URL  = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+STATIC_URL  = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+MEDIA_URL   = '/media/'
+MEDIA_ROOT  = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -134,5 +136,5 @@ CHANNEL_LAYERS = {
 
 # Resend — clé API dans .env (vide = mode dev, email loggé en console)
 RESEND_API_KEY = config('RESEND_API_KEY', default='')
-EMAIL_FROM     = config('EMAIL_FROM', default='DoraKa <onboarding@resend.dev>')
+EMAIL_FROM     = config('EMAIL_FROM', default='DouraKa <onboarding@resend.dev>')
 FRONTEND_URL   = config('FRONTEND_URL', default='http://localhost:4200')
