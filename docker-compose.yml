@@ -41,6 +41,10 @@ services:
       dockerfile: ./docker/Dockerfile.frontend
     ports:
       - "4200:80"
+    environment:
+      # En dev local : backend accessible via le réseau Docker interne
+      # Sur Railway : remplacer par http://backend.railway.internal:PORT_DU_BACKEND
+      BACKEND_INTERNAL_URL: http://backend:8000
     depends_on:
       - backend
 
