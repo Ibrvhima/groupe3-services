@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: '/api',
-  wsUrl:  '',     // vide = même hôte que l'app, nginx proxie /ws/ → backend
+  apiUrl: 'https://douraka-backend.onrender.com/api',
+  wsUrl:  'wss://douraka-backend.onrender.com',
 };
