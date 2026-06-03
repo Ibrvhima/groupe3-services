@@ -70,11 +70,17 @@ DATABASES = {
 
 AUTH_USER_MODEL = 'users.User'
 
-# Cache Redis partagé entre les workers — utilisé pour le rate limiting
+# Cache Redis — supporte redis:// (local/Docker) et rediss:// (Upstash TLS)
+REDIS_URL = config('REDIS_URL', default=None)
+if not REDIS_URL:
+    _redis_host = config('REDIS_HOST', default='redis')
+    _redis_port = config('REDIS_PORT', default='6379')
+    REDIS_URL = f"redis://{_redis_host}:{_redis_port}/0"
+
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': f"redis://{config('REDIS_HOST', default='redis')}:6379/1",
+        'LOCATION': REDIS_URL,
         'OPTIONS': {'CLIENT_CLASS': 'django_redis.client.DefaultClient'},
         'TIMEOUT': 300,
     }
@@ -125,7 +131,7 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            'hosts': [(config('REDIS_HOST', default='redis'), 6379)],
+            'hosts': [REDIS_URL],
         },
     }
 }
