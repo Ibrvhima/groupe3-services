@@ -208,28 +208,29 @@ class PasswordResetRequestView(APIView):
 
     def _envoyer_email(self, to_email: str, token: str):
         from django.conf import settings
+        from django.core.mail import send_mail
 
         frontend_url = getattr(settings, 'FRONTEND_URL', 'http://localhost:4200')
         reset_url = f"{frontend_url}/auth/reset-password?token={token}"
-        api_key = getattr(settings, 'RESEND_API_KEY', '')
+        host_user = getattr(settings, 'EMAIL_HOST_USER', '')
 
-        if not api_key:
+        if not host_user:
+            # Mode dev : pas de compte SMTP configuré
             print(f"[PASSWORD RESET - DEV] {to_email} -> {reset_url}")
-            return reset_url   # retourné uniquement en dev
+            return reset_url
 
         try:
-            import resend
-            resend.api_key = api_key
-            resend.Emails.send({
-                "from": getattr(settings, 'EMAIL_FROM', 'DoraKa <onboarding@resend.dev>'),
-                "to": [to_email],
-                "subject": "Réinitialisation de votre mot de passe DoraKa",
-                "html": self._html_reset(reset_url),
-            })
+            send_mail(
+                subject="Réinitialisation de votre mot de passe DouraKa",
+                message=f"Réinitialisez votre mot de passe : {reset_url}",
+                from_email=getattr(settings, 'EMAIL_FROM', f'DouraKa <{host_user}>'),
+                recipient_list=[to_email],
+                html_message=self._html_reset(reset_url),
+                fail_silently=False,
+            )
             return None
         except Exception as e:
-            # Fallback dev : Resend indisponible ou clé invalide
-            print(f"[PASSWORD RESET - RESEND ERROR] {e}")
+            print(f"[PASSWORD RESET - SMTP ERROR] {e}")
             print(f"[PASSWORD RESET - FALLBACK] {to_email} -> {reset_url}")
             return reset_url
 
