@@ -208,29 +208,31 @@ class PasswordResetRequestView(APIView):
 
     def _envoyer_email(self, to_email: str, token: str):
         from django.conf import settings
-        from django.core.mail import send_mail
 
         frontend_url = getattr(settings, 'FRONTEND_URL', 'http://localhost:4200')
         reset_url = f"{frontend_url}/auth/reset-password?token={token}"
-        host_user = getattr(settings, 'EMAIL_HOST_USER', '')
+        api_key = getattr(settings, 'SENDGRID_API_KEY', '')
 
-        if not host_user:
-            # Mode dev : pas de compte SMTP configuré
+        if not api_key:
+            # Mode dev : pas de clé SendGrid configurée
             print(f"[PASSWORD RESET - DEV] {to_email} -> {reset_url}")
             return reset_url
 
         try:
-            send_mail(
+            import sendgrid
+            from sendgrid.helpers.mail import Mail
+
+            sg = sendgrid.SendGridAPIClient(api_key=api_key)
+            message = Mail(
+                from_email=getattr(settings, 'EMAIL_FROM', 'DouraKa <ibrahimadialloib300@gmail.com>'),
+                to_emails=to_email,
                 subject="Réinitialisation de votre mot de passe DouraKa",
-                message=f"Réinitialisez votre mot de passe : {reset_url}",
-                from_email=getattr(settings, 'EMAIL_FROM', f'DouraKa <{host_user}>'),
-                recipient_list=[to_email],
-                html_message=self._html_reset(reset_url),
-                fail_silently=False,
+                html_content=self._html_reset(reset_url),
             )
+            sg.send(message)
             return None
         except Exception as e:
-            print(f"[PASSWORD RESET - SMTP ERROR] {e}")
+            print(f"[PASSWORD RESET - SENDGRID ERROR] {e}")
             print(f"[PASSWORD RESET - FALLBACK] {to_email} -> {reset_url}")
             return reset_url
 
