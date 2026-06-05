@@ -50,7 +50,10 @@
     <!-- Notifications + Profil + Déconnexion desktop -->
     <div class="hidden md:flex items-center gap-3">
       <app-notifications></app-notifications>
-      <span class="text-sm text-gray-600">{{ user?.nom }} {{ user?.prenom }}</span>
+      <a routerLink="/client/profil"
+        class="text-sm text-gray-600 hover:text-orange-600 transition font-medium">
+        {{ user?.nom }} {{ user?.prenom }}
+      </a>
       <button
         (click)="logout()"
         class="text-xs bg-red-50 text-red-500 px-3 py-1.5 rounded-lg hover:bg-red-100 transition"
@@ -100,6 +103,8 @@
       </svg>
       Messages
     </a>
+    <a routerLink="/client/profil" (click)="toggleMenu()"
+      class="block text-sm text-gray-700 py-2 border-b border-gray-50">Mon profil</a>
     <div class="flex items-center justify-between py-2">
       <span class="text-sm text-gray-600">{{ user?.nom }} {{ user?.prenom }}</span>
       <button (click)="logout()" class="text-xs bg-red-50 text-red-500 px-3 py-1.5 rounded-lg">

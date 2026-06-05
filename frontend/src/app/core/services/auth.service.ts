@@ -23,6 +23,16 @@ export class AuthService {
     );
   }
 
+  updateMe(data: FormData) {
+    return this.http.patch<User>(`${this.api}/me/`, data).pipe(
+      tap(user => localStorage.setItem('user', JSON.stringify(user)))
+    );
+  }
+
+  deleteAccount() {
+    return this.http.delete(`${this.api}/me/`);
+  }
+
   logout(): void {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');

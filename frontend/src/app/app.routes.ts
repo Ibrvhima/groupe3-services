@@ -61,6 +61,11 @@ export const routes: Routes = [
         title: 'Messages',
         loadComponent: () => import('./features/client/chat/chat').then(m => m.ChatClientComponent),
       },
+      {
+        path: 'profil',
+        title: 'Mon profil',
+        loadComponent: () => import('./features/client/profil/profil').then(m => m.ClientProfilComponent),
+      },
     ],
   },
 
