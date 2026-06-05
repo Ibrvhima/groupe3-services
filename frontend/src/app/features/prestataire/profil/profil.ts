@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PrestataireService } from '../../../core/services/prestataire.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { PrestataireSidebarComponent } from '../layout/sidebar/sidebar';
 import { Prestataire, Categorie } from '../../../core/models';
 
@@ -21,6 +22,8 @@ export class PrestataireProfilComponent implements OnInit {
   error    = '';
 
   form = {
+    nom:          '',
+    prenom:       '',
     description:  '',
     quartier:     '',
     telephone:    '',
@@ -28,12 +31,16 @@ export class PrestataireProfilComponent implements OnInit {
     disponible:   true,
   };
 
+  deleting      = false;
+  confirmDelete = false;
+
   photoFile: File | null    = null;
   photoPreview: string | null = null;
   readonly mediaUrl = '';
 
   constructor(
     private prestataireService: PrestataireService,
+    private authService: AuthService,
     private router: Router,
   ) {}
 
@@ -42,6 +49,8 @@ export class PrestataireProfilComponent implements OnInit {
       next: profil => {
         this.profil = profil;
         this.form = {
+          nom:          profil.user?.nom   ?? '',
+          prenom:       profil.user?.prenom ?? '',
           description:  profil.description,
           quartier:     profil.quartier,
           telephone:    profil.telephone,
@@ -86,6 +95,13 @@ export class PrestataireProfilComponent implements OnInit {
     this.success = '';
     this.error   = '';
 
+    // Mise à jour infos personnelles (nom/prénom)
+    const userFd = new FormData();
+    userFd.append('nom',    this.form.nom);
+    userFd.append('prenom', this.form.prenom);
+    this.authService.updateMe(userFd).subscribe();
+
+    // Mise à jour profil prestataire
     const formData = new FormData();
     formData.append('description', this.form.description);
     formData.append('quartier',    this.form.quartier);
@@ -114,6 +130,17 @@ export class PrestataireProfilComponent implements OnInit {
 
   toggleDisponible(): void {
     this.form.disponible = !this.form.disponible;
+  }
+
+  supprimerCompte(): void {
+    this.deleting = true;
+    this.authService.deleteAccount().subscribe({
+      next: () => this.authService.logout(),
+      error: () => {
+        this.error    = 'Impossible de supprimer le compte.';
+        this.deleting = false;
+      },
+    });
   }
 
   retour(): void {
