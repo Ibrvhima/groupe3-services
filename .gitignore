@@ -7,7 +7,11 @@ __pycache__/
 venv/
 env/
 *.sqlite3
-backend/media/
+# Ignore les fichiers uploadés mais garde la structure de dossiers (via .gitkeep)
+backend/media/*
+backend/media/**/*
+!backend/media/.gitkeep
+!backend/media/users/.gitkeep
 
 # Node / Angular
 node_modules/

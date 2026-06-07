@@ -15,6 +15,6 @@ urlpatterns = [
     path('api/',        include('apps.chat.urls')),
 ]
 
-# Sert les fichiers media (photos de profil) en développement
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Sert les fichiers media (photos de profil) — nécessaire en production sur Render
+# (Render utilise gunicorn sans nginx, Django doit servir /media/ lui-même)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
